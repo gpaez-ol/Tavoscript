@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "sourceMap": true
+  },
+  "files": ["./src/index.ts", "./src/index.d.ts"]
+}
