@@ -4,8 +4,8 @@ define(function(require){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,8],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,7],$V6=[5,7,8,9,10,11,16],$V7=[1,25],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,24],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,30],$Vi=[14,19,20,21,22,23,25],$Vj=[14,19,20,25],$Vk=[14,19,20,21,22,25];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"doubleType":8,"boolType":9,"charType":10,"stringType":11,"INSTRUCTION":12,"DECLARATION":13,";":14,"ASSIGNMENT":15,"id":16,"=":17,"EXPRESSION":18,"+":19,"-":20,"*":21,"/":22,"^":23,"(":24,")":25,"NUMBER":26,"E":27,"PI":28,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"intType",8:"doubleType",9:"boolType",10:"charType",11:"stringType",14:";",16:"id",17:"=",19:"+",20:"-",21:"*",22:"/",23:"^",24:"(",25:")",26:"NUMBER",27:"E",28:"PI"},
+symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"charType":10,"stringType":11,"INSTRUCTION":12,"DECLARATION":13,";":14,"ASSIGNMENT":15,"id":16,"=":17,"EXPRESSION":18,"+":19,"-":20,"*":21,"/":22,"^":23,"(":24,")":25,"NUMBER":26,"E":27,"PI":28,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"charType",11:"stringType",14:";",16:"id",17:"=",19:"+",20:"-",21:"*",22:"/",23:"^",24:"(",25:")",26:"NUMBER",27:"E",28:"PI"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[6,1],[4,2],[4,1],[12,2],[12,2],[13,2],[15,1],[15,3],[18,3],[18,3],[18,3],[18,3],[18,3],[18,2],[18,3],[18,1],[18,1],[18,1],[18,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
@@ -274,6 +274,7 @@ parse: function parse(input) {
     semanticTable[["float","boolean",'/']] = null;
     semanticTable[["float","boolean","comparison"]] = null;
     semanticTable[["float","boolean","&&"]] = null;
+
     // char
     semanticTable[["char","int",'+']] = null;
     semanticTable[["char","int",'-']] = null;
@@ -713,7 +714,7 @@ case 22:
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\^)/,/^(?:\()/,/^(?:\))/,/^(?:=)/,/^(?:;)/,/^(?:char\b)/,/^(?:boolean\b)/,/^(?:string\b)/,/^(?:double\b)/,/^(?:int\b)/,/^(?:"[^\"]*")/,/^(?:'[^\']?')/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:PI\b)/,/^(?:E\b)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\^)/,/^(?:\()/,/^(?:\))/,/^(?:=)/,/^(?:;)/,/^(?:char\b)/,/^(?:boolean\b)/,/^(?:string\b)/,/^(?:float\b)/,/^(?:int\b)/,/^(?:"[^\"]*")/,/^(?:'[^\']?')/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:PI\b)/,/^(?:E\b)/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],"inclusive":true}}
 });
 return lexer;

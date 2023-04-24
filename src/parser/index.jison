@@ -15,7 +15,7 @@
 "char"                      return 'charType'
 "boolean"                   return 'boolType'
 "string"                    return 'stringType'
-"double"                    return 'doubleType'
+"float"                    return 'floatType'
 "int"                       return 'intType'
 \"[^\"]*\"				    return 'text'
 \'[^\']?\'                  return 'character'
@@ -92,7 +92,7 @@
     semanticTable[["float","boolean",'/']] = null;
     semanticTable[["float","boolean","comparison"]] = null;
     semanticTable[["float","boolean","&&"]] = null;
-    
+
     // char
     semanticTable[["char","int",'+']] = null;
     semanticTable[["char","int",'-']] = null;
@@ -159,7 +159,7 @@
 %start START
 %%
 START : INSTRUCTIONS EOF { console.log("Correct Syntax")  };
-TYPE : intType | doubleType  | boolType | charType | stringType;
+TYPE : intType | floatType  | boolType | charType | stringType;
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION;
 INSTRUCTION : DECLARATION ';' | ASSIGNMENT ';' ;
 DECLARATION : TYPE ASSIGNMENT;
