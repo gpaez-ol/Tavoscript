@@ -24,3 +24,15 @@
 ## Folder Structure
 
 Inside the `src` directory there are multiple folders with their own specific purpose. Specifically the Lex syntax and the Parser logic
+
+## Avances hasta el momento
+
+Se preparo el documento completo de cual seria la descripcion del lenguaje,
+Se creo el primer repositori el cual tiene las herramientas necesarias para probar facilmetne el lenguaje utilizando JISON.
+Se anadio un lenguaje basico que funciona como calculadora por el momento para tener una base.
+
+-Se anadio instrucciones, declaracion basica y asignacion basica de valores a un identificador.
+
+- Se agrego un mapa de las variables disponibles en el programa.
+- Se agergo logica para agregar una variable nueva
+- Se agrego logica para llamar el valor de una variable
