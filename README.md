@@ -36,3 +36,4 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se agrego un mapa de las variables disponibles en el programa.
 - Se agergo logica para agregar una variable nueva
 - Se agrego logica para llamar el valor de una variable
+- Se agrego tabla semantica para las operaciones
