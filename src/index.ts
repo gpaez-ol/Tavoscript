@@ -1,6 +1,6 @@
 import * as parser from "parser";
 // TODO: Switch for a file
-const code: string = "int varB = 4; int varC = 8 + varB;";
+const code: string = "if (32*5>5) {3*5;}";
 
 const compileBtn = document.getElementById("runtimeBtn");
 onload = () => {

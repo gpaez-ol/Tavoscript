@@ -1,74 +1,215 @@
 
 
 define(function(require){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,8],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,7],$V6=[5,7,8,9,10,11,16],$V7=[1,25],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,24],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,30],$Vi=[14,19,20,21,22,23,25],$Vj=[14,19,20,25],$Vk=[14,19,20,21,22,25];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,10],$V1=[1,11],$V2=[1,12],$V3=[1,13],$V4=[1,14],$V5=[1,7],$V6=[1,24],$V7=[1,22],$V8=[1,19],$V9=[1,20],$Va=[1,21],$Vb=[1,23],$Vc=[5,7,8,9,10,11,14,18,25,42,43,44,45],$Vd=[1,29],$Ve=[1,33],$Vf=[16,21,26],$Vg=[1,34],$Vh=[1,35],$Vi=[16,21,25,26,29,30],$Vj=[1,36],$Vk=[1,37],$Vl=[1,38],$Vm=[1,39],$Vn=[16,21,25,26,29,30,31,33,34,35],$Vo=[1,40],$Vp=[1,41],$Vq=[16,21,25,26,29,30,31,33,34,35,37,38],$Vr=[1,42],$Vs=[1,43],$Vt=[16,21,25,26,29,30,31,33,34,35,37,38,39,41],$Vu=[21,25];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"charType":10,"stringType":11,"INSTRUCTION":12,"DECLARATION":13,";":14,"ASSIGNMENT":15,"id":16,"=":17,"EXPRESSION":18,"+":19,"-":20,"*":21,"/":22,"^":23,"(":24,")":25,"NUMBER":26,"E":27,"PI":28,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"charType",11:"stringType",14:";",16:"id",17:"=",19:"+",20:"-",21:"*",22:"/",23:"^",24:"(",25:")",26:"NUMBER",27:"E",28:"PI"},
-productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[6,1],[4,2],[4,1],[12,2],[12,2],[13,2],[15,1],[15,3],[18,3],[18,3],[18,3],[18,3],[18,3],[18,2],[18,3],[18,1],[18,1],[18,1],[18,1]],
+symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"charType":10,"stringType":11,"CONDITIONALS":12,"IF":13,"(":14,"CONDITIONALHYPEREXPRESSION":15,")":16,"{":17,"}":18,"INSTRUCTION":19,"DECLARATION":20,";":21,"SUPRAEXPRESSION":22,"ASSIGNMENTS":23,"ASSIGNMENT":24,"id":25,"=":26,"HYPEREXPRESSION":27,"SUPEREXPRESSION":28,"&&":29,"||":30,"<":31,"EXPRESSION":32,">":33,"!=":34,"==":35,"TERMS":36,"+":37,"-":38,"*":39,"FACTOR":40,"/":41,"NUMBER":42,"E":43,"PI":44,"text":45,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"charType",11:"stringType",13:"IF",14:"(",16:")",17:"{",18:"}",21:";",25:"id",26:"=",29:"&&",30:"||",31:"<",33:">",34:"!=",35:"==",37:"+",38:"-",39:"*",41:"/",42:"NUMBER",43:"E",44:"PI",45:"text"},
+productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[6,1],[12,7],[4,2],[4,1],[4,1],[19,2],[19,2],[20,2],[23,2],[23,1],[24,1],[24,3],[22,3],[22,1],[27,1],[27,3],[27,3],[15,1],[28,3],[28,3],[28,3],[28,3],[28,1],[32,1],[32,3],[32,3],[36,3],[36,3],[36,1],[40,1],[40,1],[40,1],[40,1],[40,1],[40,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- console.log("Correct Syntax")  
+ 
+    // aqui deberia regresar la tabla de memoria de las funciones, etc
+    console.log(quadruples);
+    console.log(operatorStack);
+    console.log(operandStack);
+    console.log(variables);
 break;
-case 12:
+case 2:
 
-        // TODO: Add logic to which type of value it is
-        variables[$$[$0]] ={type:"int",value:null};
-    
+      currentType = "int";
+
+break;
+case 3:
+
+    currentType = "float";
+
+break;
+case 4:
+
+    currentType = "boolean";
+
+break;
+case 5:
+
+    currentType = "char";
+
+break;
+case 6:
+
+    currentType = "string";
+
+break;
+case 7:
+
+                var end = jumpStack.pop();
+                var quadruple = quadruples[end];
+                console.log(quadruple);
+                quadruple.result = quadruples.length;
+
+        
+
 break;
 case 13:
 
-        // TODO: Add logic to which type of value it is
-        variables[$$[$0-2]] = {type:"int",value:Number($$[$0])};
-        console.log(variables);
-    
-break;
-case 14:
-this.$ = $$[$0-2]+$$[$0];
-break;
-case 15:
-this.$ = $$[$0-2]-$$[$0];
+        currentType = null;
+
+
 break;
 case 16:
-this.$ = $$[$0-2]*$$[$0];
+
+        // TODO: Add logic link variables with functions or with global status
+        if(variables.some(variable => variable.name === $$[$0]))
+        {
+            console.log("Name is already taken",$$[$0]);
+            throw new Error($$[$0], "name is already taken");
+        }
+        variables.push({type:currentType,name:$$[$0]});
+    
 break;
 case 17:
-this.$ = $$[$0-2]/$$[$0];
+
+        // TODO: Add logic to which type of value it is
+        variables.push({type:currentType,name:$$[$0-2]});
+        operatorStack.push('=');
+        if([...operatorStack].pop() == "=")
+        {
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = $$[$0-2];
+        var leftType = currentType;
+        var operator = operatorStack.pop();
+        if(rightType != leftType)
+        {
+            console.log("Operation",leftType,operator,rightType,"is not valid");
+            throw new Error("Operation is not valid");
+        }
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+        }
+    
 break;
 case 18:
-this.$ = Math.pow($$[$0-2], $$[$0]);
-break;
-case 19:
-this.$ = -$$[$0];
-break;
-case 20:
-this.$ = $$[$0-1];
-break;
-case 21:
-this.$ = Number(yytext);
-break;
-case 22:
-this.$ = Math.E;
+
+                operatorStack.push('=');
+                if([...operatorStack].pop() == "="){
+                    createAssignmentQuad();
+            }
+        
 break;
 case 23:
-this.$ = Math.PI;
+
+            console.log({... quadruples});
+            // check if there is a result  if no resutl its an error
+            var resultOperand = operandStack.pop();
+            var resultType = typeStack.pop();
+            console.log(resultOperand,resultType);
+            if(resultType != "bool")
+            {
+                console.log("A conditional statement should be a boolean");
+                throw new Error("A conditional statement should be a boolean");
+            }
+            quadruples.push({operator:"GOTOF",leftOperand:resultOperand,rightOperand:null,result:null});
+            jumpStack.push(quadruples.length-1);
+        
 break;
 case 24:
 
-        // TODO: Add logic to check that the identifier has a value and exists
-        console.log(variables);
-        this.$ = variables[$$[$0]].value;
-      
+                operatorStack.push('<');
+                if([...operatorStack].pop() == "<"){
+                createOperationQuad();
+            }
+        
+break;
+case 25:
+
+            operatorStack.push('>');
+            if([...operatorStack].pop() == ">"){
+                createOperationQuad();
+            }
+        
+break;
+case 26:
+
+            operatorStack.push('!=');
+            if([...operatorStack].pop() == "!="){
+                createOperationQuad();
+            }
+        
+break;
+case 27:
+
+            operatorStack.push('==');
+            if([...operatorStack].pop() == "=="){
+                createOperationQuad();
+            }
+        
+break;
+case 30:
+
+            operatorStack.push('+');
+            if([...operatorStack].pop() == "+"){
+                createOperationQuad();
+            }
+            
+        
+break;
+case 31:
+
+            operatorStack.push('-');
+            if([...operatorStack].pop() == "-"){
+                createOperationQuad();
+            }
+        
+break;
+case 32:
+
+            operatorStack.push('*');
+            if([...operatorStack].pop() == "*"){
+                createOperationQuad();
+            }
+        
+break;
+case 33:
+
+            operatorStack.push('/');
+            if([...operatorStack].pop() == "/"){
+                createOperationQuad();
+            }
+        
+break;
+case 35:
+
+            // check if number is int or float
+            operandStack.push($$[$0]);
+            typeStack.push("int");
+        
+break;
+case 38:
+
+            // check var exists
+            // if var doesnt exist throw error
+            let variable = variables.find(variable => variable.name === $$[$0]);
+            if (variable)
+            {
+            operandStack.push($$[$0]);
+            typeStack.push(variable.type);
+
+            }else {
+                console.log("Variable does not exist at this point in time",$$[$0]);
+                throw new Error("Variable ",$$[$0], "does not exist at this point");
+            }
+        
 break;
 }
 },
-table: [{3:1,4:2,6:6,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:3,13:4,15:5,16:$V5},{1:[3]},{5:[1,13],6:6,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:14,13:4,15:5,16:$V5},o($V6,[2,8]),{14:[1,15]},{14:[1,16]},{15:17,16:$V5},{14:[2,12],17:[1,18]},{16:[2,2]},{16:[2,3]},{16:[2,4]},{16:[2,5]},{16:[2,6]},{1:[2,1]},o($V6,[2,7]),o($V6,[2,9]),o($V6,[2,10]),{14:[2,11]},{16:$V7,18:19,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},{14:[2,13],19:$Vd,20:$Ve,21:$Vf,22:$Vg,23:$Vh},{16:$V7,18:31,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},{16:$V7,18:32,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},o($Vi,[2,21]),o($Vi,[2,22]),o($Vi,[2,23]),o($Vi,[2,24]),{16:$V7,18:33,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},{16:$V7,18:34,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},{16:$V7,18:35,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},{16:$V7,18:36,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},{16:$V7,18:37,20:$V8,24:$V9,26:$Va,27:$Vb,28:$Vc},o($Vi,[2,19]),{19:$Vd,20:$Ve,21:$Vf,22:$Vg,23:$Vh,25:[1,38]},o($Vj,[2,14],{21:$Vf,22:$Vg,23:$Vh}),o($Vj,[2,15],{21:$Vf,22:$Vg,23:$Vh}),o($Vk,[2,16],{23:$Vh}),o($Vk,[2,17],{23:$Vh}),o($Vi,[2,18]),o($Vi,[2,20])],
-defaultActions: {8:[2,2],9:[2,3],10:[2,4],11:[2,5],12:[2,6],13:[2,1],17:[2,11]},
+table: [{3:1,4:2,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:4,13:$V5,14:$V6,19:3,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{1:[3]},{5:[1,25],6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,14:$V6,19:26,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},o($Vc,[2,9]),o($Vc,[2,10]),{21:[1,27]},{21:[1,28],26:$Vd},{14:[1,30]},{23:31,24:32,25:$Ve},o($Vf,[2,19],{29:$Vg,30:$Vh}),{25:[2,2]},{25:[2,3]},{25:[2,4]},{25:[2,5]},{25:[2,6]},o($Vi,[2,20],{31:$Vj,33:$Vk,34:$Vl,35:$Vm}),o($Vn,[2,28],{37:$Vo,38:$Vp}),o($Vq,[2,29],{39:$Vr,41:$Vs}),o($Vt,[2,34]),o($Vt,[2,35]),o($Vt,[2,36]),o($Vt,[2,37]),o($Vt,[2,38]),o($Vt,[2,39]),{14:$V6,22:44,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{1:[2,1]},o($Vc,[2,8]),o($Vc,[2,11]),o($Vc,[2,12]),{14:$V6,25:$V7,27:45,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,15:46,25:$V7,27:47,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{21:[2,13],24:48,25:$Ve},o($Vu,[2,15]),o($Vu,[2,16],{26:[1,49]}),{14:$V6,25:$V7,28:50,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,28:51,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:52,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:53,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:54,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:55,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,36:56,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,36:57,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,40:58,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,40:59,42:$V8,43:$V9,44:$Va,45:$Vb},{16:[1,60],26:$Vd},o($Vf,[2,18],{29:$Vg,30:$Vh}),{16:[1,61]},{16:[2,23],29:$Vg,30:$Vh},o($Vu,[2,14]),{14:$V6,25:$V7,27:62,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},o($Vi,[2,21],{31:$Vj,33:$Vk,34:$Vl,35:$Vm}),o($Vi,[2,22],{31:$Vj,33:$Vk,34:$Vl,35:$Vm}),o($Vn,[2,24],{37:$Vo,38:$Vp}),o($Vn,[2,25],{37:$Vo,38:$Vp}),o($Vn,[2,26],{37:$Vo,38:$Vp}),o($Vn,[2,27],{37:$Vo,38:$Vp}),o($Vq,[2,30],{39:$Vr,41:$Vs}),o($Vq,[2,31],{39:$Vr,41:$Vs}),o($Vt,[2,32]),o($Vt,[2,33]),o($Vt,[2,40]),{17:[1,63]},o($Vu,[2,17],{29:$Vg,30:$Vh}),{4:64,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:4,13:$V5,14:$V6,19:3,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,14:$V6,18:[1,65],19:26,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},o($Vc,[2,7])],
+defaultActions: {10:[2,2],11:[2,3],12:[2,4],13:[2,5],14:[2,6],25:[2,1]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -216,127 +357,181 @@ parse: function parse(input) {
     return true;
 }};
 
-    var semanticTable = {};
-    // int 
-    semanticTable[["int","int",'+']] = "int";
-    semanticTable[["int","int",'-']] = "int";
-    semanticTable[["int","int",'*']] = "int";
-    semanticTable[["int","int",'/']] = "float";
-    semanticTable[["int","int","comparison"]] = "boolean";
-    semanticTable[["int","int","&&"]] = null;
-    
-    semanticTable[["int","float",'+']] = "float";
-    semanticTable[["int","float",'-']] = "float";
-    semanticTable[["int","float",'*']] = "float";
-    semanticTable[["int","float",'/']] = "float";
-    semanticTable[["int","float","comparison"]] = "boolean";
-    semanticTable[["int","float","&&"]] = null;
+    var operatorStack = [];
+    var operandStack = [];
+    var typeStack = [];
+    var jumpStack = [];
+    // t1 registro temporal
+    // operacion,   operandoizq,operandoder,res
+    var quadruples = [];
+    /*
+    int 0
+    float 1
+    char 2
+    boolean 3
+    */
+    let semanticTable = {};
+    semanticTable['int'] = {
+        '+': {
+            'int': 'int',
+            'float': 'float'
+        },
+        '-': {
+            'int': 'int',
+            'float': 'float'
+        },
+        '*': {
+            'int': 'int',
+            'float': 'float'
+        },
+        '/': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '>': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '>=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '==': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '!=': {
+            'int': 'bool',
+            'float': 'bool'
+        }
+        };
 
-    semanticTable[["int","char",'+']] = null;
-    semanticTable[["int","char",'-']] = null;
-    semanticTable[["int","char",'*']] = null;
-    semanticTable[["int","char",'/']] = null;
-    semanticTable[["int","char","comparison"]] = null;
-    semanticTable[["int","char","&&"]] = null;
-    
-    semanticTable[["int","boolean",'+']] = null;
-    semanticTable[["int","boolean",'-']] = null;
-    semanticTable[["int","boolean",'*']] = null;
-    semanticTable[["int","boolean",'/']] = null;
-    semanticTable[["int","boolean","comparison"]] = null;
-    semanticTable[["int","boolean","&&"]] = null;
+    // Float values
+    semanticTable['float'] = {
+        '+': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '-': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '*': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '/': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '>': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '>=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '==': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '!=': {
+            'int': 'bool',
+            'float': 'bool'
+        }
+        };
+    // char values
+    semanticTable['char'] = {
+        '==': {
+            'char': 'bool'
+        },
+        '!=': {
+            'char': 'bool'
+        }
+        };
 
-    // float
-    semanticTable[["float","int",'+']] = "float";
-    semanticTable[["float","int",'-']] = "float";
-    semanticTable[["float","int",'*']] = "float";
-    semanticTable[["float","int",'/']] = "float";
-    semanticTable[["float","int","comparison"]] = "boolean";
-    semanticTable[["float","int","&&"]] = null;
+    // Boolean values
+    semanticTable['bool'] = {
+        '&&': {
+            'bool': 'bool'
+        },
+        '||': {
+            'bool': 'bool'
+        },
+        '!': {
+            'bool': 'bool'
+        },
+        '==': {
+            'bool': 'bool'
+        },
+        '!=': {
+            'bool': 'bool'
+        }
+        };
 
-    semanticTable[["float","float",'+']] = "float";
-    semanticTable[["float","float",'-']] = "float";
-    semanticTable[["float","float",'*']] = "float";
-    semanticTable[["float","float",'/']] = "float";
-    semanticTable[["float","float","comparison"]] = "boolean";
-    semanticTable[["float","float","&&"]] = null;
-
-    semanticTable[["float","char",'+']] = null;
-    semanticTable[["float","char",'-']] = null;
-    semanticTable[["float","char",'*']] = null;
-    semanticTable[["float","char",'/']] = null;
-    semanticTable[["float","char","comparison"]] = null;
-    semanticTable[["float","char","&&"]] = null;
-
-    semanticTable[["float","boolean",'+']] = null;
-    semanticTable[["float","boolean",'-']] = null;
-    semanticTable[["float","boolean",'*']] = null;
-    semanticTable[["float","boolean",'/']] = null;
-    semanticTable[["float","boolean","comparison"]] = null;
-    semanticTable[["float","boolean","&&"]] = null;
-
-    // char
-    semanticTable[["char","int",'+']] = null;
-    semanticTable[["char","int",'-']] = null;
-    semanticTable[["char","int",'*']] = null;
-    semanticTable[["char","int",'/']] = null;
-    semanticTable[["char","int","comparison"]] = null;
-    semanticTable[["char","int","&&"]] = null;
-    
-    semanticTable[["char","float",'+']] = null;
-    semanticTable[["char","float",'-']] = null;
-    semanticTable[["char","float",'*']] = null;
-    semanticTable[["char","float",'/']] = null;
-    semanticTable[["char","float","comparison"]] = null;
-    semanticTable[["char","float","&&"]] = null;
-
-    semanticTable[["char","char",'+']] = "char";
-    semanticTable[["char","char",'-']] = null;
-    semanticTable[["char","char",'*']] = null;
-    semanticTable[["char","char",'/']] = null;
-    semanticTable[["char","char","comparison"]] = "boolean";
-    semanticTable[["char","char","&&"]] = null;
-
-    semanticTable[["char","boolean",'+']] = null;
-    semanticTable[["char","boolean",'-']] = null;
-    semanticTable[["char","boolean",'*']] = null;
-    semanticTable[["char","boolean",'/']] = null;
-    semanticTable[["char","boolean","comparison"]] = null;
-    semanticTable[["char","boolean","&&"]] = null;
-
-    // boolean
-    semanticTable[["boolean","int",'+']] = null;
-    semanticTable[["boolean","int",'-']] = null;
-    semanticTable[["boolean","int",'*']] = null;
-    semanticTable[["boolean","int",'/']] = null;
-    semanticTable[["boolean","int","comparison"]] = null;
-    semanticTable[["boolean","int","&&"]] = null;
-
-    semanticTable[["boolean","float",'+']] = null;
-    semanticTable[["boolean","float",'-']] = null;
-    semanticTable[["boolean","float",'*']] = null;
-    semanticTable[["boolean","float",'/']] = null;
-    semanticTable[["boolean","float","comparison"]] = null;
-    semanticTable[["boolean","float","&&"]] = null;
-
-    semanticTable[["boolean","char",'+']] = null;
-    semanticTable[["boolean","char",'-']] = null;
-    semanticTable[["boolean","char",'*']] = null;
-    semanticTable[["boolean","char",'/']] = null;
-    semanticTable[["boolean","char","comparison"]] = null;
-    semanticTable[["boolean","char","&&"]] = null;
-
-    semanticTable[["boolean","boolean",'+']] = null;
-    semanticTable[["boolean","boolean",'-']] = null;
-    semanticTable[["boolean","boolean",'*']] = null;
-    semanticTable[["boolean","boolean",'/']] = null;
-    semanticTable[["boolean","boolean","comparison"]] = null;
-    semanticTable[["boolean","boolean","&&"]] = "boolean";
-
-
-    var variables = {};
-    // example type
-    // variables["varA"] = {type:"int",value:10};
+    // type,name
+    // TODO: make variables linked to functions and global values
+    var variables = [];
+    var jumpStack = [];
+    let nextAvailable = 1;
+    function nextAvail() {
+        let variable = "t" + nextAvailable;
+        nextAvailable = nextAvailable+1;
+        return variable;
+    }
+    var currentType = "";
+    function getOperands() {
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = operandStack.pop();
+        var leftType = typeStack.pop();
+        var operator = operatorStack.pop();
+        return [rightOperand,rightType,leftOperand,leftType,operator]
+    }
+    function createOperationQuad() {
+        var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
+        var resultType =  semanticTable[leftType][operator][rightType];
+        if(!resultType)
+        {
+            console.log("Operation",leftType,operator,rightType,"is not valid");
+            throw new Error("Operation is not valid");
+        }
+        var result = nextAvail();
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})=${result}(${resultType})`);
+        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:rightOperand,result:result});
+        operandStack.push(result);
+        typeStack.push(resultType);
+        // TODO: delete temporals that are not needed anymore
+    }
+    function createAssignmentQuad(){
+        var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
+        // add more validations later but for now strict typing
+        if(rightType != leftType)
+        {
+            console.log("Operation",leftType,operator,rightType,"is not valid");
+            throw new Error("Operation is not valid");
+        }
+        console.log("se uso el assignment");
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+    }
 
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
@@ -668,54 +863,74 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:/* skip whitespace */
 break;
-case 1:return 26
+case 1:return 42
 break;
-case 2:return 21
+case 2:return 39
 break;
-case 3:return 22
+case 3:return 41
 break;
-case 4:return 20
+case 4:return 38
 break;
-case 5:return 19
+case 5:return 37
 break;
-case 6:return 23
+case 6:return 14
 break;
-case 7:return 24
+case 7:return 16
 break;
-case 8:return 25
+case 8:return 17
 break;
-case 9:return 17
+case 9:return 18
 break;
-case 10:return 14
+case 10:return 31
 break;
-case 11:return 10
+case 11:return 33
 break;
-case 12:return 9
+case 12:return '<='
 break;
-case 13:return 11
+case 13:return '>='
 break;
-case 14:return 8
+case 14:return 34
 break;
-case 15:return 7
+case 15:return 35
 break;
-case 16:return 'text'
+case 16:return 26
 break;
-case 17:return 'character'
+case 17:return 21
 break;
-case 18:return 16
+case 18:return 10
 break;
-case 19:return 28
+case 19:return 9
 break;
-case 20:return 27
+case 20:return 11
 break;
-case 21:return 5
+case 21:return 8
 break;
-case 22:
+case 22:return 7
+break;
+case 23:return 13
+break;
+case 24:return 'WHILE'
+break;
+case 25:return 'DO'
+break;
+case 26:return 45
+break;
+case 27:return 'character'
+break;
+case 28:return 25
+break;
+case 29:return 44
+break;
+case 30:return 43
+break;
+case 31:return 5
+break;
+case 32:
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\^)/,/^(?:\()/,/^(?:\))/,/^(?:=)/,/^(?:;)/,/^(?:char\b)/,/^(?:boolean\b)/,/^(?:string\b)/,/^(?:float\b)/,/^(?:int\b)/,/^(?:"[^\"]*")/,/^(?:'[^\']?')/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:PI\b)/,/^(?:E\b)/,/^(?:$)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\()/,/^(?:\))/,/^(?:\{)/,/^(?:\})/,/^(?:<)/,/^(?:>)/,/^(?:<=)/,/^(?:>=)/,/^(?:!=)/,/^(?:==)/,/^(?:=)/,/^(?:;)/,/^(?:char\b)/,/^(?:boolean\b)/,/^(?:string\b)/,/^(?:float\b)/,/^(?:int\b)/,/^(?:if\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:"[^\"]*")/,/^(?:'[^\']?')/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:PI\b)/,/^(?:E\b)/,/^(?:$)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32],"inclusive":true}}
 });
 return lexer;
 })();
