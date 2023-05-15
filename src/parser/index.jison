@@ -1,206 +1,407 @@
 
+%{
+    var operatorStack = [];
+    var operandStack = [];
+    var typeStack = [];
+    var jumpStack = [];
+    // t1 registro temporal
+    // operacion,   operandoizq,operandoder,res
+    var quadruples = [];
+    /*
+    int 0
+    float 1
+    char 2
+    boolean 3
+    */
+    let semanticTable = {};
+    semanticTable['int'] = {
+        '+': {
+            'int': 'int',
+            'float': 'float'
+        },
+        '-': {
+            'int': 'int',
+            'float': 'float'
+        },
+        '*': {
+            'int': 'int',
+            'float': 'float'
+        },
+        '/': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '>': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '>=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '==': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '!=': {
+            'int': 'bool',
+            'float': 'bool'
+        }
+        };
+
+    // Float values
+    semanticTable['float'] = {
+        '+': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '-': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '*': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '/': {
+            'int': 'float',
+            'float': 'float'
+        },
+        '>': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '>=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '<=': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '==': {
+            'int': 'bool',
+            'float': 'bool'
+        },
+        '!=': {
+            'int': 'bool',
+            'float': 'bool'
+        }
+        };
+    // char values
+    semanticTable['char'] = {
+        '==': {
+            'char': 'bool'
+        },
+        '!=': {
+            'char': 'bool'
+        }
+        };
+
+    // Boolean values
+    semanticTable['bool'] = {
+        '&&': {
+            'bool': 'bool'
+        },
+        '||': {
+            'bool': 'bool'
+        },
+        '!': {
+            'bool': 'bool'
+        },
+        '==': {
+            'bool': 'bool'
+        },
+        '!=': {
+            'bool': 'bool'
+        }
+        };
+
+    // type,name
+    // TODO: make variables linked to functions and global values
+    var variables = [];
+    var jumpStack = [];
+    let nextAvailable = 1;
+    function nextAvail() {
+        let variable = "t" + nextAvailable;
+        nextAvailable = nextAvailable+1;
+        return variable;
+    }
+    var currentType = "";
+    function getOperands() {
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = operandStack.pop();
+        var leftType = typeStack.pop();
+        var operator = operatorStack.pop();
+        return [rightOperand,rightType,leftOperand,leftType,operator]
+    }
+    function createOperationQuad() {
+        var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
+        var resultType =  semanticTable[leftType][operator][rightType];
+        if(!resultType)
+        {
+            console.log("Operation",leftType,operator,rightType,"is not valid");
+            throw new Error("Operation is not valid");
+        }
+        var result = nextAvail();
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})=${result}(${resultType})`);
+        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:rightOperand,result:result});
+        operandStack.push(result);
+        typeStack.push(resultType);
+        // TODO: delete temporals that are not needed anymore
+    }
+    function createAssignmentQuad(){
+        var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
+        // add more validations later but for now strict typing
+        if(rightType != leftType)
+        {
+            console.log("Operation",leftType,operator,rightType,"is not valid");
+            throw new Error("Operation is not valid");
+        }
+        console.log("se uso el assignment");
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+    }
+%}
 %lex
 %%
 \s+                   /* skip whitespace */
-[0-9]+("."[0-9]+)?\b  return 'NUMBER'
-"*"                   return '*'
-"/"                   return '/'
-"-"                   return '-'
-"+"                   return '+'
-"^"                   return '^'
-"("                   return '('
-")"                   return ')'
+[0-9]+("."[0-9]+)?\b        return 'NUMBER'
+"*"                         return '*'
+"/"                         return '/'
+"-"                         return '-'
+"+"                         return '+'
+"("                         return '('
+")"                         return ')'
+"{"                         return '{'
+"}"                         return '}'
+"<"                         return '<'
+">"                         return '>'
+"<="                        return '<='
+">="                        return '>='
+"!="                        return '!='
+"=="                        return '=='
 "="                         return '='
 ";"                         return ';'
 "char"                      return 'charType'
 "boolean"                   return 'boolType'
 "string"                    return 'stringType'
-"float"                    return 'floatType'
+"float"                     return 'floatType'
 "int"                       return 'intType'
+"if"                        return 'IF'
+"while"                     return 'WHILE'
+"do"                        return 'DO'
 \"[^\"]*\"				    return 'text'
 \'[^\']?\'                  return 'character'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
-"PI"                  return 'PI'
-"E"                   return 'E'
+"PI"                        return 'PI'
+"E"                         return 'E'
 <<EOF>>				        return 'EOF'
 .                           {}
 /lex
 /* operator associations and precedence */
 
-%left '+' '-'
-%left '*' '/'
-%left '^'
+%left '+' '-' '*' '/'
 %right '='
 %left UMINUS
 
-%{
-    var semanticTable = {};
-    // int 
-    semanticTable[["int","int",'+']] = "int";
-    semanticTable[["int","int",'-']] = "int";
-    semanticTable[["int","int",'*']] = "int";
-    semanticTable[["int","int",'/']] = "float";
-    semanticTable[["int","int","comparison"]] = "boolean";
-    semanticTable[["int","int","&&"]] = null;
-    
-    semanticTable[["int","float",'+']] = "float";
-    semanticTable[["int","float",'-']] = "float";
-    semanticTable[["int","float",'*']] = "float";
-    semanticTable[["int","float",'/']] = "float";
-    semanticTable[["int","float","comparison"]] = "boolean";
-    semanticTable[["int","float","&&"]] = null;
-
-    semanticTable[["int","char",'+']] = null;
-    semanticTable[["int","char",'-']] = null;
-    semanticTable[["int","char",'*']] = null;
-    semanticTable[["int","char",'/']] = null;
-    semanticTable[["int","char","comparison"]] = null;
-    semanticTable[["int","char","&&"]] = null;
-    
-    semanticTable[["int","boolean",'+']] = null;
-    semanticTable[["int","boolean",'-']] = null;
-    semanticTable[["int","boolean",'*']] = null;
-    semanticTable[["int","boolean",'/']] = null;
-    semanticTable[["int","boolean","comparison"]] = null;
-    semanticTable[["int","boolean","&&"]] = null;
-
-    // float
-    semanticTable[["float","int",'+']] = "float";
-    semanticTable[["float","int",'-']] = "float";
-    semanticTable[["float","int",'*']] = "float";
-    semanticTable[["float","int",'/']] = "float";
-    semanticTable[["float","int","comparison"]] = "boolean";
-    semanticTable[["float","int","&&"]] = null;
-
-    semanticTable[["float","float",'+']] = "float";
-    semanticTable[["float","float",'-']] = "float";
-    semanticTable[["float","float",'*']] = "float";
-    semanticTable[["float","float",'/']] = "float";
-    semanticTable[["float","float","comparison"]] = "boolean";
-    semanticTable[["float","float","&&"]] = null;
-
-    semanticTable[["float","char",'+']] = null;
-    semanticTable[["float","char",'-']] = null;
-    semanticTable[["float","char",'*']] = null;
-    semanticTable[["float","char",'/']] = null;
-    semanticTable[["float","char","comparison"]] = null;
-    semanticTable[["float","char","&&"]] = null;
-
-    semanticTable[["float","boolean",'+']] = null;
-    semanticTable[["float","boolean",'-']] = null;
-    semanticTable[["float","boolean",'*']] = null;
-    semanticTable[["float","boolean",'/']] = null;
-    semanticTable[["float","boolean","comparison"]] = null;
-    semanticTable[["float","boolean","&&"]] = null;
-
-    // char
-    semanticTable[["char","int",'+']] = null;
-    semanticTable[["char","int",'-']] = null;
-    semanticTable[["char","int",'*']] = null;
-    semanticTable[["char","int",'/']] = null;
-    semanticTable[["char","int","comparison"]] = null;
-    semanticTable[["char","int","&&"]] = null;
-    
-    semanticTable[["char","float",'+']] = null;
-    semanticTable[["char","float",'-']] = null;
-    semanticTable[["char","float",'*']] = null;
-    semanticTable[["char","float",'/']] = null;
-    semanticTable[["char","float","comparison"]] = null;
-    semanticTable[["char","float","&&"]] = null;
-
-    semanticTable[["char","char",'+']] = "char";
-    semanticTable[["char","char",'-']] = null;
-    semanticTable[["char","char",'*']] = null;
-    semanticTable[["char","char",'/']] = null;
-    semanticTable[["char","char","comparison"]] = "boolean";
-    semanticTable[["char","char","&&"]] = null;
-
-    semanticTable[["char","boolean",'+']] = null;
-    semanticTable[["char","boolean",'-']] = null;
-    semanticTable[["char","boolean",'*']] = null;
-    semanticTable[["char","boolean",'/']] = null;
-    semanticTable[["char","boolean","comparison"]] = null;
-    semanticTable[["char","boolean","&&"]] = null;
-
-    // boolean
-    semanticTable[["boolean","int",'+']] = null;
-    semanticTable[["boolean","int",'-']] = null;
-    semanticTable[["boolean","int",'*']] = null;
-    semanticTable[["boolean","int",'/']] = null;
-    semanticTable[["boolean","int","comparison"]] = null;
-    semanticTable[["boolean","int","&&"]] = null;
-
-    semanticTable[["boolean","float",'+']] = null;
-    semanticTable[["boolean","float",'-']] = null;
-    semanticTable[["boolean","float",'*']] = null;
-    semanticTable[["boolean","float",'/']] = null;
-    semanticTable[["boolean","float","comparison"]] = null;
-    semanticTable[["boolean","float","&&"]] = null;
-
-    semanticTable[["boolean","char",'+']] = null;
-    semanticTable[["boolean","char",'-']] = null;
-    semanticTable[["boolean","char",'*']] = null;
-    semanticTable[["boolean","char",'/']] = null;
-    semanticTable[["boolean","char","comparison"]] = null;
-    semanticTable[["boolean","char","&&"]] = null;
-
-    semanticTable[["boolean","boolean",'+']] = null;
-    semanticTable[["boolean","boolean",'-']] = null;
-    semanticTable[["boolean","boolean",'*']] = null;
-    semanticTable[["boolean","boolean",'/']] = null;
-    semanticTable[["boolean","boolean","comparison"]] = null;
-    semanticTable[["boolean","boolean","&&"]] = "boolean";
-
-
-    var variables = {};
-    // example type
-    // variables["varA"] = {type:"int",value:10};
-%}
 %start START
 %%
-START : INSTRUCTIONS EOF { console.log("Correct Syntax")  };
-TYPE : intType | floatType  | boolType | charType | stringType;
-INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION;
-INSTRUCTION : DECLARATION ';' | ASSIGNMENT ';' ;
-DECLARATION : TYPE ASSIGNMENT;
+START : INSTRUCTIONS EOF { 
+    // aqui deberia regresar la tabla de memoria de las funciones, etc
+    console.log(quadruples);
+    console.log(operatorStack);
+    console.log(operandStack);
+    console.log(variables);};
+TYPE : intType {
+      currentType = "int";
+} | floatType {
+    currentType = "float";
+}  | boolType {
+    currentType = "boolean";
+} | charType  {
+    currentType = "char";
+}| stringType {
+    currentType = "string";
+};
+
+CONDITIONALS: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
+                var end = jumpStack.pop();
+                var quadruple = quadruples[end];
+                console.log(quadruple);
+                quadruple.result = quadruples.length;
+
+        
+};
+INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION | CONDITIONALS;
+
+INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' ;
+DECLARATION : TYPE ASSIGNMENTS {
+        currentType = null;
+
+};
+ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
 ASSIGNMENT 
     : id {
-        // TODO: Add logic to which type of value it is
-        variables[$1] ={type:"int",value:null};
+        // TODO: Add logic link variables with functions or with global status
+        if(variables.some(variable => variable.name === $1))
+        {
+            console.log("Name is already taken",$1);
+            throw new Error($1, "name is already taken");
+        }
+        variables.push({type:currentType,name:$1});
     }
-    | id '=' EXPRESSION {
+    | id '=' HYPEREXPRESSION {
         // TODO: Add logic to which type of value it is
-        variables[$1] = {type:"int",value:Number($3)};
-        console.log(variables);
+        variables.push({type:currentType,name:$1});
+        operatorStack.push('=');
+        if([...operatorStack].pop() == "=")
+        {
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = $1;
+        var leftType = currentType;
+        var operator = operatorStack.pop();
+        if(rightType != leftType)
+        {
+            console.log("Operation",leftType,operator,rightType,"is not valid");
+            throw new Error("Operation is not valid");
+        }
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+        }
     }
     ;
 
+SUPRAEXPRESSION 
+        : SUPRAEXPRESSION '=' HYPEREXPRESSION {
+                operatorStack.push('=');
+                if([...operatorStack].pop() == "="){
+                    createAssignmentQuad();
+            }
+        }
+        | HYPEREXPRESSION;
+
+HYPEREXPRESSION
+        : SUPEREXPRESSION
+        | HYPEREXPRESSION '&&' SUPEREXPRESSION
+        | HYPEREXPRESSION '||' SUPEREXPRESSION;
+
+CONDITIONALHYPEREXPRESSION
+        : HYPEREXPRESSION {
+            console.log({... quadruples});
+            // check if there is a result  if no resutl its an error
+            var resultOperand = operandStack.pop();
+            var resultType = typeStack.pop();
+            console.log(resultOperand,resultType);
+            if(resultType != "bool")
+            {
+                console.log("A conditional statement should be a boolean");
+                throw new Error("A conditional statement should be a boolean");
+            }
+            quadruples.push({operator:"GOTOF",leftOperand:resultOperand,rightOperand:null,result:null});
+            jumpStack.push(quadruples.length-1);
+        };
+
+SUPEREXPRESSION
+        : SUPEREXPRESSION '<' EXPRESSION {
+                operatorStack.push('<');
+                if([...operatorStack].pop() == "<"){
+                createOperationQuad();
+            }
+        }
+        | SUPEREXPRESSION '>' EXPRESSION {
+            operatorStack.push('>');
+            if([...operatorStack].pop() == ">"){
+                createOperationQuad();
+            }
+        }
+        | SUPEREXPRESSION '!=' EXPRESSION {
+            operatorStack.push('!=');
+            if([...operatorStack].pop() == "!="){
+                createOperationQuad();
+            }
+        }
+        | SUPEREXPRESSION '==' EXPRESSION {
+            operatorStack.push('==');
+            if([...operatorStack].pop() == "=="){
+                createOperationQuad();
+            }
+        }
+        | EXPRESSION;
 
 EXPRESSION
-    : EXPRESSION '+' EXPRESSION
-        {$$ = $1+$3;}
-    | EXPRESSION '-' EXPRESSION
-        {$$ = $1-$3;}
-    | EXPRESSION '*' EXPRESSION
-        {$$ = $1*$3;}
-    | EXPRESSION '/' EXPRESSION
-        {$$ = $1/$3;}
-    | EXPRESSION '^' EXPRESSION
-        {$$ = Math.pow($1, $3);}
-    | '-' EXPRESSION %prec UMINUS
-        {$$ = -$2;}
-    | '(' EXPRESSION ')'
-        {$$ = $2;}
-    | NUMBER
-        {$$ = Number(yytext);}
-    | E
-        {$$ = Math.E;}
-    | PI
-        {$$ = Math.PI;}
-    | id
-      {
-        // TODO: Add logic to check that the identifier has a value and exists
-        console.log(variables);
-        $$ = variables[$1].value;
-      }
-    ;
+        : TERMS 
+        | EXPRESSION '+' TERMS
+        {
+            operatorStack.push('+');
+            if([...operatorStack].pop() == "+"){
+                createOperationQuad();
+            }
+            
+        }
+        | EXPRESSION '-' TERMS
+        {
+            operatorStack.push('-');
+            if([...operatorStack].pop() == "-"){
+                createOperationQuad();
+            }
+        };
+
+TERMS
+        : TERMS '*' FACTOR
+        {
+            operatorStack.push('*');
+            if([...operatorStack].pop() == "*"){
+                createOperationQuad();
+            }
+        }
+        | TERMS '/' FACTOR
+        {
+            operatorStack.push('/');
+            if([...operatorStack].pop() == "/"){
+                createOperationQuad();
+            }
+        }
+        | FACTOR;     
+
+FACTOR
+        : NUMBER 
+        {
+            // check if number is int or float
+            operandStack.push($1);
+            typeStack.push("int");
+        }
+        | E
+        | PI
+        | id
+        {
+            // check var exists
+            // if var doesnt exist throw error
+            let variable = variables.find(variable => variable.name === $1);
+            if (variable)
+            {
+            operandStack.push($1);
+            typeStack.push(variable.type);
+
+            }else {
+                console.log("Variable does not exist at this point in time",$1);
+                throw new Error("Variable ",$1, "does not exist at this point");
+            }
+        }
+        | text
+        | '('  SUPRAEXPRESSION ')'; 
+
