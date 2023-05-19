@@ -202,6 +202,7 @@
 "float"                     return 'floatType'
 "int"                       return 'intType'
 "if"                        return 'IF'
+"else"                      return 'ELSE'
 "while"                     return 'WHILE'
 "do"                        return 'DO'
 \"[^\"]*\"				    return 'text'
@@ -238,15 +239,31 @@ TYPE : intType {
     currentType = "string";
 };
 
+HYPERCONDITIONALS: CONDITIONALS | CONDITIONALS '{'  INSTRUCTIONS '}'{
+            var end = jumpStack.pop();
+            var quadruple = quadruples[end];
+            console.log(quadruple);
+            quadruple.result = quadruples.length;
+
+};
+
 CONDITIONALS: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 console.log(quadruple);
                 quadruple.result = quadruples.length;
-
-        
+      
+} | IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE {
+                var end = jumpStack.pop();
+                var quadruple = quadruples[end];
+                console.log(quadruple);
+                quadruple.result = quadruples.length;
+                quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:null});
+                 jumpStack.push(quadruples.length-1);
+      
 };
-INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION | CONDITIONALS;
+INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION | HYPERCONDITIONALS;
+
 
 INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' ;
 DECLARATION : TYPE ASSIGNMENTS {
@@ -303,7 +320,7 @@ HYPEREXPRESSION
 CONDITIONALHYPEREXPRESSION
         : HYPEREXPRESSION {
             console.log({... quadruples});
-            // check if there is a result  if no resutl its an error
+            // check if there is a result  if no result its an error
             var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
             console.log(resultOperand,resultType);
