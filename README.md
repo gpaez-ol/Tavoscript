@@ -42,5 +42,7 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se generan variables temporales cuando son necesitadas
 - Se generar cuadruplos con orden correcto para instrucciones basicas
 - Se generan cuadruplos correctos para el condicional "if"
-- Se generan cuadruplos correctos para el condicional "else
-- Pendiente el else y los ciclos for
+- Se generan cuadruplos correctos para el condicional "else"
+- Se generan cuadruplos correctos para el condicional "while"
+- Se generan cuadruplos correctos para el condicional "do - while"
+- Pendiente ciclo for
