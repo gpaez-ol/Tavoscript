@@ -38,7 +38,7 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se agrego logica para llamar el valor de una variable
 - Se agrego tabla semantica para las operaciones
 - Se mejoro la tabla semantica de las operaciones
-- Se agrego logica para creaer multiples variables de int,float y tipo char
+- Se agrego logica para creaer multiples variables de int,float y tipo string
 - Se generan variables temporales cuando son necesitadas
 - Se generar cuadruplos con orden correcto para instrucciones basicas
 - Se generan cuadruplos correctos para el condicional "if"
@@ -46,3 +46,4 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se generan cuadruplos correctos para el condicional "while"
 - Se generan cuadruplos correctos para el condicional "do - while"
 - Se generan cuadruplos correctos para el ciclo "for" con 1 variable y 1 condicion
+- La tabla semantica se encuentra en su propio archivo
