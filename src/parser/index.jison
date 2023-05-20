@@ -8,12 +8,6 @@
     // t1 registro temporal
     // operacion,   operandoizq,operandoder,res
     var quadruples = [];
-    /*
-    int 0
-    float 1
-    char 2
-    boolean 3
-    */
     
 
     // type,name
@@ -83,7 +77,6 @@
 "=="                        return '=='
 "="                         return '='
 ";"                         return ';'
-"char"                      return 'charType'
 "boolean"                   return 'boolType'
 "string"                    return 'stringType'
 "float"                     return 'floatType'
@@ -94,7 +87,6 @@
 "do"                        return 'DO'
 "for"                       return 'FOR'
 \"[^\"]*\"				    return 'text'
-\'[^\']?\'                  return 'character'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
 "PI"                        return 'PI'
 "E"                         return 'E'
@@ -122,9 +114,7 @@ TYPE : intType {
     currentType = "float";
 }  | boolType {
     currentType = "boolean";
-} | charType  {
-    currentType = "char";
-}| stringType {
+} | stringType {
     currentType = "string";
 };
 
