@@ -205,6 +205,7 @@
 "else"                      return 'ELSE'
 "while"                     return 'WHILE'
 "do"                        return 'DO'
+"for"                       return 'FOR'
 \"[^\"]*\"				    return 'text'
 \'[^\']?\'                  return 'character'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
@@ -251,7 +252,6 @@ HYPERCONDITIONALS: CONDITIONALS | CONDITIONALS '{'  INSTRUCTIONS '}'{
 CONDITIONALS: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
-                var destination = quadruples[quadruples.length];
                 quadruple.result = quadruples.length;
       
 } | IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE {
@@ -283,7 +283,14 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
             }
             var end = jumpStack.pop();
             quadruples.push({operator:"GOTOT",leftOperand:resultOperand,rightOperand:null,result:end});
-} ;
+} | FOR '(' FORASSIGNMENT  , CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
+        var pendingFalseQuadruple = jumpStack.pop();
+        var forStart = jumpStack.pop();
+        var quadruple = quadruples[pendingFalseQuadruple];
+        quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:forStart});
+        quadruple.result = quadruples.length;
+
+};
 
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
@@ -325,7 +332,27 @@ ASSIGNMENT
         }
     }
     ;
-
+FORASSIGNMENT : id '=' HYPEREXPRESSION {
+         variables.push({type:"int",name:$1});
+        operatorStack.push('=');
+        if([...operatorStack].pop() == "=")
+        {
+            var rightOperand = operandStack.pop();
+            var rightType = typeStack.pop();
+            var leftOperand = $1;
+            var leftType = "int";
+            var operator = operatorStack.pop();
+            if(rightType != leftType)
+            {
+                console.log("Type should be int");
+                throw new Error("For loops only take int types");
+            }
+            console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+            quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+            // this should be the reference to goto at the end of the for
+            jumpStack.push(quadruples.length);
+        }
+    };
 SUPRAEXPRESSION 
         : SUPRAEXPRESSION '=' HYPEREXPRESSION {
                 operatorStack.push('=');
@@ -342,7 +369,6 @@ HYPEREXPRESSION
 
 CONDITIONALHYPEREXPRESSION
         : HYPEREXPRESSION {
-            console.log({... quadruples});
             // check if there is a result  if no result its an error
             var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
