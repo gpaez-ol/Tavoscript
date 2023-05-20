@@ -45,4 +45,4 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se generan cuadruplos correctos para el condicional "else"
 - Se generan cuadruplos correctos para el condicional "while"
 - Se generan cuadruplos correctos para el condicional "do - while"
-- Pendiente ciclo for
+- Se generan cuadruplos correctos para el ciclo "for" con 1 variable y 1 condicion
