@@ -60,7 +60,8 @@
 %lex
 %%
 \s+                   /* skip whitespace */
-[0-9]+("."[0-9]+)?\b        return 'NUMBER'
+[0-9]+("."[0-9]+)\b        return 'FLOAT'
+[0-9]+\b                    return 'NUMBER'
 "*"                         return '*'
 "/"                         return '/'
 "-"                         return '-'
@@ -86,6 +87,7 @@
 "while"                     return 'WHILE'
 "do"                        return 'DO'
 "for"                       return 'FOR'
+"func"                      return 'FUNC'
 \"[^\"]*\"				    return 'text'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
 "PI"                        return 'PI'
@@ -327,6 +329,11 @@ FACTOR
             // check if number is int or float
             operandStack.push($1);
             typeStack.push("int");
+        }
+        | FLOAT 
+        {
+            operandStack.push($1);
+            typeStack.push("float");
         }
         | E
         | PI
