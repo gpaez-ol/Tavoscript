@@ -1,5 +1,6 @@
 
 %{
+    var {semanticTable} = require("./semanticTable");
     var operatorStack = [];
     var operandStack = [];
     var typeStack = [];
@@ -13,121 +14,7 @@
     char 2
     boolean 3
     */
-    let semanticTable = {};
-    semanticTable['int'] = {
-        '+': {
-            'int': 'int',
-            'float': 'float'
-        },
-        '-': {
-            'int': 'int',
-            'float': 'float'
-        },
-        '*': {
-            'int': 'int',
-            'float': 'float'
-        },
-        '/': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '>': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '>=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '==': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '!=': {
-            'int': 'bool',
-            'float': 'bool'
-        }
-        };
-
-    // Float values
-    semanticTable['float'] = {
-        '+': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '-': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '*': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '/': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '>': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '>=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '==': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '!=': {
-            'int': 'bool',
-            'float': 'bool'
-        }
-        };
-    // char values
-    semanticTable['char'] = {
-        '==': {
-            'char': 'bool'
-        },
-        '!=': {
-            'char': 'bool'
-        }
-        };
-
-    // Boolean values
-    semanticTable['bool'] = {
-        '&&': {
-            'bool': 'bool'
-        },
-        '||': {
-            'bool': 'bool'
-        },
-        '!': {
-            'bool': 'bool'
-        },
-        '==': {
-            'bool': 'bool'
-        },
-        '!=': {
-            'bool': 'bool'
-        }
-        };
+    
 
     // type,name
     // TODO: make variables linked to functions and global values
@@ -151,7 +38,7 @@
     function createOperationQuad() {
         var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
         var resultType =  semanticTable[leftType][operator][rightType];
-        if(!resultType)
+        if(resultType === undefined)
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
@@ -468,6 +355,9 @@ FACTOR
                 throw new Error("Variable ",$1, "does not exist at this point");
             }
         }
-        | text
+        | text {
+            operandStack.push($1);
+            typeStack.push("string");
+        }
         | '('  SUPRAEXPRESSION ')'; 
 

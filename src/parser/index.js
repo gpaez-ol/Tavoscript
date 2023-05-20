@@ -1,12 +1,12 @@
 
 
 define(function(require){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,10],$V1=[1,11],$V2=[1,12],$V3=[1,13],$V4=[1,14],$V5=[1,7],$V6=[1,24],$V7=[1,22],$V8=[1,19],$V9=[1,20],$Va=[1,21],$Vb=[1,23],$Vc=[5,7,8,9,10,11,14,18,25,42,43,44,45],$Vd=[1,29],$Ve=[1,33],$Vf=[16,21,26],$Vg=[1,34],$Vh=[1,35],$Vi=[16,21,25,26,29,30],$Vj=[1,36],$Vk=[1,37],$Vl=[1,38],$Vm=[1,39],$Vn=[16,21,25,26,29,30,31,33,34,35],$Vo=[1,40],$Vp=[1,41],$Vq=[16,21,25,26,29,30,31,33,34,35,37,38],$Vr=[1,42],$Vs=[1,43],$Vt=[16,21,25,26,29,30,31,33,34,35,37,38,39,41],$Vu=[21,25];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,14],$V1=[1,15],$V2=[1,16],$V3=[1,17],$V4=[1,18],$V5=[1,20],$V6=[1,31],$V7=[1,21],$V8=[1,22],$V9=[1,13],$Va=[1,29],$Vb=[1,26],$Vc=[1,27],$Vd=[1,28],$Ve=[1,30],$Vf=[5,7,8,9,10,11,15,16,17,22,24,27,35,51,52,53,54],$Vg=[1,36],$Vh=[1,39],$Vi=[19,31,36],$Vj=[1,40],$Vk=[1,41],$Vl=[17,19,31,35,36,38,39,51,52,53,54],$Vm=[1,46],$Vn=[1,47],$Vo=[1,48],$Vp=[1,49],$Vq=[17,19,31,35,36,38,39,40,42,43,44,51,52,53,54],$Vr=[1,51],$Vs=[1,52],$Vt=[17,19,31,35,36,38,39,40,42,43,44,46,47,51,52,53,54],$Vu=[1,53],$Vv=[1,54],$Vw=[17,19,31,35,36,38,39,40,42,43,44,46,47,48,50,51,52,53,54],$Vx=[31,35],$Vy=[5,7,8,9,10,11,14,15,16,17,22,24,27,35,51,52,53,54];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"charType":10,"stringType":11,"CONDITIONALS":12,"IF":13,"(":14,"CONDITIONALHYPEREXPRESSION":15,")":16,"{":17,"}":18,"INSTRUCTION":19,"DECLARATION":20,";":21,"SUPRAEXPRESSION":22,"ASSIGNMENTS":23,"ASSIGNMENT":24,"id":25,"=":26,"HYPEREXPRESSION":27,"SUPEREXPRESSION":28,"&&":29,"||":30,"<":31,"EXPRESSION":32,">":33,"!=":34,"==":35,"TERMS":36,"+":37,"-":38,"*":39,"FACTOR":40,"/":41,"NUMBER":42,"E":43,"PI":44,"text":45,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"charType",11:"stringType",13:"IF",14:"(",16:")",17:"{",18:"}",21:";",25:"id",26:"=",29:"&&",30:"||",31:"<",33:">",34:"!=",35:"==",37:"+",38:"-",39:"*",41:"/",42:"NUMBER",43:"E",44:"PI",45:"text"},
-productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[6,1],[12,7],[4,2],[4,1],[4,1],[19,2],[19,2],[20,2],[23,2],[23,1],[24,1],[24,3],[22,3],[22,1],[27,1],[27,3],[27,3],[15,1],[28,3],[28,3],[28,3],[28,3],[28,1],[32,1],[32,3],[32,3],[36,3],[36,3],[36,1],[40,1],[40,1],[40,1],[40,1],[40,1],[40,3]],
+symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"charType":10,"stringType":11,"HYPERCONDITIONALS":12,"CONDITIONALS":13,"{":14,"}":15,"IF":16,"(":17,"CONDITIONALHYPEREXPRESSION":18,")":19,"ELSE":20,"WHILECOMMAND":21,"WHILE":22,"DOCOMMAND":23,"DO":24,"LOOPS":25,"HYPEREXPRESSION":26,"FOR":27,"FORASSIGNMENT":28,"INSTRUCTION":29,"DECLARATION":30,";":31,"SUPRAEXPRESSION":32,"ASSIGNMENTS":33,"ASSIGNMENT":34,"id":35,"=":36,"SUPEREXPRESSION":37,"&&":38,"||":39,"<":40,"EXPRESSION":41,">":42,"!=":43,"==":44,"TERMS":45,"+":46,"-":47,"*":48,"FACTOR":49,"/":50,"NUMBER":51,"E":52,"PI":53,"text":54,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"charType",11:"stringType",14:"{",15:"}",16:"IF",17:"(",19:")",20:"ELSE",22:"WHILE",24:"DO",27:"FOR",31:";",35:"id",36:"=",38:"&&",39:"||",40:"<",42:">",43:"!=",44:"==",46:"+",47:"-",48:"*",50:"/",51:"NUMBER",52:"E",53:"PI",54:"text"},
+productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[6,1],[12,1],[12,4],[13,7],[13,8],[21,1],[23,1],[25,7],[25,8],[25,8],[4,2],[4,1],[29,2],[29,2],[29,1],[29,1],[30,2],[33,2],[33,1],[34,1],[34,3],[28,3],[32,3],[32,1],[26,1],[26,3],[26,3],[18,1],[37,3],[37,3],[37,3],[37,3],[37,1],[41,1],[41,3],[41,3],[45,3],[45,3],[45,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -15,10 +15,11 @@ switch (yystate) {
 case 1:
  
     // aqui deberia regresar la tabla de memoria de las funciones, etc
-    console.log(quadruples);
-    console.log(operatorStack);
-    console.log(operandStack);
-    console.log(variables);
+    console.log("quadruples:",quadruples);
+    console.log("operators:",operatorStack);
+    console.log("operands:",operandStack);
+    console.log("jumps:",jumpStack);
+    console.log("variables:",variables);
 break;
 case 2:
 
@@ -45,23 +46,78 @@ case 6:
     currentType = "string";
 
 break;
-case 7:
+case 8:
+
+            var end = jumpStack.pop();
+            var quadruple = quadruples[end];
+            console.log(quadruple);
+            quadruple.result = quadruples.length;
+
+
+break;
+case 9:
+
+                var end = jumpStack.pop();
+                var quadruple = quadruples[end];
+                quadruple.result = quadruples.length;
+      
+
+break;
+case 10:
 
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 console.log(quadruple);
-                quadruple.result = quadruples.length;
-
-        
+                quadruple.result = quadruples.length+1;
+                quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:null});
+                jumpStack.push(quadruples.length-1);
+      
 
 break;
+case 11: case 12:
+jumpStack.push(quadruples.length);
+break;
 case 13:
+
+                         var end = jumpStack.pop();
+                         var whileStart =  jumpStack.pop();
+                         var quadruple = quadruples[end];
+                         quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:whileStart});
+                         quadruple.result = quadruples.length;
+
+
+break;
+case 14:
+
+        var resultOperand = operandStack.pop();
+            var resultType = typeStack.pop();
+            console.log(resultOperand,resultType);
+            if(resultType != "bool")
+            {
+                console.log("A conditional statement should be a boolean");
+                throw new Error("A conditional statement should be a boolean");
+            }
+            var end = jumpStack.pop();
+            quadruples.push({operator:"GOTOT",leftOperand:resultOperand,rightOperand:null,result:end});
+
+break;
+case 15:
+
+        var pendingFalseQuadruple = jumpStack.pop();
+        var forStart = jumpStack.pop();
+        var quadruple = quadruples[pendingFalseQuadruple];
+        quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:forStart});
+        quadruple.result = quadruples.length;
+
+
+break;
+case 22:
 
         currentType = null;
 
 
 break;
-case 16:
+case 25:
 
         // TODO: Add logic link variables with functions or with global status
         if(variables.some(variable => variable.name === $$[$0]))
@@ -72,7 +128,7 @@ case 16:
         variables.push({type:currentType,name:$$[$0]});
     
 break;
-case 17:
+case 26:
 
         // TODO: Add logic to which type of value it is
         variables.push({type:currentType,name:$$[$0-2]});
@@ -94,7 +150,30 @@ case 17:
         }
     
 break;
-case 18:
+case 27:
+
+         variables.push({type:"int",name:$$[$0-2]});
+        operatorStack.push('=');
+        if([...operatorStack].pop() == "=")
+        {
+            var rightOperand = operandStack.pop();
+            var rightType = typeStack.pop();
+            var leftOperand = $$[$0-2];
+            var leftType = "int";
+            var operator = operatorStack.pop();
+            if(rightType != leftType)
+            {
+                console.log("Type should be int");
+                throw new Error("For loops only take int types");
+            }
+            console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+            quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+            // this should be the reference to goto at the end of the for
+            jumpStack.push(quadruples.length);
+        }
+    
+break;
+case 28:
 
                 operatorStack.push('=');
                 if([...operatorStack].pop() == "="){
@@ -102,10 +181,9 @@ case 18:
             }
         
 break;
-case 23:
+case 33:
 
-            console.log({... quadruples});
-            // check if there is a result  if no resutl its an error
+            // check if there is a result  if no result its an error
             var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
             console.log(resultOperand,resultType);
@@ -118,7 +196,7 @@ case 23:
             jumpStack.push(quadruples.length-1);
         
 break;
-case 24:
+case 34:
 
                 operatorStack.push('<');
                 if([...operatorStack].pop() == "<"){
@@ -126,7 +204,7 @@ case 24:
             }
         
 break;
-case 25:
+case 35:
 
             operatorStack.push('>');
             if([...operatorStack].pop() == ">"){
@@ -134,7 +212,7 @@ case 25:
             }
         
 break;
-case 26:
+case 36:
 
             operatorStack.push('!=');
             if([...operatorStack].pop() == "!="){
@@ -142,7 +220,7 @@ case 26:
             }
         
 break;
-case 27:
+case 37:
 
             operatorStack.push('==');
             if([...operatorStack].pop() == "=="){
@@ -150,7 +228,7 @@ case 27:
             }
         
 break;
-case 30:
+case 40:
 
             operatorStack.push('+');
             if([...operatorStack].pop() == "+"){
@@ -159,7 +237,7 @@ case 30:
             
         
 break;
-case 31:
+case 41:
 
             operatorStack.push('-');
             if([...operatorStack].pop() == "-"){
@@ -167,7 +245,7 @@ case 31:
             }
         
 break;
-case 32:
+case 42:
 
             operatorStack.push('*');
             if([...operatorStack].pop() == "*"){
@@ -175,7 +253,7 @@ case 32:
             }
         
 break;
-case 33:
+case 43:
 
             operatorStack.push('/');
             if([...operatorStack].pop() == "/"){
@@ -183,14 +261,14 @@ case 33:
             }
         
 break;
-case 35:
+case 45:
 
             // check if number is int or float
             operandStack.push($$[$0]);
             typeStack.push("int");
         
 break;
-case 38:
+case 48:
 
             // check var exists
             // if var doesnt exist throw error
@@ -206,10 +284,16 @@ case 38:
             }
         
 break;
+case 49:
+
+            operandStack.push($$[$0]);
+            typeStack.push("string");
+        
+break;
 }
 },
-table: [{3:1,4:2,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:4,13:$V5,14:$V6,19:3,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{1:[3]},{5:[1,25],6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,14:$V6,19:26,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},o($Vc,[2,9]),o($Vc,[2,10]),{21:[1,27]},{21:[1,28],26:$Vd},{14:[1,30]},{23:31,24:32,25:$Ve},o($Vf,[2,19],{29:$Vg,30:$Vh}),{25:[2,2]},{25:[2,3]},{25:[2,4]},{25:[2,5]},{25:[2,6]},o($Vi,[2,20],{31:$Vj,33:$Vk,34:$Vl,35:$Vm}),o($Vn,[2,28],{37:$Vo,38:$Vp}),o($Vq,[2,29],{39:$Vr,41:$Vs}),o($Vt,[2,34]),o($Vt,[2,35]),o($Vt,[2,36]),o($Vt,[2,37]),o($Vt,[2,38]),o($Vt,[2,39]),{14:$V6,22:44,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{1:[2,1]},o($Vc,[2,8]),o($Vc,[2,11]),o($Vc,[2,12]),{14:$V6,25:$V7,27:45,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,15:46,25:$V7,27:47,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{21:[2,13],24:48,25:$Ve},o($Vu,[2,15]),o($Vu,[2,16],{26:[1,49]}),{14:$V6,25:$V7,28:50,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,28:51,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:52,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:53,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:54,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,32:55,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,36:56,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,36:57,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,40:58,42:$V8,43:$V9,44:$Va,45:$Vb},{14:$V6,25:$V7,40:59,42:$V8,43:$V9,44:$Va,45:$Vb},{16:[1,60],26:$Vd},o($Vf,[2,18],{29:$Vg,30:$Vh}),{16:[1,61]},{16:[2,23],29:$Vg,30:$Vh},o($Vu,[2,14]),{14:$V6,25:$V7,27:62,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},o($Vi,[2,21],{31:$Vj,33:$Vk,34:$Vl,35:$Vm}),o($Vi,[2,22],{31:$Vj,33:$Vk,34:$Vl,35:$Vm}),o($Vn,[2,24],{37:$Vo,38:$Vp}),o($Vn,[2,25],{37:$Vo,38:$Vp}),o($Vn,[2,26],{37:$Vo,38:$Vp}),o($Vn,[2,27],{37:$Vo,38:$Vp}),o($Vq,[2,30],{39:$Vr,41:$Vs}),o($Vq,[2,31],{39:$Vr,41:$Vs}),o($Vt,[2,32]),o($Vt,[2,33]),o($Vt,[2,40]),{17:[1,63]},o($Vu,[2,17],{29:$Vg,30:$Vh}),{4:64,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:4,13:$V5,14:$V6,19:3,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},{6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,14:$V6,18:[1,65],19:26,20:5,22:6,25:$V7,27:9,28:15,32:16,36:17,40:18,42:$V8,43:$V9,44:$Va,45:$Vb},o($Vc,[2,7])],
-defaultActions: {10:[2,2],11:[2,3],12:[2,4],13:[2,5],14:[2,6],25:[2,1]},
+table: [{3:1,4:2,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:3,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{1:[3]},{5:[1,32],6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:33,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},o($Vf,[2,17]),{31:[1,34]},{31:[1,35],36:$Vg},o($Vf,[2,20]),o($Vf,[2,21]),{33:37,34:38,35:$Vh},o($Vi,[2,29],{38:$Vj,39:$Vk}),o($Vf,[2,7],{14:[1,42]}),{17:[1,43]},{14:[1,44]},{17:[1,45]},{35:[2,2]},{35:[2,3]},{35:[2,4]},{35:[2,5]},{35:[2,6]},o($Vl,[2,30],{40:$Vm,42:$Vn,43:$Vo,44:$Vp}),{17:[1,50]},{17:[2,11]},{14:[2,12]},o($Vq,[2,38],{46:$Vr,47:$Vs}),o($Vt,[2,39],{48:$Vu,50:$Vv}),o($Vw,[2,44]),o($Vw,[2,45]),o($Vw,[2,46]),o($Vw,[2,47]),o($Vw,[2,48]),o($Vw,[2,49]),{17:$V6,26:9,32:55,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{1:[2,1]},o($Vf,[2,16]),o($Vf,[2,18]),o($Vf,[2,19]),{17:$V6,26:56,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{31:[2,22],34:57,35:$Vh},o($Vx,[2,24]),o($Vx,[2,25],{36:[1,58]}),{17:$V6,35:$Va,37:59,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,37:60,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{4:61,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:3,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,18:62,26:63,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{4:64,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:3,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{28:65,35:[1,66]},{17:$V6,35:$Va,41:67,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,41:68,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,41:69,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,41:70,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,18:71,26:63,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,45:72,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,45:73,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,49:74,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,35:$Va,49:75,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{19:[1,76],36:$Vg},o($Vi,[2,28],{38:$Vj,39:$Vk}),o($Vx,[2,23]),{17:$V6,26:77,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},o($Vl,[2,31],{40:$Vm,42:$Vn,43:$Vo,44:$Vp}),o($Vl,[2,32],{40:$Vm,42:$Vn,43:$Vo,44:$Vp}),{6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,15:[1,78],16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:33,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{19:[1,79]},{19:[2,33],38:$Vj,39:$Vk},{6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,15:[1,80],16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:33,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,18:81,26:63,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{36:[1,82]},o($Vq,[2,34],{46:$Vr,47:$Vs}),o($Vq,[2,35],{46:$Vr,47:$Vs}),o($Vq,[2,36],{46:$Vr,47:$Vs}),o($Vq,[2,37],{46:$Vr,47:$Vs}),{19:[1,83]},o($Vt,[2,40],{48:$Vu,50:$Vv}),o($Vt,[2,41],{48:$Vu,50:$Vv}),o($Vw,[2,42]),o($Vw,[2,43]),o($Vw,[2,50]),o($Vx,[2,26],{38:$Vj,39:$Vk}),o($Vf,[2,8]),{14:[1,84]},{22:[1,85]},{19:[1,86]},{17:$V6,26:87,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{14:[1,88]},{4:89,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:3,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:[1,90]},{14:[1,91]},o([17,35,51,52,53,54],[2,27],{38:$Vj,39:$Vk}),{4:92,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:3,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,15:[1,93],16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:33,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{17:$V6,26:94,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{4:95,6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:3,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},{6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,15:[1,96],16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:33,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},o($Vf,[2,13]),{19:[1,97],38:$Vj,39:$Vk},{6:8,7:$V0,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:10,15:[1,98],16:$V5,17:$V6,21:11,22:$V7,23:12,24:$V8,25:7,26:9,27:$V9,29:33,30:4,32:5,35:$Va,37:19,41:23,45:24,49:25,51:$Vb,52:$Vc,53:$Vd,54:$Ve},o($Vy,[2,9],{20:[1,99]}),o($Vf,[2,14]),o($Vf,[2,15]),o($Vy,[2,10])],
+defaultActions: {14:[2,2],15:[2,3],16:[2,4],17:[2,5],18:[2,6],21:[2,11],22:[2,12],32:[2,1]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -357,6 +441,8 @@ parse: function parse(input) {
     return true;
 }};
 
+    var {semanticTable} = require("./semanticTable");
+    console.log(semanticTable);
     var operatorStack = [];
     var operandStack = [];
     var typeStack = [];
@@ -370,121 +456,7 @@ parse: function parse(input) {
     char 2
     boolean 3
     */
-    let semanticTable = {};
-    semanticTable['int'] = {
-        '+': {
-            'int': 'int',
-            'float': 'float'
-        },
-        '-': {
-            'int': 'int',
-            'float': 'float'
-        },
-        '*': {
-            'int': 'int',
-            'float': 'float'
-        },
-        '/': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '>': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '>=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '==': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '!=': {
-            'int': 'bool',
-            'float': 'bool'
-        }
-        };
-
-    // Float values
-    semanticTable['float'] = {
-        '+': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '-': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '*': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '/': {
-            'int': 'float',
-            'float': 'float'
-        },
-        '>': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '>=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '<=': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '==': {
-            'int': 'bool',
-            'float': 'bool'
-        },
-        '!=': {
-            'int': 'bool',
-            'float': 'bool'
-        }
-        };
-    // char values
-    semanticTable['char'] = {
-        '==': {
-            'char': 'bool'
-        },
-        '!=': {
-            'char': 'bool'
-        }
-        };
-
-    // Boolean values
-    semanticTable['bool'] = {
-        '&&': {
-            'bool': 'bool'
-        },
-        '||': {
-            'bool': 'bool'
-        },
-        '!': {
-            'bool': 'bool'
-        },
-        '==': {
-            'bool': 'bool'
-        },
-        '!=': {
-            'bool': 'bool'
-        }
-        };
+    
 
     // type,name
     // TODO: make variables linked to functions and global values
@@ -506,9 +478,13 @@ parse: function parse(input) {
         return [rightOperand,rightType,leftOperand,leftType,operator]
     }
     function createOperationQuad() {
+        console.log("va a crear quad");
+        console.log("Tabla:",semanticTable)
         var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
+        console.log("antes de sacarlo");
         var resultType =  semanticTable[leftType][operator][rightType];
-        if(!resultType)
+        console.log(resultType);
+        if(resultType === undefined)
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
@@ -863,39 +839,39 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:/* skip whitespace */
 break;
-case 1:return 42
+case 1:return 51
 break;
-case 2:return 39
+case 2:return 48
 break;
-case 3:return 41
+case 3:return 50
 break;
-case 4:return 38
+case 4:return 47
 break;
-case 5:return 37
+case 5:return 46
 break;
-case 6:return 14
+case 6:return 17
 break;
-case 7:return 16
+case 7:return 19
 break;
-case 8:return 17
+case 8:return 14
 break;
-case 9:return 18
+case 9:return 15
 break;
-case 10:return 31
+case 10:return 40
 break;
-case 11:return 33
+case 11:return 42
 break;
 case 12:return '<='
 break;
 case 13:return '>='
 break;
-case 14:return 34
+case 14:return 43
 break;
-case 15:return 35
+case 15:return 44
 break;
-case 16:return 26
+case 16:return 36
 break;
-case 17:return 21
+case 17:return 31
 break;
 case 18:return 10
 break;
@@ -907,30 +883,34 @@ case 21:return 8
 break;
 case 22:return 7
 break;
-case 23:return 13
+case 23:return 16
 break;
-case 24:return 'WHILE'
+case 24:return 20
 break;
-case 25:return 'DO'
+case 25:return 22
 break;
-case 26:return 45
+case 26:return 24
 break;
-case 27:return 'character'
+case 27:return 27
 break;
-case 28:return 25
+case 28:return 54
 break;
-case 29:return 44
+case 29:return 'character'
 break;
-case 30:return 43
+case 30:return 35
 break;
-case 31:return 5
+case 31:return 53
 break;
-case 32:
+case 32:return 52
+break;
+case 33:return 5
+break;
+case 34:
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\()/,/^(?:\))/,/^(?:\{)/,/^(?:\})/,/^(?:<)/,/^(?:>)/,/^(?:<=)/,/^(?:>=)/,/^(?:!=)/,/^(?:==)/,/^(?:=)/,/^(?:;)/,/^(?:char\b)/,/^(?:boolean\b)/,/^(?:string\b)/,/^(?:float\b)/,/^(?:int\b)/,/^(?:if\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:"[^\"]*")/,/^(?:'[^\']?')/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:PI\b)/,/^(?:E\b)/,/^(?:$)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\()/,/^(?:\))/,/^(?:\{)/,/^(?:\})/,/^(?:<)/,/^(?:>)/,/^(?:<=)/,/^(?:>=)/,/^(?:!=)/,/^(?:==)/,/^(?:=)/,/^(?:;)/,/^(?:char\b)/,/^(?:boolean\b)/,/^(?:string\b)/,/^(?:float\b)/,/^(?:int\b)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:"[^\"]*")/,/^(?:'[^\']?')/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:PI\b)/,/^(?:E\b)/,/^(?:$)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34],"inclusive":true}}
 });
 return lexer;
 })();
