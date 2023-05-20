@@ -223,10 +223,11 @@
 %%
 START : INSTRUCTIONS EOF { 
     // aqui deberia regresar la tabla de memoria de las funciones, etc
-    console.log(quadruples);
-    console.log(operatorStack);
-    console.log(operandStack);
-    console.log(variables);};
+    console.log("quadruples:",quadruples);
+    console.log("operators:",operatorStack);
+    console.log("operands:",operandStack);
+    console.log("jumps:",jumpStack);
+    console.log("variables:",variables);};
 TYPE : intType {
       currentType = "int";
 } | floatType {
@@ -250,22 +251,44 @@ HYPERCONDITIONALS: CONDITIONALS | CONDITIONALS '{'  INSTRUCTIONS '}'{
 CONDITIONALS: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
-                console.log(quadruple);
+                var destination = quadruples[quadruples.length];
                 quadruple.result = quadruples.length;
       
 } | IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE {
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 console.log(quadruple);
-                quadruple.result = quadruples.length;
+                quadruple.result = quadruples.length+1;
                 quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:null});
-                 jumpStack.push(quadruples.length-1);
+                jumpStack.push(quadruples.length-1);
       
 };
-INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION | HYPERCONDITIONALS;
+WHILECOMMAND: WHILE {jumpStack.push(quadruples.length);};
+DOCOMMAND: DO {jumpStack.push(quadruples.length);};
+LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
+                         var end = jumpStack.pop();
+                         var whileStart =  jumpStack.pop();
+                         var quadruple = quadruples[end];
+                         quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:whileStart});
+                         quadruple.result = quadruples.length;
+
+} | DOCOMMAND '{' INSTRUCTIONS'}' WHILE '(' HYPEREXPRESSION ')' {
+        var resultOperand = operandStack.pop();
+            var resultType = typeStack.pop();
+            console.log(resultOperand,resultType);
+            if(resultType != "bool")
+            {
+                console.log("A conditional statement should be a boolean");
+                throw new Error("A conditional statement should be a boolean");
+            }
+            var end = jumpStack.pop();
+            quadruples.push({operator:"GOTOT",leftOperand:resultOperand,rightOperand:null,result:end});
+} ;
+
+INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
 
-INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' ;
+INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | HYPERCONDITIONALS | LOOPS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 
