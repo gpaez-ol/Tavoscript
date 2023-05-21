@@ -47,3 +47,6 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se generan cuadruplos correctos para el condicional "do - while"
 - Se generan cuadruplos correctos para el ciclo "for" con 1 variable y 1 condicion
 - La tabla semantica se encuentra en su propio archivo
+- Se generan funciones que guardan las variables locales, temporales
+- Se genera automaticamente una funcion main la cual tiene variables globales
+- Se genera el directorio de funciones

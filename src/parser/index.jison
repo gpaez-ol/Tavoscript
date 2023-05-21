@@ -1,19 +1,22 @@
 
 %{
     var {semanticTable} = require("./semanticTable");
+    const {createReturnVar,finishFunction} = require("./functionsUtils");
+    const {createVariable,createConstantVariable,getVariable} = require("./variableUtils");
+
     var operatorStack = [];
     var operandStack = [];
     var typeStack = [];
     var jumpStack = [];
     // t1 registro temporal
     // operacion,   operandoizq,operandoder,res
+    // el primer quadruple debe ser un GOTO main () ya que main es la primera funcion, si no existe main , tirar error
     var quadruples = [];
     
-
-    // type,name
-    // TODO: make variables linked to functions and global values
-    var variables = [];
+    var functions = [{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
+    let currentFunction = 0;
     var jumpStack = [];
+    // add logic so when main is back it goese back to nextAvailable = 1
     let nextAvailable = 1;
     function nextAvail() {
         let variable = "t" + nextAvailable;
@@ -39,10 +42,10 @@
         }
         var result = nextAvail();
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})=${result}(${resultType})`);
+        createVariable(result,resultType,functions[currentFunction],"temporal");
         quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:rightOperand,result:result});
         operandStack.push(result);
         typeStack.push(resultType);
-        // TODO: delete temporals that are not needed anymore
     }
     function createAssignmentQuad(){
         var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
@@ -52,7 +55,6 @@
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
         }
-        console.log("se uso el assignment");
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
         quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
     }
@@ -83,11 +85,13 @@
 "float"                     return 'floatType'
 "int"                       return 'intType'
 "if"                        return 'IF'
+"void"                      return 'voidType'
 "else"                      return 'ELSE'
 "while"                     return 'WHILE'
 "do"                        return 'DO'
 "for"                       return 'FOR'
 "func"                      return 'FUNC'
+"return"                    return 'RETURN'
 \"[^\"]*\"				    return 'text'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
 "PI"                        return 'PI'
@@ -103,13 +107,15 @@
 
 %start START
 %%
-START : INSTRUCTIONS EOF { 
+START : MAININSTRUCTIONS EOF { 
     // aqui deberia regresar la tabla de memoria de las funciones, etc
     console.log("quadruples:",quadruples);
     console.log("operators:",operatorStack);
     console.log("operands:",operandStack);
     console.log("jumps:",jumpStack);
-    console.log("variables:",variables);};
+    console.log("functions:",functions);
+    console.log("current function:",currentFunction)
+    };
 TYPE : intType {
       currentType = "int";
 } | floatType {
@@ -170,6 +176,35 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
         quadruple.result = quadruples.length;
 
 };
+// contabilizar parametros, variables locales y las variables temporales para saber de que tamano es el pedazo de memoria
+PARAMETER: TYPE id {
+         createVariable($2,$1,functions[currentFunction],"parameter");
+         functions[currentFunction].parameters.push($1);
+
+};
+PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
+FUNCTYPE: intType  | floatType   | boolType  | stringType  | voidType;
+FUNCDEFINITION: FUNC FUNCTYPE id{
+    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
+    currentFunction = functions.length-1;
+    nextAvailable=1;
+};
+FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
+    functions[currentFunction].quadruplesStart = quadruples.length;
+};
+FUNCTION: FUNCHEADER '{'  FUNCTIONINSTRUCTIONS '}'{
+    finishFunction(functions[currentFunction],functions[0],nextAvailable,quadruples)
+    currentFunction = 0;
+};
+
+FUNCRETURN:  RETURN HYPEREXPRESSION ';' {
+            createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples,nextAvail);
+};
+
+FUNCTIONINSTRUCTIONS: INSTRUCTIONS FUNCRETURN | FUNCRETURN;
+
+MAININSTRUCTION: DECLARATION ';' | FUNCTION;
+MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
 
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
@@ -182,17 +217,10 @@ DECLARATION : TYPE ASSIGNMENTS {
 ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
 ASSIGNMENT 
     : id {
-        // TODO: Add logic link variables with functions or with global status
-        if(variables.some(variable => variable.name === $1))
-        {
-            console.log("Name is already taken",$1);
-            throw new Error($1, "name is already taken");
-        }
-        variables.push({type:currentType,name:$1});
+        createVariable($1,currentType,functions[currentFunction]);
     }
     | id '=' HYPEREXPRESSION {
-        // TODO: Add logic to which type of value it is
-        variables.push({type:currentType,name:$1});
+        createVariable($1,currentType,functions[currentFunction]);
         operatorStack.push('=');
         if([...operatorStack].pop() == "=")
         {
@@ -212,7 +240,7 @@ ASSIGNMENT
     }
     ;
 FORASSIGNMENT : id '=' HYPEREXPRESSION {
-         variables.push({type:"int",name:$1});
+        createVariable($1,"int",functions[currentFunction]);
         operatorStack.push('=');
         if([...operatorStack].pop() == "=")
         {
@@ -326,14 +354,15 @@ TERMS
 FACTOR
         : NUMBER 
         {
-            // check if number is int or float
             operandStack.push($1);
             typeStack.push("int");
+            createConstantVariable($1,"int",functions[0])
         }
         | FLOAT 
         {
             operandStack.push($1);
             typeStack.push("float");
+            createConstantVariable($1,"float",functions[0])
         }
         | E
         | PI
@@ -341,20 +370,14 @@ FACTOR
         {
             // check var exists
             // if var doesnt exist throw error
-            let variable = variables.find(variable => variable.name === $1);
-            if (variable)
-            {
+            let variable = getVariable($1,functions,currentFunction);
             operandStack.push($1);
             typeStack.push(variable.type);
-
-            }else {
-                console.log("Variable does not exist at this point in time",$1);
-                throw new Error("Variable ",$1, "does not exist at this point");
-            }
         }
         | text {
             operandStack.push($1);
             typeStack.push("string");
+            createConstantVariable($1,"string",functions[0])
         }
         | '('  SUPRAEXPRESSION ')'; 
 
