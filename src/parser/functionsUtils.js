@@ -4,35 +4,59 @@ function getFunctionSize(variables) {
   let vls = 0;
   let vlb = 0;
   // TODO: Add temporals
-  variables.forEach((variable) => {
-    switch (variable.type) {
-      case "int":
-        vli++;
-        break;
-      case "float":
-        vlf++;
-        break;
-      case "string":
-        vls++;
-        break;
-      case "bool":
-        vlb++;
-        break;
-    }
-  });
+  let vti = 0;
+  let vtf = 0;
+  let vts = 0;
+  let vtb = 0;
+  variables
+    .filter(
+      (variable) =>
+        variable.varType == "local" || variable.varType == "parameter"
+    )
+    .forEach((variable) => {
+      switch (variable.type) {
+        case "int":
+          vli = vli + 1;
+          break;
+        case "float":
+          vlf = vlf + 1;
+          break;
+        case "string":
+          vls = vls + 1;
+          break;
+        case "bool":
+          vlb = vlb + 1;
+          break;
+      }
+    });
+  variables
+    .filter((variable) => variable.varType == "temporal")
+    .forEach((variable) => {
+      switch (variable.type) {
+        case "int":
+          vti = vti + 1;
+          break;
+        case "float":
+          vtf = vtf + 1;
+          break;
+        case "string":
+          vts = vts + 1;
+          break;
+        case "bool":
+          vtb = vtb + 1;
+          break;
+      }
+    });
   return {
     local: { vli, vlf, vls, vlb },
-    temporal: { vti: 0, vtf: 0, vts: 0, vtb: 0 },
+    temporal: { vti, vtf, vts, vtb },
   };
 }
 
-export function finishFunction(thisFunction, mainFunction, quadruples) {
+export function finishFunction(thisFunction, quadruples) {
   thisFunction.size = getFunctionSize(thisFunction.variables);
   quadruples.push({
     operator: "ENDFunc",
-    leftOperand: null,
-    rightOperand: null,
-    result: null,
   });
 }
 
@@ -53,11 +77,15 @@ export function createReturnVar(
     throw new Error(`Function return type should be ${leftType}`);
   }
   console.log(`${leftOperand}(${leftType})=${rightOperand}(${rightType})`);
-  thisFunction.variables.push({ leftType, leftOperand, varType: "temporal" });
+  thisFunction.variables.push({
+    type: leftType,
+    name: leftOperand,
+    varType: "temporal",
+  });
+  // aqui podria ser la variable global con el mismo nombre que la funcion
   quadruples.push({
     operator: operator,
-    leftOperand: leftOperand,
-    rightOperand: null,
+    operand: leftOperand,
     result: rightOperand,
   });
 }
