@@ -1,8 +1,9 @@
 
 %{
-    var {semanticTable} = require("./semanticTable");
+    const {semanticTable} = require("./semanticTable");
     const {createReturnVar,finishFunction} = require("./functionsUtils");
     const {createVariable,createConstantVariable,getVariable} = require("./variableUtils");
+    const {getOperands,createAssignmentQuad,createOperationQuad} = require("./quadrupleUtils.js");
 
     var operatorStack = [];
     var operandStack = [];
@@ -11,12 +12,12 @@
     // t1 registro temporal
     // operacion,   operandoizq,operandoder,res
     // el primer quadruple debe ser un GOTO main () ya que main es la primera funcion, si no existe main , tirar error
-    var quadruples = [];
+    // should be main if its still null after everything that is the error
+    var quadruples = [{operator:"GOTO",address:null}];
     
     var functions = [{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
     let currentFunction = 0;
     var jumpStack = [];
-    // add logic so when main is back it goese back to nextAvailable = 1
     let nextAvailable = 1;
     function nextAvail() {
         let variable = "t" + nextAvailable;
@@ -24,40 +25,7 @@
         return variable;
     }
     var currentType = "";
-    function getOperands() {
-        var rightOperand = operandStack.pop();
-        var rightType = typeStack.pop();
-        var leftOperand = operandStack.pop();
-        var leftType = typeStack.pop();
-        var operator = operatorStack.pop();
-        return [rightOperand,rightType,leftOperand,leftType,operator]
-    }
-    function createOperationQuad() {
-        var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
-        var resultType =  semanticTable[leftType][operator][rightType];
-        if(resultType === undefined)
-        {
-            console.log("Operation",leftType,operator,rightType,"is not valid");
-            throw new Error("Operation is not valid");
-        }
-        var result = nextAvail();
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})=${result}(${resultType})`);
-        createVariable(result,resultType,functions[currentFunction],"temporal");
-        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:rightOperand,result:result});
-        operandStack.push(result);
-        typeStack.push(resultType);
-    }
-    function createAssignmentQuad(){
-        var [rightOperand,rightType,leftOperand,leftType,operator] = getOperands();
-        // add more validations later but for now strict typing
-        if(rightType != leftType)
-        {
-            console.log("Operation",leftType,operator,rightType,"is not valid");
-            throw new Error("Operation is not valid");
-        }
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
-    }
+    
 %}
 %lex
 %%
@@ -129,22 +97,21 @@ TYPE : intType {
 HYPERCONDITIONALS: CONDITIONALS | CONDITIONALS '{'  INSTRUCTIONS '}'{
             var end = jumpStack.pop();
             var quadruple = quadruples[end];
-            console.log(quadruple);
-            quadruple.result = quadruples.length;
+            quadruple.address = quadruples.length;
 
 };
 
 CONDITIONALS: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
-                quadruple.result = quadruples.length;
+                quadruple.address = quadruples.length;
       
 } | IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE {
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 console.log(quadruple);
-                quadruple.result = quadruples.length+1;
-                quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:null});
+                quadruple.address = quadruples.length+1;
+                quadruples.push({operator:"GOTO",address:result});
                 jumpStack.push(quadruples.length-1);
       
 };
@@ -154,8 +121,8 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
                          var end = jumpStack.pop();
                          var whileStart =  jumpStack.pop();
                          var quadruple = quadruples[end];
-                         quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:whileStart});
-                         quadruple.result = quadruples.length;
+                         quadruples.push({operator:"GOTO",address:whileStart});
+                         quadruple.address = quadruples.length;
 
 } | DOCOMMAND '{' INSTRUCTIONS'}' WHILE '(' HYPEREXPRESSION ')' {
         var resultOperand = operandStack.pop();
@@ -167,13 +134,13 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
                 throw new Error("A conditional statement should be a boolean");
             }
             var end = jumpStack.pop();
-            quadruples.push({operator:"GOTOT",leftOperand:resultOperand,rightOperand:null,result:end});
+            quadruples.push({operator:"GOTOT",value:resultOperand,address:end});
 } | FOR '(' FORASSIGNMENT  , CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
         var pendingFalseQuadruple = jumpStack.pop();
         var forStart = jumpStack.pop();
         var quadruple = quadruples[pendingFalseQuadruple];
-        quadruples.push({operator:"GOTO",leftOperand:resultOperand,rightOperand:null,result:forStart});
-        quadruple.result = quadruples.length;
+        quadruples.push({operator:"GOTO",address:forStart});
+        quadruple.address = quadruples.length;
 
 };
 // contabilizar parametros, variables locales y las variables temporales para saber de que tamano es el pedazo de memoria
@@ -185,6 +152,13 @@ PARAMETER: TYPE id {
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
 FUNCTYPE: intType  | floatType   | boolType  | stringType  | voidType;
 FUNCDEFINITION: FUNC FUNCTYPE id{
+    // add check to see function is unique
+    if(functions.some((func) => func.name === $3))
+    {
+        console.log(`Function ${$3} already exists`);
+        throw new Error(`Function ${$3} was already declared`);
+    }
+    // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
     functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
     currentFunction = functions.length-1;
     nextAvailable=1;
@@ -193,23 +167,40 @@ FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
     functions[currentFunction].quadruplesStart = quadruples.length;
 };
 FUNCTION: FUNCHEADER '{'  FUNCTIONINSTRUCTIONS '}'{
-    finishFunction(functions[currentFunction],functions[0],nextAvailable,quadruples)
+    finishFunction(functions[currentFunction],quadruples)
     currentFunction = 0;
+    nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
 };
 
 FUNCRETURN:  RETURN HYPEREXPRESSION ';' {
+            // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
             createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples,nextAvail);
 };
 
+ARGUMENTS: ARGUMENTS , ARGUMENT | ARGUMENT;
+ARGUMENT: HYPEREXPRESSION {
+    console.log("Se llamo la funci:",$1);
+};
+FUNCCALLHEADER: id '('{
+    console.log("la funcion va a ser llamada");
+    // prepara el numero de parametros
+    // genera ERA size para traer el new size
+};
+FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')' ';'{
+    // revisar que los parametros usados este vacio
+    // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
+    // recordar el address donde estabas antes
+} | id '(' ')' ';';
+
 FUNCTIONINSTRUCTIONS: INSTRUCTIONS FUNCRETURN | FUNCRETURN;
 
-MAININSTRUCTION: DECLARATION ';' | FUNCTION;
+MAININSTRUCTION: DECLARATION ';' | FUNCTION | FUNCCALLS;
 MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
 
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
 
-INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | HYPERCONDITIONALS | LOOPS;
+INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | HYPERCONDITIONALS | LOOPS | FUNCCALLS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 
@@ -235,7 +226,7 @@ ASSIGNMENT
             throw new Error("Operation is not valid");
         }
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+        quadruples.push({operator:operator,operand:leftOperand,result:rightOperand});
         }
     }
     ;
@@ -255,7 +246,7 @@ FORASSIGNMENT : id '=' HYPEREXPRESSION {
                 throw new Error("For loops only take int types");
             }
             console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-            quadruples.push({operator:operator,leftOperand:leftOperand,rightOperand:null,result:rightOperand});
+            quadruples.push({operator:operator,operand:leftOperand,result:rightOperand});
             // this should be the reference to goto at the end of the for
             jumpStack.push(quadruples.length);
         }
@@ -264,7 +255,7 @@ SUPRAEXPRESSION
         : SUPRAEXPRESSION '=' HYPEREXPRESSION {
                 operatorStack.push('=');
                 if([...operatorStack].pop() == "="){
-                    createAssignmentQuad();
+                    createAssignmentQuad(quadruples,operandStack,operatorStack,typeStack);
             }
         }
         | HYPEREXPRESSION;
@@ -279,13 +270,12 @@ CONDITIONALHYPEREXPRESSION
             // check if there is a result  if no result its an error
             var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
-            console.log(resultOperand,resultType);
             if(resultType != "bool")
             {
                 console.log("A conditional statement should be a boolean");
                 throw new Error("A conditional statement should be a boolean");
             }
-            quadruples.push({operator:"GOTOF",leftOperand:resultOperand,rightOperand:null,result:null});
+            quadruples.push({operator:"GOTOF",value:resultOperand,address:null});
             jumpStack.push(quadruples.length-1);
         };
 
@@ -293,25 +283,25 @@ SUPEREXPRESSION
         : SUPEREXPRESSION '<' EXPRESSION {
                 operatorStack.push('<');
                 if([...operatorStack].pop() == "<"){
-                createOperationQuad();
+                createOperationQuad(quadruples,operandStack, operatorStack,typeStack, nextAvail, functions[currentFunction]);
             }
         }
         | SUPEREXPRESSION '>' EXPRESSION {
             operatorStack.push('>');
             if([...operatorStack].pop() == ">"){
-                createOperationQuad();
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
             }
         }
         | SUPEREXPRESSION '!=' EXPRESSION {
             operatorStack.push('!=');
             if([...operatorStack].pop() == "!="){
-                createOperationQuad();
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
             }
         }
         | SUPEREXPRESSION '==' EXPRESSION {
             operatorStack.push('==');
             if([...operatorStack].pop() == "=="){
-                createOperationQuad();
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
             }
         }
         | EXPRESSION;
@@ -322,7 +312,7 @@ EXPRESSION
         {
             operatorStack.push('+');
             if([...operatorStack].pop() == "+"){
-                createOperationQuad();
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack,nextAvail, functions[currentFunction]);
             }
             
         }
@@ -330,7 +320,7 @@ EXPRESSION
         {
             operatorStack.push('-');
             if([...operatorStack].pop() == "-"){
-                createOperationQuad();
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
             }
         };
 
@@ -339,14 +329,14 @@ TERMS
         {
             operatorStack.push('*');
             if([...operatorStack].pop() == "*"){
-                createOperationQuad();
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
             }
         }
         | TERMS '/' FACTOR
         {
             operatorStack.push('/');
             if([...operatorStack].pop() == "/"){
-                createOperationQuad();
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
             }
         }
         | FACTOR;     
@@ -380,4 +370,3 @@ FACTOR
             createConstantVariable($1,"string",functions[0])
         }
         | '('  SUPRAEXPRESSION ')'; 
-
