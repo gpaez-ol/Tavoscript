@@ -56,7 +56,7 @@ function getFunctionSize(variables) {
 export function finishFunction(thisFunction, quadruples) {
   thisFunction.size = getFunctionSize(thisFunction.variables);
   quadruples.push({
-    operator: "ENDFunc",
+    operator: "ENDFUNC",
   });
 }
 
@@ -69,23 +69,15 @@ export function createReturnVar(
 ) {
   var rightOperand = operandStack.pop();
   var rightType = typeStack.pop();
-  var leftOperand = nextAvail();
   var leftType = thisFunction.returnType;
-  var operator = "=";
   if (rightType != leftType) {
     console.log(`Type should be ${leftType}`);
     throw new Error(`Function return type should be ${leftType}`);
   }
-  console.log(`${leftOperand}(${leftType})=${rightOperand}(${rightType})`);
-  thisFunction.variables.push({
-    type: leftType,
-    name: leftOperand,
-    varType: "temporal",
-  });
+  console.log(`Return(${leftType})=${rightOperand}(${rightType})`);
   // aqui podria ser la variable global con el mismo nombre que la funcion
   quadruples.push({
-    operator: operator,
-    operand: leftOperand,
-    result: rightOperand,
+    operator: "RETURN",
+    value: rightOperand,
   });
 }
