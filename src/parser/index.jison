@@ -9,6 +9,11 @@
     var operandStack = [];
     var typeStack = [];
     var jumpStack = [];
+
+    //for functions
+    var availableParams = [];
+    var functionCalled = null;
+    var functionCallCurrentParam = 0;
     // t1 registro temporal
     // operacion,   operandoizq,operandoder,res
     // el primer quadruple debe ser un GOTO main () ya que main es la primera funcion, si no existe main , tirar error
@@ -48,6 +53,7 @@
 "=="                        return '=='
 "="                         return '='
 ";"                         return ';'
+":"                         return 'CallType'
 "boolean"                   return 'boolType'
 "string"                    return 'stringType'
 "float"                     return 'floatType'
@@ -150,27 +156,67 @@ PARAMETER: TYPE id {
 
 };
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
-FUNCTYPE: intType  | floatType   | boolType  | stringType  | voidType;
+FUNCTYPE: intType  | floatType   | boolType  | stringType;
 FUNCDEFINITION: FUNC FUNCTYPE id{
     // add check to see function is unique
+    if($3 === "main"){
+        console.log("Main function should be void");
+        throw new Error("Main function should be void");
+    }
     if(functions.some((func) => func.name === $3))
     {
         console.log(`Function ${$3} already exists`);
         throw new Error(`Function ${$3} was already declared`);
     }
+    // check if variable name exists because global variable will exist
     // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
     functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
     currentFunction = functions.length-1;
     nextAvailable=1;
 };
+VOIDFUNCDEFINITION: FUNC voidType id{
+    // add check to see function is unique
+    if(functions.some((func) => func.name === $3) && $3 !== "main")
+    {
+        console.log(`Function ${$3} already exists`);
+        throw new Error(`Function ${$3} was already declared`);
+    }else if($3 === "main" && functions.find((func) => func.name === $3).quadruplesStart !== null)
+    {
+        console.log('Main was already declared');
+        throw new Error("Main was already declared");
+    }
+    // check if variable name exists because global variable will exist
+    // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
+    if($3 !== "main" )
+    {
+    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
+    currentFunction = functions.length-1;
+    nextAvailable=1;
+    }
+};
 FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
     functions[currentFunction].quadruplesStart = quadruples.length;
+    if(functions[currentFunction].name === "main")
+    {
+        quadruples[0].address = quadruples.length;
+    }
+};
+VOIDFUNCHEADER: VOIDFUNCDEFINITION '('PARAMETERS ')' {
+    functions[currentFunction].quadruplesStart = quadruples.length;
+    if(functions[currentFunction].name === "main")
+    {
+        quadruples[0].address = quadruples.length;
+    }
 };
 FUNCTION: FUNCHEADER '{'  FUNCTIONINSTRUCTIONS '}'{
     finishFunction(functions[currentFunction],quadruples)
     currentFunction = 0;
     nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
-};
+} | VOIDFUNCHEADER '{'  INSTRUCTIONS '}'{
+    finishFunction(functions[currentFunction],quadruples)
+    currentFunction = 0;
+    nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
+} ;
 
 FUNCRETURN:  RETURN HYPEREXPRESSION ';' {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
@@ -179,28 +225,97 @@ FUNCRETURN:  RETURN HYPEREXPRESSION ';' {
 
 ARGUMENTS: ARGUMENTS , ARGUMENT | ARGUMENT;
 ARGUMENT: HYPEREXPRESSION {
-    console.log("Se llamo la funci:",$1);
+            var currentParam = availableParams.pop();
+            if(currentParam === null || currentParam === undefined)
+            {
+                console.log("Too many arguments for the function");
+                throw new Error("Too many arguments for the function")
+            }
+            var operand = operandStack.pop();
+            var operandType = typeStack.pop();
+            var param = functionCallCurrentParam;
+            var paramType = currentParam;
+            if(operandType !== paramType)
+            {
+                console.log(`Type should be ${paramType}`);
+                throw new Error(`Type should be ${paramType}`);
+            }
+            console.log(`${param}(${paramType})=${operand}(${operandType})`);
+            quadruples.push({operator:"PARAM",value:operand,param:functionCallCurrentParam});
+            functionCallCurrentParam++;
 };
-FUNCCALLHEADER: id '('{
-    console.log("la funcion va a ser llamada");
+FUNCCALLHEADER: CallType id '('{
     // prepara el numero de parametros
     // genera ERA size para traer el new size
+    // check function exist
+    functionCalled = functions.find(func => func.name === $2);
+    if(!functionCalled)
+    {
+        console.log(`The function ${$2}does not exist`);
+        throw new Error(`The function ${$1} does not exist`);
+    }
+    availableParams = [...functionCalled.parameters];
+    functionCallCurrentParam = 1
+    quadruples.push({operator:"ERA",functionName:$2});
 };
-FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')' ';'{
+FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     // revisar que los parametros usados este vacio
+    if(availableParams.length > 0)
+    {
+        console.log("Arguments missing");
+        throw new Error("Arguments missing for function call");
+    }
     // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
+    quadruples.push({operator:"GOSUB",value:functionCalled.name});
     // recordar el address donde estabas antes
-} | id '(' ')' ';';
+    // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
+    if(functionCalled.returnType != "void")
+    {
+        // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
+        var result = nextAvail();[]
+        var resultType = functionCalled.returnType;
+        createVariable(result, resultType, functions[currentFunction], "temporal");
+        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
+    }
+    
+} | CALLTYPE id '(' ')';
+
+FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
+    // revisar que los parametros usados este vacio
+    if(availableParams.length > 0)
+    {
+        console.log("Arguments missing");
+        throw new Error("Arguments missing for function call");
+    }
+    // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
+    quadruples.push({operator:"GOSUB",value:functionCalled.name});
+    // recordar el address donde estabas antes
+    // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
+    if(functionCalled.returnType != "void")
+    {
+        // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
+        var result = nextAvail();[]
+        var resultType = functionCalled.returnType;
+        createVariable(result, resultType, functions[currentFunction], "temporal");
+        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
+        operandStack.push(result);
+        typeStack.push(resultType);
+    }else {
+        console.log("You cannot use a void function within a expression");
+        throw new Error("You cannot use a void function within an expression");
+    }
+    
+};
 
 FUNCTIONINSTRUCTIONS: INSTRUCTIONS FUNCRETURN | FUNCRETURN;
 
-MAININSTRUCTION: DECLARATION ';' | FUNCTION | FUNCCALLS;
+MAININSTRUCTION: DECLARATION ';' | FUNCTION | FUNCCALLS ';';
 MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
 
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
 
-INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | HYPERCONDITIONALS | LOOPS | FUNCCALLS;
+INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | HYPERCONDITIONALS | LOOPS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 
@@ -226,7 +341,7 @@ ASSIGNMENT
             throw new Error("Operation is not valid");
         }
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,operand:leftOperand,result:rightOperand});
+        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand});
         }
     }
     ;
@@ -344,6 +459,7 @@ TERMS
 FACTOR
         : NUMBER 
         {
+            // add check constants
             operandStack.push($1);
             typeStack.push("int");
             createConstantVariable($1,"int",functions[0])
@@ -354,8 +470,6 @@ FACTOR
             typeStack.push("float");
             createConstantVariable($1,"float",functions[0])
         }
-        | E
-        | PI
         | id
         {
             // check var exists
@@ -363,10 +477,11 @@ FACTOR
             let variable = getVariable($1,functions,currentFunction);
             operandStack.push($1);
             typeStack.push(variable.type);
-        }
+        }|
+        FACTFUNCCALLS 
         | text {
             operandStack.push($1);
             typeStack.push("string");
             createConstantVariable($1,"string",functions[0])
-        }
+        } 
         | '('  SUPRAEXPRESSION ')'; 

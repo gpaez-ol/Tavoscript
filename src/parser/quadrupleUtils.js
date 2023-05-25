@@ -31,7 +31,7 @@ export function createAssignmentQuad(
   quadruples.push({
     operator: operator,
     operand: leftOperand,
-    result: rightOperand,
+    value: rightOperand,
   });
 }
 
