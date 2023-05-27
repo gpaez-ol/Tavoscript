@@ -70,19 +70,63 @@ export function createVariable(name, type, currentFunction, varType = "local") {
     varType:
       currentFunction.name == "main" && varType == "local" ? "global" : varType,
   });
-  // checar si la variable es local
-  // si no es local checar la global
-  //   switch (type) {
-  //     case "int":
-  //       break;
-  //     case "float":
-  //       break;
-  //     case "string":
-  //       break;
-  //     case "bool":
-  //       break;
-  //   }
-  // variables.push({ type: currentType, name: $1,address:10000 });
+}
+
+// di = ls -li +1 en este caso nos alinemos con c y el limite inferios siempr es 0
+// m1  = d2*d3... dn
+// m2 = d3*d4...dn
+// mn-1 = dn
+// mn =1
+// dirB9(id) + s1 *m1 + s2*m2 + sn 
+// la ultima direccion siempre va pelon
+// la primera dimension es la que multiplica todas las dimensiones
+// la seguna una menos
+// acumulado de la multiplicacion de las dimensiones invirtiendo el arreglo es mas facil calcularlo el primer valor no tiene dimensiones a la der
+
+
+
+export function createArrayVariable(array, currentFunction, varType = "local") {
+  if (currentFunction.variables.some((variable) => variable.name === array.name)) {
+    console.log("Name is already taken", array.name);
+    throw new Error(name, "name is already taken");
+  }
+  let m0 = array.dimensions.reduce((currentValue,currentDimension) => { return currentValue * Number(currentDimension.upperLimit)},1)
+  console.log(array);
+  console.log("m0",m0);
+  let dimension =  0;
+  let m = m0;
+  while(dimension < array.dimensions.length)
+  {
+    m = m/Number(array.dimensions[dimension].upperLimit);
+    array.dimensions[dimension].m = m;
+    console.log("m:",m)
+    dimension++;
+  }
+  array.dimensions[array.dimensions.length-1]['k'] = array.dimensions[array.dimensions.length-1]['m'] * -1;
+  delete array.dimensions[array.dimensions.length-1]['m'];
+  array.varType = currentFunction.name == "main" && varType == "local" ? "global" : varType;
+  // add logic for the upper limits?
+  currentFunction.variables.push(array);
+}
+
+export function accessArrayValue(array,indexes)
+{
+  let cell=0;
+  array.forEach(dimension => {
+    index = indexes.pop();
+    if(index === null || index === undefined)
+    {
+      console.log("Array has more dimensions that the ones specified");
+      throw new Error("array has more dimensions that the ones specified");
+    }
+    if(Object.hasOwn(object1, 'k'))
+    {
+      cell += index;
+    }else{
+      cell += dimension.m * index;
+    }
+  })
+  return cell;
 }
 
 export function createConstantVariable(name, type, mainFunction) {
