@@ -2,7 +2,7 @@
 %{
     const {semanticTable} = require("./semanticTable");
     const {createReturnVar,finishFunction} = require("./functionsUtils");
-    const {createVariable,createConstantVariable,getVariable} = require("./variableUtils");
+    const {createVariable,createConstantVariable,getVariable,createArrayVariable} = require("./variableUtils");
     const {getOperands,createAssignmentQuad,createOperationQuad} = require("./quadrupleUtils.js");
 
     var operatorStack = [];
@@ -30,6 +30,8 @@
         return variable;
     }
     var currentType = "";
+    var currentArray = null;
+
     
 %}
 %lex
@@ -54,6 +56,8 @@
 "="                         return '='
 ";"                         return ';'
 ":"                         return 'CallType'
+"["                         return '['
+"]"                         return ']'
 "boolean"                   return 'boolType'
 "string"                    return 'stringType'
 "float"                     return 'floatType'
@@ -153,7 +157,11 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
 PARAMETER: TYPE id {
          createVariable($2,$1,functions[currentFunction],"parameter");
          functions[currentFunction].parameters.push($1);
-
+} | TYPE DIMENSIONS ']'{
+        currentArray.type = $1;
+        createArrayVariable(currentArray,functions[currentFunction],"parameter");
+       functions[currentFunction].parameters.push({type:$1,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
+        currentArray = null;
 };
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
 FUNCTYPE: intType  | floatType   | boolType  | stringType;
@@ -320,10 +328,38 @@ DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 
 };
+ARRAYID: id;
+DIMENSION: ']''[' NUMBER {
+    if(currentArray === null)
+    {
+        console.log("Dimensions can only be created within a named array");
+        throw new Error("Dimensions can only be created within a named array");
+    }
+    if($3 < 1)
+    {
+        console.log("Array limits must be positive values");
+        throw new Error("Array limits must be positive values");
+    }
+    createConstantVariable($3,"int",functions[0])
+    currentArray.dimensions.push({upperLimit:$3,m:0});
+} | id '[' NUMBER{
+    if($3< 1)
+    {
+        console.log("Array limits must be positive values");
+        throw new Error("Array limits must be positive values");
+    }
+    createConstantVariable($3,"int",functions[0])
+    currentArray = {type:currentType,name:$1,varType:currentFunction.name == "main" ? "global" : "local",dimensions:[{upperLimit:$3}]};
+
+};
+DIMENSIONS: DIMENSIONS DIMENSION | DIMENSION;
 ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
 ASSIGNMENT 
     : id {
         createVariable($1,currentType,functions[currentFunction]);
+    } | DIMENSIONS ']'{
+        createArrayVariable(currentArray,functions[currentFunction]);
+        currentArray = null;
     }
     | id '=' HYPEREXPRESSION {
         createVariable($1,currentType,functions[currentFunction]);
