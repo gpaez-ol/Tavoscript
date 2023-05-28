@@ -52,3 +52,4 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se genera el directorio de funciones
 - Se pueden utilizar funciones en las expresiones y se llaman utilizando :nombreFunc(argumentos);
 - Se pueden crear arreglos de cualquier tamano de dimensiones, como parametros de funciones tmbn
+- Se puede llamas arreglos utiliando expresiones como los argumentos de dicho arreglo

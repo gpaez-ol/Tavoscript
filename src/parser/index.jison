@@ -220,8 +220,20 @@ FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
     {
         quadruples[0].address = quadruples.length;
     }
+} | FUNCDEFINITION '(' ')' {
+    functions[currentFunction].quadruplesStart = quadruples.length;
+    if(functions[currentFunction].name === "main")
+    {
+        quadruples[0].address = quadruples.length;
+    }
 };
 VOIDFUNCHEADER: VOIDFUNCDEFINITION '('PARAMETERS ')' {
+    functions[currentFunction].quadruplesStart = quadruples.length;
+    if(functions[currentFunction].name === "main")
+    {
+        quadruples[0].address = quadruples.length;
+    }
+} |  VOIDFUNCDEFINITION '(' ')' {
     functions[currentFunction].quadruplesStart = quadruples.length;
     if(functions[currentFunction].name === "main")
     {
@@ -298,7 +310,19 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         quadruples.push({operator:"=",operand:result,value:functionCalled.name})
     }
     
-} | CALLTYPE id '(' ')';
+} | FUNCCALLHEADER ')'{
+    quadruples.push({operator:"GOSUB",value:functionCalled.name});
+    // recordar el address donde estabas antes
+    // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
+    if(functionCalled.returnType != "void")
+    {
+        // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
+        var result = nextAvail();[]
+        var resultType = functionCalled.returnType;
+        createVariable(result, resultType, functions[currentFunction], "temporal");
+        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
+    }
+};
 
 FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     // revisar que los parametros usados este vacio
@@ -325,6 +349,23 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         throw new Error("You cannot use a void function within an expression");
     }
     
+}| FUNCCALLHEADER  ')' {
+      quadruples.push({operator:"GOSUB",value:functionCalled.name});
+    // recordar el address donde estabas antes
+    // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
+    if(functionCalled.returnType != "void")
+    {
+        // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
+        var result = nextAvail();[]
+        var resultType = functionCalled.returnType;
+        createVariable(result, resultType, functions[currentFunction], "temporal");
+        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
+        operandStack.push(result);
+        typeStack.push(resultType);
+    }else {
+        console.log("You cannot use a void function within a expression");
+        throw new Error("You cannot use a void function within an expression");
+    }
 };
 
 FUNCTIONINSTRUCTIONS: INSTRUCTIONS FUNCRETURN | FUNCRETURN;
@@ -341,6 +382,7 @@ DECLARATION : TYPE ASSIGNMENTS {
 
 };
 ARRAYID: id;
+DIMENSIONS: DIMENSIONS DIMENSION | DIMENSION;
 DIMENSION: ']''[' NUMBER {
     if(currentArray === null)
     {
@@ -364,7 +406,7 @@ DIMENSION: ']''[' NUMBER {
     currentArray = {type:currentType,name:$1,varType:currentFunction.name == "main" ? "global" : "local",dimensions:[{upperLimit:$3}]};
 
 };
-DIMENSIONS: DIMENSIONS DIMENSION | DIMENSION;
+
 ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
 ASSIGNMENT 
     : id {
@@ -518,12 +560,20 @@ ARRHEADER: id '[' {
 };
 ARRBODY: ARRBODY , EXPRESSION{
      createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction])
-     currentArrayCallIndex = operandStack[operandStack.length-1];
+     if(currentDimension !== arrayCalled.dimensions.length-1)
+     {
+     currentArrayCallIndex = operandStack.pop();
+     typeStack.pop();
+     }
      currentDimension++;
 } | EXPRESSION
 {
     createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction])
-    currentArrayCallIndex = operandStack[operandStack.length-1];
+    if(currentDimension !== arrayCalled.dimensions.length-1)
+     {
+     currentArrayCallIndex = operandStack.pop();
+     typeStack.pop();
+     }
     currentDimension++;
 };
 ARRCALL: ARRHEADER ARRBODY;
