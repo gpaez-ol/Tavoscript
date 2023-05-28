@@ -13,7 +13,7 @@ export function createAssignmentQuad(
   quadruples,
   operandStack,
   operatorStack,
-  typeStack
+  typeStack,
 ) {
   var [rightOperand, rightType, leftOperand, leftType, operator] = getOperands(
     operandStack,
@@ -41,7 +41,8 @@ export function createOperationQuad(
   operatorStack,
   typeStack,
   nextAvail,
-  thisFunction
+  thisFunction,
+  pointer = false
 ) {
   var [rightOperand, rightType, leftOperand, leftType, operator] = getOperands(
     operandStack,
@@ -53,7 +54,7 @@ export function createOperationQuad(
     console.log("Operation", leftType, operator, rightType, "is not valid");
     throw new Error("Operation is not valid");
   }
-  var result = nextAvail();
+  var result = nextAvail(pointer);
   console.log(
     `${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})=${result}(${resultType})`
   );
@@ -67,3 +68,4 @@ export function createOperationQuad(
   operandStack.push(result);
   typeStack.push(resultType);
 }
+
