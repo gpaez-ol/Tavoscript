@@ -3,12 +3,16 @@
     const {semanticTable} = require("./semanticTable");
     const {createReturnVar,finishFunction} = require("./functionsUtils");
     const {createVariable,createConstantVariable,getVariable,createArrayVariable} = require("./variableUtils");
-    const {getOperands,createAssignmentQuad,createOperationQuad} = require("./quadrupleUtils.js");
+    const {getOperands,createAssignmentQuad,createOperationQuad} = require("./quadrupleUtils");
+    const {createDimensionQuad} = require("./arrayUtils");
 
     var operatorStack = [];
     var operandStack = [];
     var typeStack = [];
     var jumpStack = [];
+    var currentDimension = 0;
+    var arrayCalled = null;
+    var currentArrayCallIndex = null;
 
     //for functions
     var availableParams = [];
@@ -24,9 +28,16 @@
     let currentFunction = 0;
     var jumpStack = [];
     let nextAvailable = 1;
-    function nextAvail() {
-        let variable = "t" + nextAvailable;
-        nextAvailable = nextAvailable+1;
+    let nextPointerAvailable =1;
+    function nextAvail(pointer=false) {
+        if(pointer)
+        {
+            let variable = `tp${nextPointerAvailable}`;
+            nextPointerAvailable++;
+            return variable;
+        }
+        let variable = `t${nextAvailable}`;
+        nextAvailable++;
         return variable;
     }
     var currentType = "";
@@ -181,6 +192,7 @@ FUNCDEFINITION: FUNC FUNCTYPE id{
     functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
     currentFunction = functions.length-1;
     nextAvailable=1;
+    nextPointerAvailable=1;
 };
 VOIDFUNCDEFINITION: FUNC voidType id{
     // add check to see function is unique
@@ -491,7 +503,30 @@ TERMS
             }
         }
         | FACTOR;     
+        
+ARRHEADER: id '[' {
+        console.log($1);
+        let arrayVariable = getVariable($1,functions,currentFunction);
+        if(arrayVariable.dimensions === null || arrayVariable.dimensions === undefined)
+        {
+            console.log(`Variable ${$1} is not an array thus cannot be accessed`);
+            throw new Error(`Variable ${$1} is not an array thus cannot be accessed`);
+        }
+        arrayCalled = arrayVariable;
+        currentDimension = 0;
 
+};
+ARRBODY: ARRBODY , EXPRESSION{
+     createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction])
+     currentArrayCallIndex = operandStack[operandStack.length-1];
+     currentDimension++;
+} | EXPRESSION
+{
+    createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction])
+    currentArrayCallIndex = operandStack[operandStack.length-1];
+    currentDimension++;
+};
+ARRCALL: ARRHEADER ARRBODY;
 FACTOR
         : NUMBER 
         {
@@ -513,8 +548,18 @@ FACTOR
             let variable = getVariable($1,functions,currentFunction);
             operandStack.push($1);
             typeStack.push(variable.type);
-        }|
-        FACTFUNCCALLS 
+        }|ARRCALL ']'
+        {
+            if(currentDimension < arrayCalled.dimensions.length-1)
+            {
+                console.log(`Incorrect call array ${arrayVariable.name} has more dimensionesn`);
+                throw new Error(`Incorrect call array ${arrayVariable.name} has more dimensionesn`);
+
+            }
+            arrayCalled = null;
+            currentArrayCallIndex = null;
+        }
+        |FACTFUNCCALLS 
         | text {
             operandStack.push($1);
             typeStack.push("string");

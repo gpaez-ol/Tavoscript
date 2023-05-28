@@ -53,20 +53,17 @@ const vcs = 15000;
 // constantes boolean = 16000
 const vcb = 16000;
 
-// this is the module class
-
-function createModule() {
-  return [vli, vlf, vls, vlb, vti, vtf, vts, vtb, vci, vcf, vcs, vcb];
-}
-
 export function createVariable(name, type, currentFunction, varType = "local") {
   if (currentFunction.variables.some((variable) => variable.name === name)) {
     console.log("Name is already taken", name);
     throw new Error(name, "name is already taken");
   }
+  // add logic to add starting adddress
+  let address = 1000;
   currentFunction.variables.push({
     type,
     name,
+    address,
     varType:
       currentFunction.name == "main" && varType == "local" ? "global" : varType,
   });
@@ -91,20 +88,18 @@ export function createArrayVariable(array, currentFunction, varType = "local") {
     throw new Error(name, "name is already taken");
   }
   let m0 = array.dimensions.reduce((currentValue,currentDimension) => { return currentValue * Number(currentDimension.upperLimit)},1)
-  console.log(array);
-  console.log("m0",m0);
   let dimension =  0;
   let m = m0;
   while(dimension < array.dimensions.length)
   {
     m = m/Number(array.dimensions[dimension].upperLimit);
     array.dimensions[dimension].m = m;
-    console.log("m:",m)
     dimension++;
   }
   array.dimensions[array.dimensions.length-1]['k'] = array.dimensions[array.dimensions.length-1]['m'] * -1;
   delete array.dimensions[array.dimensions.length-1]['m'];
   array.varType = currentFunction.name == "main" && varType == "local" ? "global" : varType;
+  array.address = 2000;
   // add logic for the upper limits?
   currentFunction.variables.push(array);
 }
@@ -119,7 +114,7 @@ export function accessArrayValue(array,indexes)
       console.log("Array has more dimensions that the ones specified");
       throw new Error("array has more dimensions that the ones specified");
     }
-    if(Object.hasOwn(object1, 'k'))
+    if(Object.hasOwn(dimension, 'k'))
     {
       cell += index;
     }else{
