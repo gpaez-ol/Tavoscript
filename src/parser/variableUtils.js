@@ -1,72 +1,44 @@
-// codigo de operacion
-/*
-    + 
-    -
-    /
-    *
-    =
-    >
-    <
-    >=
-    <=
-    ==
-    !=
-    &&
-    ||
-*/
-// variable global int = 1000
-let vgi = 1000;
-// variable global float = 2000
-let vgf = 2000;
-// variable global string = 3000
-let vgs = 3000;
-// variable global booleana = 4000
-let vgb = 4000;
+import { startingAddresses } from "./mainAddresses";
 
-// variable local int = 5000
-// se resetean cada modulo
-const vli = 5000;
-// variable local float = 6000
-const vlf = 6000;
-// variable local string = 7000
-const vls = 7000;
-// variable local boolean = 8000
-const vlb = 8000;
+let availableAddresses = JSON.parse(JSON.stringify(startingAddresses));
 
-// temporales t1,t2,t3 cuando se estan resolviendo ecuaciones
-// se resetean en cada modulo
-// variable temporales int = 9000
-const vti = 9000;
-// variable temporales float = 10000
-const vtf = 10000;
-// variable temporales string = 11000
-const vts = 11000;
-// variable temporales boolean = 12000
-const vtb = 12000;
+export function resetAvailableAddresses()
+{
+  let currentGlobalAddress = {...availableAddresses.global};
+  let currentConst = {... availableAddresses.constant};
+  availableAddresses = JSON.parse(JSON.stringify(startingAddresses));
+  availableAddresses.global = currentGlobalAddress;
+  availableAddresses.constant = currentConst;
+}
 
-// constantes int = 13000
-const vci = 13000;
-// constantes float = 14000
-const vcf = 14000;
-// constantes string = 15000
-const vcs = 15000;
-// constantes boolean = 16000
-const vcb = 16000;
+function assignAddress(variable,m0=null){
+  let availableAddress = Number(availableAddresses[variable.varType][variable.type]);
+  if(m0 != null && variable.dimensions !== null && variable.dimensions !== undefined)
+  {
+    console.log("va a setear");
+    console.log(availableAddresses[variable.varType][variable.type])
+    console.log(m0);
+    availableAddresses[variable.varType][variable.type] += Number(m0);
+  }else {
+    availableAddresses[variable.varType][variable.type]++;
+  }
+  return availableAddress;
+}
 
 export function createVariable(name, type, currentFunction, varType = "local") {
   if (currentFunction.variables.some((variable) => variable.name === name)) {
     console.log("Name is already taken", name);
     throw new Error(name, "name is already taken");
   }
-  // add logic to add starting adddress
-  let address = 1000;
-  currentFunction.variables.push({
+  let variable = {
     type,
     name,
-    address,
-    varType:
-      currentFunction.name == "main" && varType == "local" ? "global" : varType,
-  });
+    address:null,
+    varType,varType:
+    currentFunction.name == "main" && varType == "local" ? "global" : varType,
+  }
+  variable.address = assignAddress(variable);
+  currentFunction.variables.push(variable);
 }
 
 // di = ls -li +1 en este caso nos alinemos con c y el limite inferios siempr es 0
@@ -99,7 +71,7 @@ export function createArrayVariable(array, currentFunction, varType = "local") {
   array.dimensions[array.dimensions.length-1]['k'] = array.dimensions[array.dimensions.length-1]['m'] * -1;
   delete array.dimensions[array.dimensions.length-1]['m'];
   array.varType = currentFunction.name == "main" && varType == "local" ? "global" : varType;
-  array.address = 2000;
+  array.address = assignAddress(array,m0);
   // add logic for the upper limits?
   currentFunction.variables.push(array);
 }
