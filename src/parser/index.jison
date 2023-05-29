@@ -2,7 +2,7 @@
 %{
     const {semanticTable} = require("./semanticTable");
     const {createReturnVar,finishFunction} = require("./functionsUtils");
-    const {createVariable,createConstantVariable,getVariable,createArrayVariable} = require("./variableUtils");
+    const {createVariable,createConstantVariable,getVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
     const {getOperands,createAssignmentQuad,createOperationQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
 
@@ -71,7 +71,7 @@
 "]"                         return ']'
 "true"                      return 'TRUE'
 "false"                     return 'FALSE'
-"boolean"                   return 'boolType'
+"bool"                   return 'boolType'
 "string"                    return 'stringType'
 "float"                     return 'floatType'
 "int"                       return 'intType'
@@ -112,7 +112,7 @@ TYPE : intType {
 } | floatType {
     currentType = "float";
 }  | boolType {
-    currentType = "boolean";
+    currentType = "bool";
 } | stringType {
     currentType = "string";
 };
@@ -195,6 +195,7 @@ FUNCDEFINITION: FUNC FUNCTYPE id{
     currentFunction = functions.length-1;
     nextAvailable=1;
     nextPointerAvailable=1;
+    resetAvailableAddresses();
 };
 VOIDFUNCDEFINITION: FUNC voidType id{
     // add check to see function is unique
@@ -242,7 +243,7 @@ VOIDFUNCHEADER: VOIDFUNCDEFINITION '('PARAMETERS ')' {
         quadruples[0].address = quadruples.length;
     }
 };
-FUNCTION: FUNCHEADER '{'  FUNCTIONINSTRUCTIONS '}'{
+FUNCTION: FUNCHEADER '{'  INSTRUCTIONS '}'{
     finishFunction(functions[currentFunction],quadruples)
     currentFunction = 0;
     nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
@@ -252,7 +253,7 @@ FUNCTION: FUNCHEADER '{'  FUNCTIONINSTRUCTIONS '}'{
     nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
 } ;
 
-FUNCRETURN:  RETURN HYPEREXPRESSION ';' {
+FUNCRETURN:  RETURN HYPEREXPRESSION  {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
             createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples,nextAvail);
 };
@@ -370,7 +371,7 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     }
 };
 
-FUNCTIONINSTRUCTIONS: INSTRUCTIONS FUNCRETURN | FUNCRETURN;
+
 
 MAININSTRUCTION: DECLARATION ';' | FUNCTION | FUNCCALLS ';';
 MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
@@ -378,7 +379,7 @@ MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
 
-INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | HYPERCONDITIONALS | LOOPS;
+INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | FUNCRETURN ';' | HYPERCONDITIONALS | LOOPS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 
