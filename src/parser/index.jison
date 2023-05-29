@@ -60,8 +60,8 @@
 "}"                         return '}'
 "<"                         return '<'
 ">"                         return '>'
-"<="                        return '<='
-">="                        return '>='
+"<!"                        return '<='
+"!>"                        return '>='
 "!="                        return '!='
 "=="                        return '=='
 "="                         return '='
@@ -69,6 +69,8 @@
 ":"                         return 'CallType'
 "["                         return '['
 "]"                         return ']'
+"true"                      return 'TRUE'
+"false"                     return 'FALSE'
 "boolean"                   return 'boolType'
 "string"                    return 'stringType'
 "float"                     return 'floatType'
@@ -491,9 +493,21 @@ SUPEREXPRESSION
                 createOperationQuad(quadruples,operandStack, operatorStack,typeStack, nextAvail, functions[currentFunction]);
             }
         }
+        | SUPEREXPRESSION '<=' EXPRESSION {
+            operatorStack.push('<=');
+            if([...operatorStack].pop() == "<="){
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
+            }
+        }
         | SUPEREXPRESSION '>' EXPRESSION {
             operatorStack.push('>');
             if([...operatorStack].pop() == ">"){
+                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
+            }
+        }
+        | SUPEREXPRESSION '>=' EXPRESSION {
+            operatorStack.push('>=');
+            if([...operatorStack].pop() == ">="){
                 createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
             }
         }
@@ -614,5 +628,17 @@ FACTOR
             operandStack.push($1);
             typeStack.push("string");
             createConstantVariable($1,"string",functions[0])
-        } 
+        } |
+        TRUE{
+            // constant address
+            operandStack.push("true");
+            typeStack.push("bool");
+            createConstantVariable("true","bool",functions[0])
+        } |
+        FALSE {
+            // constant address
+            operandStack.push("false");
+            typeStack.push("bool");
+            createConstantVariable("false","bool",functions[0])
+        }
         | '('  SUPRAEXPRESSION ')'; 
