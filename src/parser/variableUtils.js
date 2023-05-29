@@ -15,9 +15,6 @@ function assignAddress(variable,m0=null){
   let availableAddress = Number(availableAddresses[variable.varType][variable.type]);
   if(m0 != null && variable.dimensions !== null && variable.dimensions !== undefined)
   {
-    console.log("va a setear");
-    console.log(availableAddresses[variable.varType][variable.type])
-    console.log(m0);
     availableAddresses[variable.varType][variable.type] += Number(m0);
   }else {
     availableAddresses[variable.varType][variable.type]++;

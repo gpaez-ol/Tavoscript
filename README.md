@@ -54,3 +54,4 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se pueden crear arreglos de cualquier tamano de dimensiones, como parametros de funciones tmbn
 - Se puede llamas arreglos utiliando expresiones como los argumentos de dicho arreglo
 - Se agregaron addresses correctos a las variables asi como un objeto con los addresses base
+- Se agrego la funcion de print() 

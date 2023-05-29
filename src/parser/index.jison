@@ -3,7 +3,7 @@
     const {semanticTable} = require("./semanticTable");
     const {createReturnVar,finishFunction} = require("./functionsUtils");
     const {createVariable,createConstantVariable,getVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
-    const {getOperands,createAssignmentQuad,createOperationQuad} = require("./quadrupleUtils");
+    const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
 
     var operatorStack = [];
@@ -83,6 +83,7 @@
 "for"                       return 'FOR'
 "func"                      return 'FUNC'
 "return"                    return 'RETURN'
+"print"                     return 'PRINT'
 \"[^\"]*\"				    return 'text'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
 "PI"                        return 'PI'
@@ -257,6 +258,14 @@ FUNCRETURN:  RETURN HYPEREXPRESSION  {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
             createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples,nextAvail);
 };
+PRINTBODY:  PRINTBODY , HYPEREXPRESSION  {
+                createPrintQuad(quadruples,operandStack,typeStack)
+                
+            }
+            | HYPEREXPRESSION{
+                createPrintQuad(quadruples,operandStack,typeStack)
+            };
+PRINTFUNC:  PRINT '(' PRINTBODY ')';
 
 ARGUMENTS: ARGUMENTS , ARGUMENT | ARGUMENT;
 ARGUMENT: HYPEREXPRESSION {
@@ -379,7 +388,7 @@ MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
 
-INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | FUNCRETURN ';' | HYPERCONDITIONALS | LOOPS;
+INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | FUNCRETURN ';' | PRINTFUNC ';' |HYPERCONDITIONALS | LOOPS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 

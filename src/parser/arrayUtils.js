@@ -13,7 +13,6 @@ export function createDimensionQuad(
   ) {
     var operand = operandStack[operandStack.length -1];
     var operandType = typeStack[typeStack.length -1];
-    console.log(`Operand: ${operand}, Dimension: ${currentDimension}, Current Index: ${currentArrayCallIndex}`);
     if(operandType !== "int")
     {
         console.log(`Index for ${arrayCalled.name} should be of type int`);

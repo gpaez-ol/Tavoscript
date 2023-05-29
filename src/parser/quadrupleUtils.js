@@ -9,6 +9,26 @@ export function getOperands(operandStack, operatorStack, typeStack) {
   return [rightOperand, rightType, leftOperand, leftType, operator];
 }
 
+
+export function createPrintQuad(
+  quadruples,
+  operandStack,
+  typeStack,
+) {
+  var printValue = operandStack.pop();
+  var printType = typeStack.pop();
+  console.log(
+    `PRINT(${printValue}(${printType}))`
+  );
+  quadruples.push({
+    operator: "PRINT",
+    value: printValue,
+  });
+}
+
+
+
+
 export function createAssignmentQuad(
   quadruples,
   operandStack,
