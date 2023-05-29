@@ -136,3 +136,21 @@ export function getVariable(name, functions, currentFunction) {
   }
   return funcVar;
 }
+
+export function getArrayVariable(name,functions,currentFunction)
+{
+    let arrayVariable = getVariable(name,functions,currentFunction);
+    if(arrayVariable.dimensions === null || arrayVariable.dimensions === undefined)
+    {
+      arrayVariable = functions[0].variables.find((variable) => variable.name === name);
+      if (arrayVariable === undefined || arrayVariable === null) {
+        console.log(`Variable ${name} is not an array thus cannot be accessed`);
+        throw new Error(`Variable ${name} is not an array thus cannot be accessed`);
+      }else if(arrayVariable.dimensions === null || arrayVariable.dimensions === undefined)
+      {
+        console.log(`Variable ${name} is not an array thus cannot be accessed`);
+        throw new Error(`Variable ${name} is not an array thus cannot be accessed`);
+      }
+      return arrayVariable;
+    }
+}

@@ -26,6 +26,23 @@ export function createPrintQuad(
   });
 }
 
+// should be address
+export function createReadQuad(
+  quadruples,
+  operandStack,
+  typeStack,
+) {
+  var printValue = operandStack.pop();
+  var printType = typeStack.pop();
+  console.log(
+    `READ(${printValue}(${printType}))`
+  );
+  quadruples.push({
+    operator: "READ",
+    value: printValue,
+  });
+}
+
 
 
 
