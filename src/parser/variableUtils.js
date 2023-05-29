@@ -133,6 +133,7 @@ export function createConstantVariable(name, type, mainFunction) {
     mainFunction.variables.push({
       type,
       name,
+      address:3000,
       varType: "constant",
     });
   }
