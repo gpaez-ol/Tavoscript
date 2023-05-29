@@ -55,3 +55,5 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se puede llamas arreglos utiliando expresiones como los argumentos de dicho arreglo
 - Se agregaron addresses correctos a las variables asi como un objeto con los addresses base
 - Se agrego la funcion de print() 
+- Se agrego la funcion de read()
+- Se agrego getArrayVariable en caso de que la variable local y globa se llamen igual pero la global es arreglo si se llama como arrelgo se busca hasta global

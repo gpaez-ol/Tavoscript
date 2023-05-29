@@ -2,8 +2,8 @@
 %{
     const {semanticTable} = require("./semanticTable");
     const {createReturnVar,finishFunction} = require("./functionsUtils");
-    const {createVariable,createConstantVariable,getVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
-    const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad} = require("./quadrupleUtils");
+    const {createVariable,createConstantVariable,getVariable,getArrayVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
+    const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad,createReadQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
 
     var operatorStack = [];
@@ -84,6 +84,7 @@
 "func"                      return 'FUNC'
 "return"                    return 'RETURN'
 "print"                     return 'PRINT'
+"read"                      return 'READ'
 \"[^\"]*\"				    return 'text'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
 "PI"                        return 'PI'
@@ -258,6 +259,31 @@ FUNCRETURN:  RETURN HYPEREXPRESSION  {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
             createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples,nextAvail);
 };
+READARGUMENT:id
+        {
+            let readVariable = getVariable($1,functions,currentFunction);
+            operandStack.push($1);
+            typeStack.push(readVariable.type);
+
+        }|ARRCALL ']'
+        {
+            if(currentDimension <= arrayCalled.dimensions.length-1)
+            {
+                console.log(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
+                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
+
+            }
+            arrayCalled = null;
+            currentArrayCallIndex = null;
+        };
+READBODY:  READBODY , READARGUMENT  {
+                createReadQuad(quadruples,operandStack,typeStack)
+            }
+            | READARGUMENT{
+                createReadQuad(quadruples,operandStack,typeStack)
+            };
+READFUNC:  READ '(' READBODY ')';
+
 PRINTBODY:  PRINTBODY , HYPEREXPRESSION  {
                 createPrintQuad(quadruples,operandStack,typeStack)
                 
@@ -388,7 +414,13 @@ MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
 INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
 
 
-INSTRUCTION : DECLARATION ';' | SUPRAEXPRESSION ';' | FUNCRETURN ';' | PRINTFUNC ';' |HYPERCONDITIONALS | LOOPS;
+INSTRUCTION : DECLARATION ';' 
+            | SUPRAEXPRESSION ';' 
+            | FUNCRETURN ';' 
+            | PRINTFUNC ';' 
+            | READFUNC ';'
+            | HYPERCONDITIONALS 
+            | LOOPS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 
@@ -571,13 +603,7 @@ TERMS
         | FACTOR;     
         
 ARRHEADER: id '[' {
-        console.log($1);
-        let arrayVariable = getVariable($1,functions,currentFunction);
-        if(arrayVariable.dimensions === null || arrayVariable.dimensions === undefined)
-        {
-            console.log(`Variable ${$1} is not an array thus cannot be accessed`);
-            throw new Error(`Variable ${$1} is not an array thus cannot be accessed`);
-        }
+        let arrayVariable = getArrayVariable($1,functions,currentFunction);
         arrayCalled = arrayVariable;
         currentDimension = 0;
 
@@ -624,10 +650,10 @@ FACTOR
             typeStack.push(variable.type);
         }|ARRCALL ']'
         {
-            if(currentDimension < arrayCalled.dimensions.length-1)
+            if(currentDimension <= arrayCalled.dimensions.length-1)
             {
-                console.log(`Incorrect call array ${arrayVariable.name} has more dimensionesn`);
-                throw new Error(`Incorrect call array ${arrayVariable.name} has more dimensionesn`);
+                console.log(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
+                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
 
             }
             arrayCalled = null;
