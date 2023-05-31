@@ -65,6 +65,7 @@ export function createAssignmentQuad(
   console.log(
     `${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`
   );
+  console.log(leftOperand,"left operand assignment")
   quadruples.push({
     operator: operator,
     operand: leftOperand,
@@ -95,14 +96,14 @@ export function createOperationQuad(
   console.log(
     `${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})=${result}(${resultType})`
   );
-  createVariable(result, resultType, thisFunction, "temporal");
+  let newVariable = createVariable(result, resultType, thisFunction, pointer ? "pointer" : "temporal");
   quadruples.push({
     operator: operator,
     leftOperand: leftOperand,
     rightOperand: rightOperand,
-    result: result,
+    result: newVariable.address,
   });
-  operandStack.push(result);
+  operandStack.push(newVariable.address);
   typeStack.push(resultType);
 }
 

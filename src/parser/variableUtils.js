@@ -12,6 +12,7 @@ export function resetAvailableAddresses()
 }
 
 function assignAddress(variable,m0=null){
+  // check that the new address is within the valid range
   let availableAddress = Number(availableAddresses[variable.varType][variable.type]);
   if(m0 != null && variable.dimensions !== null && variable.dimensions !== undefined)
   {
@@ -36,6 +37,7 @@ export function createVariable(name, type, currentFunction, varType = "local") {
   }
   variable.address = assignAddress(variable);
   currentFunction.variables.push(variable);
+  return variable;
 }
 
 // di = ls -li +1 en este caso nos alinemos con c y el limite inferios siempr es 0
@@ -56,16 +58,18 @@ export function createArrayVariable(array, currentFunction, varType = "local") {
     console.log("Name is already taken", array.name);
     throw new Error(name, "name is already taken");
   }
-  let m0 = array.dimensions.reduce((currentValue,currentDimension) => { return currentValue * Number(currentDimension.upperLimit)},1)
+  let m0 = array.dimensions.reduce((currentValue,currentDimension) => { return currentValue * (Number(currentDimension.upperLimit))},1)
   let dimension =  0;
   let m = m0;
   while(dimension < array.dimensions.length)
   {
-    m = m/Number(array.dimensions[dimension].upperLimit);
+    m = m/(Number(array.dimensions[dimension].upperLimit));
     array.dimensions[dimension].m = m;
     dimension++;
   }
-  array.dimensions[array.dimensions.length-1]['k'] = array.dimensions[array.dimensions.length-1]['m'] * -1;
+  // opted for traditional base 0 arrays, but if wanted there should be an accum sum that is multiplied by -1
+  // mn * lln  + mn *lln (lower limit)
+  array.dimensions[array.dimensions.length-1]['k'] = 0 * -1;
   delete array.dimensions[array.dimensions.length-1]['m'];
   array.varType = currentFunction.name == "main" && varType == "local" ? "global" : varType;
   array.address = assignAddress(array,m0);
@@ -99,26 +103,19 @@ export function createConstantVariable(name, type, mainFunction) {
       (variable) => variable.name === name && variable.type === type
     )
   ) {
-    mainFunction.variables.push({
+    let newConstantVar = {
       type,
       name,
-      address:3000,
+      address:null,
       varType: "constant",
-    });
+    }
+    newConstantVar.address =assignAddress(newConstantVar);
+    mainFunction.variables.push(newConstantVar);
+    return newConstantVar.address;
+  }else {
+    let constantVar = mainFunction.variables.find(variable => variable.name === name);
+    return constantVar.address;
   }
-  // checar si la variable es local
-  // si no es local checar la global
-  //   switch (type) {
-  //     case "int":
-  //       break;
-  //     case "float":
-  //       break;
-  //     case "string":
-  //       break;
-  //     case "bool":
-  //       break;
-  //   }
-  // variables.push({ type: currentType, name: $1,address:10000 });
 }
 
 export function getVariable(name, functions, currentFunction) {
@@ -153,4 +150,5 @@ export function getArrayVariable(name,functions,currentFunction)
       }
       return arrayVariable;
     }
+    return arrayVariable;
 }
