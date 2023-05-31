@@ -196,8 +196,9 @@ FUNCDEFINITION: FUNC FUNCTYPE id{
         throw new Error(`Function ${$3} was already declared`);
     }
     // check if variable name exists because global variable will exist
-    // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
-    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
+    // talvez tmbn pushear a las variables globales una variable con el mismo nombre de la funcion ,para tener el valor asignado
+    let functionVariable =  createVariable($3, $2, functions[0], "local");
+    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
     currentFunction = functions.length-1;
     nextAvailable=1;
     nextPointerAvailable=1;
@@ -218,14 +219,17 @@ VOIDFUNCDEFINITION: FUNC voidType id{
     // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
     if($3 !== "main" )
     {
-    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
+    let voidFunctionVariable =  createVariable($3, $2, functions[0], "local");
+    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:voidFunctionVariable.address});
     currentFunction = functions.length-1;
     nextAvailable=1;
     nextPointerAvailable=1;
+    resetAvailableAddresses();
     }else {
         currentFunction = 1;
         nextAvailable=1;
         nextPointerAvailable=1;
+        resetAvailableAddresses();
     }
 };
 FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
