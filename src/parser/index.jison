@@ -270,7 +270,7 @@ FUNCTION: FUNCHEADER '{'  INSTRUCTIONS '}'{
 
 FUNCRETURN:  RETURN HYPEREXPRESSION  {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
-            createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples,nextAvail);
+            createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples);
 };
 READARGUMENT:id
         {
@@ -355,7 +355,7 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     if(functionCalled.returnType != "void")
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
-        var result = nextAvail();[]
+        var result = nextAvail();
         var resultType = functionCalled.returnType;
         createVariable(result, resultType, functions[currentFunction], "temporal");
         quadruples.push({operator:"=",operand:result,value:functionCalled.name})
@@ -389,10 +389,10 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     if(functionCalled.returnType != "void")
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
-        var result = nextAvail();[]
+        var result = nextAvail();
         var resultType = functionCalled.returnType;
         let createdVar = createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name})
+        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
     }else {
