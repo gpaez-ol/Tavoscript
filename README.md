@@ -57,3 +57,5 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se agrego la funcion de print() 
 - Se agrego la funcion de read()
 - Se agrego getArrayVariable en caso de que la variable local y globa se llamen igual pero la global es arreglo si se llama como arrelgo se busca hasta global
+- Se agrego la maquina virtual funcionando a un 50%
+- Se agregaron variables globales
