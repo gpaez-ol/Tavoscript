@@ -24,7 +24,7 @@
     // should be main if its still null after everything that is the error
     var quadruples = [{operator:"GOTO",address:null}];
     
-    var functions = [{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
+    var functions = [{variables:[],global:true},{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
     let currentFunction = 0;
     var jumpStack = [];
     let nextAvailable = 1;
@@ -99,7 +99,7 @@
 %start START
 %%
 START : MAININSTRUCTIONS EOF { 
-    if(functions[0].quadruplesStart === null)
+    if(functions[1].quadruplesStart === null)
     {
         console.log("Main function is missing");
         throw new Error("Main function is missing");
@@ -221,6 +221,11 @@ VOIDFUNCDEFINITION: FUNC voidType id{
     functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
     currentFunction = functions.length-1;
     nextAvailable=1;
+    nextPointerAvailable=1;
+    }else {
+        currentFunction = 1;
+        nextAvailable=1;
+        nextPointerAvailable=1;
     }
 };
 FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
@@ -450,7 +455,7 @@ DIMENSION: ']''[' NUMBER {
         throw new Error("Array limits must be positive values");
     }
     createConstantVariable($3,"int",functions[0])
-    currentArray = {type:currentType,name:$1,varType:currentFunction.name == "main" ? "global" : "local",dimensions:[{upperLimit:$3}]};
+    currentArray = {type:currentType,name:$1,varType:currentFunction.global === true ? "global" : "local",dimensions:[{upperLimit:$3}]};
 
 };
 

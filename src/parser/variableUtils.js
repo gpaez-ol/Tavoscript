@@ -33,7 +33,7 @@ export function createVariable(name, type, currentFunction, varType = "local") {
     name,
     address:null,
     varType,varType:
-    currentFunction.name == "main" && varType == "local" ? "global" : varType,
+    currentFunction.global === true && varType == "local" ? "global" : varType,
   }
   variable.address = assignAddress(variable);
   currentFunction.variables.push(variable);
@@ -71,7 +71,7 @@ export function createArrayVariable(array, currentFunction, varType = "local") {
   // mn * lln  + mn *lln (lower limit)
   array.dimensions[array.dimensions.length-1]['k'] = 0 * -1;
   delete array.dimensions[array.dimensions.length-1]['m'];
-  array.varType = currentFunction.name == "main" && varType == "local" ? "global" : varType;
+  array.varType = currentFunction.global === true && varType == "local" ? "global" : varType;
   array.address = assignAddress(array,m0);
   // add logic for the upper limits?
   currentFunction.variables.push(array);
