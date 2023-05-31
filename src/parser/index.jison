@@ -87,8 +87,6 @@
 "read"                      return 'READ'
 \"[^\"]*\"				    return 'text'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
-"PI"                        return 'PI'
-"E"                         return 'E'
 <<EOF>>				        return 'EOF'
 .                           {}
 /lex
@@ -101,6 +99,11 @@
 %start START
 %%
 START : MAININSTRUCTIONS EOF { 
+    if(functions[0].quadruplesStart === null)
+    {
+        console.log("Main function is missing");
+        throw new Error("Main function is missing");
+    }
     // aqui deberia regresar la tabla de memoria de las funciones, etc
     console.log("quadruples:",quadruples);
     console.log("operators:",operatorStack);
@@ -108,6 +111,7 @@ START : MAININSTRUCTIONS EOF {
     console.log("jumps:",jumpStack);
     console.log("functions:",functions);
     console.log("current function:",currentFunction)
+    return {quadruples,functions};
     };
 TYPE : intType {
       currentType = "int";
@@ -262,7 +266,7 @@ FUNCRETURN:  RETURN HYPEREXPRESSION  {
 READARGUMENT:id
         {
             let readVariable = getVariable($1,functions,currentFunction);
-            operandStack.push($1);
+            operandStack.push(readVariable.address);
             typeStack.push(readVariable.type);
 
         }|ARRCALL ']'
@@ -378,9 +382,9 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
-        createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
-        operandStack.push(result);
+        let createdVar = createVariable(result, resultType, functions[currentFunction], "temporal");
+        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name})
+        operandStack.push(createdVar.address);
         typeStack.push(resultType);
     }else {
         console.log("You cannot use a void function within a expression");
@@ -396,9 +400,9 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
-        createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
-        operandStack.push(result);
+        let createdVar= createVariable(result, resultType, functions[currentFunction], "temporal");
+        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name})
+        operandStack.push(createdVar.address);
         typeStack.push(resultType);
     }else {
         console.log("You cannot use a void function within a expression");
@@ -423,7 +427,6 @@ INSTRUCTION : DECLARATION ';'
             | LOOPS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
-
 };
 ARRAYID: id;
 DIMENSIONS: DIMENSIONS DIMENSION | DIMENSION;
@@ -460,13 +463,13 @@ ASSIGNMENT
         currentArray = null;
     }
     | id '=' HYPEREXPRESSION {
-        createVariable($1,currentType,functions[currentFunction]);
+        let declaredVar = createVariable($1,currentType,functions[currentFunction]);
         operatorStack.push('=');
         if([...operatorStack].pop() == "=")
         {
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
-        var leftOperand = $1;
+        var leftOperand = declaredVar.address;
         var leftType = currentType;
         var operator = operatorStack.pop();
         if(rightType != leftType)
@@ -609,7 +612,7 @@ ARRHEADER: id '[' {
 
 };
 ARRBODY: ARRBODY , EXPRESSION{
-     createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction])
+     createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction],functions[0])
      if(currentDimension !== arrayCalled.dimensions.length-1)
      {
      currentArrayCallIndex = operandStack.pop();
@@ -618,7 +621,7 @@ ARRBODY: ARRBODY , EXPRESSION{
      currentDimension++;
 } | EXPRESSION
 {
-    createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction])
+    createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction],functions[0])
     if(currentDimension !== arrayCalled.dimensions.length-1)
      {
      currentArrayCallIndex = operandStack.pop();
@@ -631,22 +634,39 @@ FACTOR
         : NUMBER 
         {
             // add check constants
-            operandStack.push($1);
+            let numberAddress = createConstantVariable($1,"int",functions[0])
             typeStack.push("int");
-            createConstantVariable($1,"int",functions[0])
+            operandStack.push(numberAddress);
+        }
+        | '-' NUMBER %prec UMINUS
+        {
+            console.log($2*-1);
+            let negativeNAddress =createConstantVariable($2*-1,"int",functions[0])
+            // add check constants
+            operandStack.push(negativeNAddress);
+            typeStack.push("int");
         }
         | FLOAT 
         {
-            operandStack.push($1);
+            let floatAddress = createConstantVariable($1,"float",functions[0])
+            operandStack.push(floatAddress);
             typeStack.push("float");
-            createConstantVariable($1,"float",functions[0])
+        }
+        
+        | '-' FLOAT %prec UMINUS
+        {
+            console.log($2*-1);
+            // add check constants
+            let negativeFAddress = createConstantVariable($2*-1,"float",functions[0])
+            operandStack.push(negativeFAddress);
+            typeStack.push("float");
         }
         | id
         {
             // check var exists
             // if var doesnt exist throw error
             let variable = getVariable($1,functions,currentFunction);
-            operandStack.push($1);
+            operandStack.push(variable.address);
             typeStack.push(variable.type);
         }|ARRCALL ']'
         {
@@ -661,20 +681,20 @@ FACTOR
         }
         |FACTFUNCCALLS 
         | text {
-            operandStack.push($1);
+            let stringAddress = createConstantVariable($1,"string",functions[0])
+            operandStack.push(stringAddress);
             typeStack.push("string");
-            createConstantVariable($1,"string",functions[0])
         } |
         TRUE{
+            let booleanTAddress = createConstantVariable("true","bool",functions[0])
             // constant address
-            operandStack.push("true");
+            operandStack.push(booleanTAddress);
             typeStack.push("bool");
-            createConstantVariable("true","bool",functions[0])
         } |
         FALSE {
             // constant address
-            operandStack.push("false");
+            let booleanFAddress = createConstantVariable("false","bool",functions[0])
+            operandStack.push(booleanFAddress);
             typeStack.push("bool");
-            createConstantVariable("false","bool",functions[0])
         }
         | '('  SUPRAEXPRESSION ')'; 

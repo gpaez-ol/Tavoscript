@@ -1,5 +1,5 @@
 import { createOperationQuad } from "./quadrupleUtils";
-
+import {createConstantVariable} from "./variableUtils";
 export function createDimensionQuad(
     arrayCalled,
     currentDimension,
@@ -9,7 +9,8 @@ export function createDimensionQuad(
     operatorStack,
     typeStack,
     nextAvail,
-    thisFunction
+    thisFunction,
+    mainFunction
   ) {
     var operand = operandStack[operandStack.length -1];
     var operandType = typeStack[typeStack.length -1];
@@ -31,7 +32,9 @@ export function createDimensionQuad(
     if(Object.hasOwn(arrayCurrentDimension, 'm'))
     {
         operatorStack.push("*");
-        operandStack.push(arrayCurrentDimension.m);
+        let constantVarAddress = createConstantVariable(arrayCurrentDimension.m,"int", mainFunction)
+        console.log(constantVarAddress, "constantVar created");
+        operandStack.push(constantVarAddress);
         typeStack.push("int");
         createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction);
         if(currentArrayCallIndex === undefined || currentArrayCallIndex === null)
@@ -49,12 +52,14 @@ export function createDimensionQuad(
     if(Object.hasOwn(arrayCurrentDimension, 'k'))
     {
         operatorStack.push("+");
-        operandStack.push(arrayCurrentDimension.k);
+        let constantVarKAddress = createConstantVariable(arrayCurrentDimension.k,"int", mainFunction)
+        operandStack.push(constantVarKAddress );
         typeStack.push("int");
         createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction);
         
         operatorStack.push("+");
-        operandStack.push(arrayCalled.address);
+        let constantArrayBaseAddress = createConstantVariable(arrayCalled.address,"int", mainFunction)
+        operandStack.push(constantArrayBaseAddress);
         typeStack.push("int");
         createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction,true);
     }
