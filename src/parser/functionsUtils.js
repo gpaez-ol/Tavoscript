@@ -65,7 +65,6 @@ export function createReturnVar(
   typeStack,
   operandStack,
   quadruples,
-  nextAvail
 ) {
   var rightOperand = operandStack.pop();
   var rightType = typeStack.pop();
