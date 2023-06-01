@@ -22,7 +22,7 @@ ES
 // variable pointers de arreglos 17000-20999
 // extraSegment = [];
 
-export let memory = {dataSegment:[],codeSegment:[],stackSegment:[],extraSegment:[]};
+export let memory = {dataSegment:{},codeSegment:{},stackSegment:{},extraSegment:{}};
 
 function createSegment(variables,segment)
 {
@@ -50,9 +50,12 @@ function createConstantSegment(variables,segment)
 }
 function createParameterSegment(variables,parameterValues,segment)
 {
+    console.log(parameterValues);
+
     variables.forEach(variable => 
         {
-            segment[variable.address] = parameterValues.slice(1)
+            segment[variable.address] = parameterValues.shift()
+            console.log("paramer with value:",segment[variable.address])
         })
 }
 
@@ -63,7 +66,10 @@ export function startVariablesMemory(functions){
     let extraSegmentVars = functions[0].variables.filter(variable => variable.varType === "temporal" || variable.varType === "pointer");
     createSegment(extraSegmentVars,memory.extraSegment);
     let constantVars = functions[0].variables.filter(variable => variable.varType === "constant");
-    createConstantSegment(constantVars,memory.extraSegment);
+    createConstantSegment(constantVars,memory.dataSegment);
+    console.log("data segment",memory.dataSegment)
+    console.log("stack segment", memory.stackSegment);
+    console.log("extra segment:",memory.extraSegment);
 }
 
 
@@ -86,15 +92,15 @@ export function resetMemory({stackSegment,extraSegment})
 
 export function offloadFunction(currentFunc)
 {
-    memory.extraSegment = [];
-    memory.stackSegment = [];
+    memory.extraSegment = {};
+    memory.stackSegment = {};
 }
 
 export function getVariableValue(address)
 {
     // variable global int 1000-4999
     if( address <= 1999 && address >= 1000)
-    {   console.log("global int:",memory.dataSegment[address]);
+    {   
         return memory.dataSegment[address] !== null ?  Number(memory.dataSegment[address]) : null;
     }
     // variable global float 2000-2999
@@ -155,22 +161,22 @@ export function getVariableValue(address)
     // constant int 13000 - 13999
     if( address <= 13999 && address >= 13000)
     {
-        return memory.extraSegment[address] !== null ?  Number(memory.extraSegment[address]) : null;
+        return memory.dataSegment[address] !== null ?  Number(memory.dataSegment[address]) : null;
     }
     // constant float 14000 - 14999
     if( address <= 14999 && address >= 14000)
     {
-        return memory.extraSegment[address] !== null ?  Number(memory.extraSegment[address]) : null;
+        return memory.dataSegment[address] !== null ?  Number(memory.dataSegment[address]) : null;
     }
     // constant string 15000 - 15999
     if( address <= 15999 && address >= 15000)
     {
-        return memory.extraSegment[address] !== null ?  String(memory.extraSegment[address]) : null;
+        return memory.dataSegment[address] !== null ?  String(memory.dataSegment[address]) : null;
     }
     // constant bool 16000 - 16999
     if( address <= 16999 && address >= 16000)
     {
-        return memory.extraSegment[address] !== null ?  Boolean(memory.extraSegment[address]) : null;
+        return memory.dataSegment[address] !== null ?  Boolean(memory.dataSegment[address]) : null;
     }
     // pointer int 17000 - 17999
     if( address <= 17999 && address >= 17000)
@@ -217,12 +223,9 @@ export function getVariableValue(address)
 
 export function assignVariableValue(address,value)
 {
-    console.log(address,"address");
-    console.log(value,"valor");
     if( address <= 4999 && address >= 1000)
     {
         memory.dataSegment[address] = value;
-        console.log(memory.dataSegment[address])
         return;
     }
     if ((address <= 8999 && address >= 5000)  || (address <= 23999 && address >= 21000) )

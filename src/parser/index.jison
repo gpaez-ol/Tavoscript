@@ -60,8 +60,8 @@
 "}"                         return '}'
 "<"                         return '<'
 ">"                         return '>'
-"<!"                        return '<='
-"!>"                        return '>='
+":<"                        return '<='
+":>"                        return '>='
 "!="                        return '!='
 "=="                        return '=='
 "="                         return '='
@@ -185,7 +185,6 @@ PARAMETER: TYPE id {
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
 FUNCTYPE: intType  | floatType   | boolType  | stringType;
 FUNCDEFINITION: FUNC FUNCTYPE id{
-    // add check to see function is unique
     if($3 === "main"){
         console.log("Main function should be void");
         throw new Error("Main function should be void");
@@ -205,7 +204,6 @@ FUNCDEFINITION: FUNC FUNCTYPE id{
     resetAvailableAddresses();
 };
 VOIDFUNCDEFINITION: FUNC voidType id{
-    // add check to see function is unique
     if(functions.some((func) => func.name === $3) && $3 !== "main")
     {
         console.log(`Function ${$3} already exists`);
@@ -220,7 +218,7 @@ VOIDFUNCDEFINITION: FUNC voidType id{
     if($3 !== "main" )
     {
     let voidFunctionVariable =  createVariable($3, $2, functions[0], "local");
-    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:voidFunctionVariable.address});
+    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
     currentFunction = functions.length-1;
     nextAvailable=1;
     nextPointerAvailable=1;
@@ -335,7 +333,7 @@ FUNCCALLHEADER: CallType id '('{
     if(!functionCalled)
     {
         console.log(`The function ${$2}does not exist`);
-        throw new Error(`The function ${$1} does not exist`);
+        throw new Error(`The function ${$2} does not exist`);
     }
     availableParams = [...functionCalled.parameters];
     functionCallCurrentParam = 1
@@ -395,9 +393,6 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
-    }else {
-        console.log("You cannot use a void function within a expression");
-        throw new Error("You cannot use a void function within an expression");
     }
     
 }| FUNCCALLHEADER  ')' {
@@ -492,13 +487,13 @@ ASSIGNMENT
     }
     ;
 FORASSIGNMENT : id '=' HYPEREXPRESSION {
-        createVariable($1,"int",functions[currentFunction]);
+        let forVar = createVariable($1,"int",functions[currentFunction]);
         operatorStack.push('=');
         if([...operatorStack].pop() == "=")
         {
             var rightOperand = operandStack.pop();
             var rightType = typeStack.pop();
-            var leftOperand = $1;
+            var leftOperand = forVar.address;
             var leftType = "int";
             var operator = operatorStack.pop();
             if(rightType != leftType)
@@ -507,7 +502,7 @@ FORASSIGNMENT : id '=' HYPEREXPRESSION {
                 throw new Error("For loops only take int types");
             }
             console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-            quadruples.push({operator:operator,operand:leftOperand,result:rightOperand});
+            quadruples.push({operator:operator,operand:leftOperand,value:rightOperand});
             // this should be the reference to goto at the end of the for
             jumpStack.push(quadruples.length);
         }

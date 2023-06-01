@@ -24,7 +24,7 @@ function assignAddress(variable,m0=null){
 }
 
 export function createVariable(name, type, currentFunction, varType = "local") {
-  if (currentFunction.variables.some((variable) => variable.name === name)) {
+  if (varType === "local" &&  currentFunction.variables.some((variable) => variable.name === name)) {
     console.log("Name is already taken", name);
     throw new Error(name, "name is already taken");
   }
@@ -35,7 +35,17 @@ export function createVariable(name, type, currentFunction, varType = "local") {
     varType,varType:
     currentFunction.global === true && varType == "local" ? "global" : varType,
   }
-  variable.address = assignAddress(variable);
+  if(variable.type !== "void")
+  {
+    variable.address = assignAddress(variable);
+  }else {
+    delete variable.address;
+  }
+  if(variable.type === "void")
+  {
+    console.log("Fue void el tipo",variable);
+
+  }
   currentFunction.variables.push(variable);
   return variable;
 }
