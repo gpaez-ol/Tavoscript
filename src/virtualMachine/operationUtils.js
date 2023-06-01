@@ -6,21 +6,32 @@ const { getVariableValue,assignVariableValue,loadFunction,resetMemory } = requir
 //   });
 let memoryStack = [];
 let quadrupleStack = [];
-
-export function solveOperation  (quadruple,currentQuadruple,functions,memory)
+let functionCalled = null;
+let parameterValues = [];
+let devMode = false
+function logger(string,object)
 {
+    if(devMode === true)
+    {
+        console.log(string,object ?? "")
+    }
+}
+export function solveOperation  (quadruple,currentQuadruple,functions,memory,logging=false)
+{
+    devMode=logging;
     if(quadruple === null || quadruple === undefined)
     {
-        console.log("quadruple was not found");
+        logger("quadruple was not found");
         return undefined;
     }
-    console.log("Current Quadruple: ",quadruple);
+    
+    logger("Current Quadruple: ",quadruple);
     switch (quadruple.operator){
         case "+":
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand + rightOperand;
-            console.log(`${leftOperand}+${rightOperand}=${result}`);
+            logger(`${leftOperand}(${quadruple.leftOperand})+${rightOperand}(${quadruple.rightOperand})=${result}(${quadruple.result})`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -28,7 +39,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand - rightOperand;
-            console.log(`${leftOperand}-${rightOperand}=${result}`);
+            logger(`${leftOperand}-${rightOperand}=${result}`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -36,7 +47,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand / rightOperand;
-            console.log(`${leftOperand}/${rightOperand}=${result}`);
+            logger(`${leftOperand}/${rightOperand}=${result}`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -44,14 +55,14 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand * rightOperand;
-            console.log(`${leftOperand}*${rightOperand}=${result}`);
+            logger(`${leftOperand}*${rightOperand}=${result}`);
             assignVariableValue(quadruple.result,result);
         }
         break;
         case "=":
         {
             const [value,assignmentOperand] = getAssignmentOperands(quadruple);
-            console.log(`${assignmentOperand}=${value}`);
+            logger(`${assignmentOperand}(address)=${value}`);
             // yo se es 1008 pero deberia ser quadruple.operand el que tiene el valor de address
             assignVariableValue(assignmentOperand,value);
         }
@@ -60,6 +71,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand === rightOperand;
+            logger(`${leftOperand}(${quadruple.leftOperand})==${rightOperand}(${quadruple.rightOperand}) => ${result}(quadruple.result)`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -67,6 +79,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand !== rightOperand;
+            logger(`${leftOperand}(${quadruple.leftOperand})!=${rightOperand}(${quadruple.rightOperand}) => ${result}(quadruple.result)`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -74,6 +87,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand < rightOperand;
+            logger(`${leftOperand}(${quadruple.leftOperand})<${rightOperand}(${quadruple.rightOperand}) => ${result}(quadruple.result)`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -81,6 +95,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand > rightOperand;
+            logger(`${leftOperand}(${quadruple.leftOperand})>${rightOperand}(${quadruple.rightOperand}) => ${result}(quadruple.result)`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -88,6 +103,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand >= rightOperand;
+            logger(`${leftOperand}(${quadruple.leftOperand})>=${rightOperand}(${quadruple.rightOperand}) => ${result}(quadruple.result)`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -95,6 +111,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         {
             const [leftOperand,rightOperand] = getOperationOperands(quadruple);
             const result = leftOperand <= rightOperand;
+            logger(`${leftOperand}(${quadruple.leftOperand})<=${rightOperand}(${quadruple.rightOperand}) => ${result}(quadruple.result)`);
             assignVariableValue(quadruple.result,result);
         }
         break;
@@ -112,22 +129,25 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
             // TODO: check if function name will have an address?
             const functionName = quadruple.functionName;
             functionCalled = functions.find(func => func.name === functionName);
-
+            parameterValues = [];
         }
         break;
         case "PARAM":
         {
             const value = getParamOperands(quadruple);
+            logger(value,"para el parametro")
             parameterValues.push(value);
         }
         break;
         case "GOSUB":
         {
              // take screenshot
-             memoryStack.push[{stackSegment:[...memory.stackSegment],extraSegment:[...memory.extraSegment]}]
+             logger(memory.stackSegment,"stack segment");
+             logger(memory.extraSegment,"extra Segment");
+             memoryStack.push({stackSegment:{...memory.stackSegment},extraSegment:{...memory.extraSegment}})
              quadrupleStack.push(currentQuadruple);
-             console.log("screenshot memory: ", memoryStack[memoryStack.length - 1]);
-             console.log("left a breadcrum at: " ,quadrupleStack[quadrupleStack.length -1])
+             logger("screenshot memory: ", memoryStack[memoryStack.length - 1]);
+             logger("left a breadcrum at: " ,quadrupleStack[quadrupleStack.length -1])
              loadFunction(functionCalled,parameterValues);
              parameterValues = [];
              return functionCalled.quadruplesStart;
@@ -138,7 +158,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
             let lastQuadruple = quadrupleStack.pop();
             if(lastQuadruple === undefined || lastQuadruple === null)
             {
-                console.log("The program ended");
+                logger("The program ended");
                 return null;
             }else {
                 let lastMemory = memoryStack.pop();
@@ -149,11 +169,12 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         break;
         case "RETURN":
         {
+            assignFunctionVariable(quadruple)
             // save global var with the function name as the value of return 
             let lastQuadruple = quadrupleStack.pop();
-            if(lastQuadruple === undefined)
+            if(lastQuadruple === undefined || lastQuadruple === null)
             {
-                console.log("The program ended");
+                logger("The program ended");
             }else {
                 let lastMemory = memoryStack.pop();
                 resetMemory(lastMemory);
@@ -180,10 +201,10 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         // case "READ":
         // {
         //     // check if types should work
-        //     console.log("PRINTED: ",value);
+        //     logger("PRINTED: ",value);
         //     rl.question(`Input value for ${quadruple.value}`, (answer) => {
         //         // TODO: Log the answer in a database
-        //         console.log(`Thank you for your valuable feedback: ${answer}`);
+        //         logger(`Thank you for your valuable feedback: ${answer}`);
         //         // Todo check input is type of value
         //         assignValue(quadruple.value,answer);
         //         rl.close();
@@ -194,7 +215,7 @@ export function solveOperation  (quadruple,currentQuadruple,functions,memory)
         case "PRINT":
         {
             const value = getVariableValue(quadruple.value)
-            console.log("PRINTED: ",value);
+            console.log("System Out: ",value);
         }
         break;
     }
@@ -208,25 +229,25 @@ function getOperationOperands(quadruple)
     if (quadruple.leftOperand >= 17000 && quadruple.leftOperand <= 20999)
     {  
         leftOperand = getVariableValue(getVariableValue(quadruple.leftOperand));
-        console.log("Actual Left Operand:",leftOperand);    
+        logger("Actual Left Operand:",leftOperand);    
     }else {
         leftOperand = getVariableValue(quadruple.leftOperand);
     }
     if (quadruple.rightOperand >= 17000 && quadruple.rightOperand <= 20999)
     {  
         rightOperand = getVariableValue(getVariableValue(quadruple.rightOperand));
-        console.log("Actual Right Operand:",operationrightOperand);    
+        logger("Actual Right Operand:",operationrightOperand);    
     }else {
         rightOperand = getVariableValue(quadruple.rightOperand);
     }
     if(leftOperand === null)
     {
-        console.log("Left Operand is null");
+        logger("Left Operand is null");
         throw new Error("Left Operand is null")
     }
     if(rightOperand === null)
     {
-        console.log("Right Operand is null");
+        logger("Right Operand is null");
         throw new Error("Right Operand is null")
     }
     return [leftOperand,rightOperand];
@@ -237,20 +258,44 @@ function getAssignmentOperands(quadruple)
     let assignmentOperand = quadruple.operand;
     if (quadruple.operand >= 17000 && quadruple.operand <= 20999)
     {  
-        assignmentOperand = getVariableValue(quadruple.operand);
-        console.log("Actual Assignment Operand:",assignmentOperand);    
+        assignmentOperand = getVariableValue(assignmentOperand);
+        logger("Actual Assignment Operand:",assignmentOperand);    
     }
     return [value,assignmentOperand];
 }
 function getVerificationOperands(quadruple)
 {
-    const operand = getVariableValue(quadruple.operand);
+    let operand = getVariableValue(quadruple.operand);
+    if (quadruple.operand >= 17000 && quadruple.operand <= 20999)
+    {  
+        operand = getVariableValue(operand);
+        logger("Actual Verification Operand:",operand);    
+    }
     // check if upper limit should be a constant
     const upperLimit = quadruple.upperLimit //getVariableValue(quadruple.upperLimit);
     return [operand,upperLimit];
 }
+function assignFunctionVariable(quadruple)
+{
+    let functionVar = functionCalled.globalAddress;
+    let returnValue = getVariableValue(quadruple.value);
+    if (quadruple.value >= 17000 && quadruple.value <= 20999)
+    {  
+        returnValue = getVariableValue(returnValue);
+        logger("Actual Function Return Operand:",value);    
+    }
+    // TODO: Check if functionVar is an existing variable (should be)
+    assignVariableValue(functionVar,returnValue);
+}
 function getParamOperands(quadruple)
 {
-    const value = getVariableValue(quadruple.value);
+    // check if value is a pointer
+    // add pointer logic to variable value
+    let value = getVariableValue(quadruple.value);
+    if (quadruple.value >= 17000 && quadruple.value <= 20999)
+    {  
+        value = getVariableValue(value);
+        logger("Actual Param Operand:",value);    
+    }
     return value;
 }

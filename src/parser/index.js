@@ -14,7 +14,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
  
-    if(functions[0].quadruplesStart === null)
+    if(functions[1].quadruplesStart === null)
     {
         console.log("Main function is missing");
         throw new Error("Main function is missing");
@@ -129,7 +129,6 @@ case 16:
 break;
 case 23:
 
-    // add check to see function is unique
     if($$[$0] === "main"){
         console.log("Main function should be void");
         throw new Error("Main function should be void");
@@ -140,8 +139,9 @@ case 23:
         throw new Error(`Function ${$$[$0]} was already declared`);
     }
     // check if variable name exists because global variable will exist
-    // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
-    functions.push({name:$$[$0],returnType:$$[$0-1],parameters:[],size:null,variables:[],quadruplesStart:null});
+    // talvez tmbn pushear a las variables globales una variable con el mismo nombre de la funcion ,para tener el valor asignado
+    let functionVariable =  createVariable($$[$0], $$[$0-1], functions[0], "local");
+    functions.push({name:$$[$0],returnType:$$[$0-1],parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
     currentFunction = functions.length-1;
     nextAvailable=1;
     nextPointerAvailable=1;
@@ -150,7 +150,6 @@ case 23:
 break;
 case 24:
 
-    // add check to see function is unique
     if(functions.some((func) => func.name === $$[$0]) && $$[$0] !== "main")
     {
         console.log(`Function ${$$[$0]} already exists`);
@@ -164,9 +163,17 @@ case 24:
     // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
     if($$[$0] !== "main" )
     {
+    let voidFunctionVariable =  createVariable($$[$0], $$[$0-1], functions[0], "local");
     functions.push({name:$$[$0],returnType:$$[$0-1],parameters:[],size:null,variables:[],quadruplesStart:null});
     currentFunction = functions.length-1;
     nextAvailable=1;
+    nextPointerAvailable=1;
+    resetAvailableAddresses();
+    }else {
+        currentFunction = 1;
+        nextAvailable=1;
+        nextPointerAvailable=1;
+        resetAvailableAddresses();
     }
 
 break;
@@ -189,7 +196,7 @@ break;
 case 31:
 
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
-            createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples,nextAvail);
+            createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples);
 
 break;
 case 32:
@@ -259,7 +266,7 @@ case 43:
     if(!functionCalled)
     {
         console.log(`The function ${$$[$0-1]}does not exist`);
-        throw new Error(`The function ${$$[$0-2]} does not exist`);
+        throw new Error(`The function ${$$[$0-1]} does not exist`);
     }
     availableParams = [...functionCalled.parameters];
     functionCallCurrentParam = 1
@@ -281,7 +288,7 @@ case 44:
     if(functionCalled.returnType != "void")
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
-        var result = nextAvail();[]
+        var result = nextAvail();
         var resultType = functionCalled.returnType;
         createVariable(result, resultType, functions[currentFunction], "temporal");
         quadruples.push({operator:"=",operand:result,value:functionCalled.name})
@@ -319,15 +326,12 @@ case 46:
     if(functionCalled.returnType != "void")
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
-        var result = nextAvail();[]
+        var result = nextAvail();
         var resultType = functionCalled.returnType;
         let createdVar = createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name})
+        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
-    }else {
-        console.log("You cannot use a void function within a expression");
-        throw new Error("You cannot use a void function within an expression");
     }
     
 
@@ -381,7 +385,7 @@ case 67:
         throw new Error("Array limits must be positive values");
     }
     createConstantVariable($$[$0],"int",functions[0])
-    currentArray = {type:currentType,name:$$[$0-2],varType:currentFunction.name == "main" ? "global" : "local",dimensions:[{upperLimit:$$[$0]}]};
+    currentArray = {type:currentType,name:$$[$0-2],varType:currentFunction.global === true ? "global" : "local",dimensions:[{upperLimit:$$[$0]}]};
 
 
 break;
@@ -419,13 +423,13 @@ case 72:
 break;
 case 73:
 
-        createVariable($$[$0-2],"int",functions[currentFunction]);
+        let forVar = createVariable($$[$0-2],"int",functions[currentFunction]);
         operatorStack.push('=');
         if([...operatorStack].pop() == "=")
         {
             var rightOperand = operandStack.pop();
             var rightType = typeStack.pop();
-            var leftOperand = $$[$0-2];
+            var leftOperand = forVar.address;
             var leftType = "int";
             var operator = operatorStack.pop();
             if(rightType != leftType)
@@ -434,7 +438,7 @@ case 73:
                 throw new Error("For loops only take int types");
             }
             console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-            quadruples.push({operator:operator,operand:leftOperand,result:rightOperand});
+            quadruples.push({operator:operator,operand:leftOperand,value:rightOperand});
             // this should be the reference to goto at the end of the for
             jumpStack.push(quadruples.length);
         }
@@ -813,7 +817,7 @@ parse: function parse(input) {
     // should be main if its still null after everything that is the error
     var quadruples = [{operator:"GOTO",address:null}];
     
-    var functions = [{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
+    var functions = [{variables:[],global:true},{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
     let currentFunction = 0;
     var jumpStack = [];
     let nextAvailable = 1;
@@ -1248,7 +1252,7 @@ case 41:
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)\b)/,/^(?:[0-9]+\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\()/,/^(?:\))/,/^(?:\{)/,/^(?:\})/,/^(?:<)/,/^(?:>)/,/^(?:<!)/,/^(?:!>)/,/^(?:!=)/,/^(?:==)/,/^(?:=)/,/^(?:;)/,/^(?::)/,/^(?:\[)/,/^(?:\])/,/^(?:true\b)/,/^(?:false\b)/,/^(?:bool\b)/,/^(?:string\b)/,/^(?:float\b)/,/^(?:int\b)/,/^(?:if\b)/,/^(?:void\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:func\b)/,/^(?:return\b)/,/^(?:print\b)/,/^(?:read\b)/,/^(?:"[^\"]*")/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)\b)/,/^(?:[0-9]+\b)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\()/,/^(?:\))/,/^(?:\{)/,/^(?:\})/,/^(?:<)/,/^(?:>)/,/^(?::<)/,/^(?::>)/,/^(?:!=)/,/^(?:==)/,/^(?:=)/,/^(?:;)/,/^(?::)/,/^(?:\[)/,/^(?:\])/,/^(?:true\b)/,/^(?:false\b)/,/^(?:bool\b)/,/^(?:string\b)/,/^(?:float\b)/,/^(?:int\b)/,/^(?:if\b)/,/^(?:void\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:func\b)/,/^(?:return\b)/,/^(?:print\b)/,/^(?:read\b)/,/^(?:"[^\"]*")/,/^(?:([a-zA-Z])[a-zA-Z0-9_]*)/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41],"inclusive":true}}
 });
 return lexer;
