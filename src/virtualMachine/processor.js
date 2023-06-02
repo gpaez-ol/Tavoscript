@@ -15,7 +15,7 @@ export function startProgram({quadruples,functions})
     }
     while(currentQuadruple !== undefined && currentQuadruple !== null)
     {
-        let solvedOperation = solveOperation(quadruples,currentQuadruple,functions,memory,globalQuads,true)
+        let solvedOperation = solveOperation(quadruples,currentQuadruple,functions,memory,globalQuads,false)
 
         if(solvedOperation.currentQuadruple === undefined && globalQuads === true)
         {

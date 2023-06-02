@@ -123,7 +123,6 @@ export function solveOperation  (quadruples,currentQuadruple,functions,memory,gl
         case "VER":
         {
             const [operand,upperLimit] = getVerificationOperands(quadruple);
-            console.log(operand);
             if(!(operand <= (upperLimit-1) && operand >= 0))
             {
                 throw new Error("Array index is out of bounds");
@@ -150,7 +149,6 @@ export function solveOperation  (quadruples,currentQuadruple,functions,memory,gl
             }else {
                 parameterValues.push(value);
             }
-            console.log(parameterValues);
         }
         break;
         case "GOSUB":
@@ -249,7 +247,6 @@ function getOperationOperands(quadruple)
     if (quadruple.leftOperand >= 17000 && quadruple.leftOperand <= 20999)
     {  
         leftOperand = getVariableValue(getVariableValue(quadruple.leftOperand));
-        console.log(leftOperand)
         logger("Actual Left Operand:",leftOperand);    
     }else {
         leftOperand = getVariableValue(quadruple.leftOperand);
@@ -257,7 +254,7 @@ function getOperationOperands(quadruple)
     if (quadruple.rightOperand >= 17000 && quadruple.rightOperand <= 20999)
     {  
         rightOperand = getVariableValue(getVariableValue(quadruple.rightOperand));
-        logger("Actual Right Operand:",operationrightOperand);    
+        logger("Actual Right Operand:",rightOperand);    
     }else {
         rightOperand = getVariableValue(quadruple.rightOperand);
     }
@@ -312,9 +309,7 @@ function getParamOperands(quadruple)
 {
     if(quadruple.m0)
     {
-        console.log("Add logic here to copy an array correctly");
         let values = getArrayVariableValue(quadruple.value,quadruple.m0);
-        console.log(values);
         return values;
     }
     let value = getVariableValue(quadruple.value);
