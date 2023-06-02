@@ -71,7 +71,7 @@ case 9:
                 var quadruple = quadruples[end];
                 console.log(quadruple);
                 quadruple.address = quadruples.length+1;
-                quadruples.push({operator:"GOTO",address:result});
+                quadruples.push({operator:"GOTO",address:result,global:currentFunction === 0});
                 jumpStack.push(quadruples.length-1);
       
 
@@ -84,7 +84,7 @@ case 12:
                          var end = jumpStack.pop();
                          var whileStart =  jumpStack.pop();
                          var quadruple = quadruples[end];
-                         quadruples.push({operator:"GOTO",address:whileStart});
+                         quadruples.push({operator:"GOTO",address:whileStart,global:currentFunction === 0});
                          quadruple.address = quadruples.length;
 
 
@@ -100,7 +100,7 @@ case 13:
                 throw new Error("A conditional statement should be a boolean");
             }
             var end = jumpStack.pop();
-            quadruples.push({operator:"GOTOT",value:resultOperand,address:end});
+            quadruples.push({operator:"GOTOT",value:resultOperand,address:end,global:currentFunction === 0});
 
 break;
 case 14:
@@ -108,19 +108,21 @@ case 14:
         var pendingFalseQuadruple = jumpStack.pop();
         var forStart = jumpStack.pop();
         var quadruple = quadruples[pendingFalseQuadruple];
-        quadruples.push({operator:"GOTO",address:forStart});
+        quadruples.push({operator:"GOTO",address:forStart,global:currentFunction === 0});
         quadruple.address = quadruples.length;
 
 
 break;
 case 15:
 
+         console.log("esta creando parametro normal");
          createVariable($$[$0],$$[$0-1],functions[currentFunction],"parameter");
          functions[currentFunction].parameters.push($$[$0-1]);
 
 break;
 case 16:
 
+        console.log("Esta creando parametro de tipo dimension");
         currentArray.type = $$[$0-2];
         createArrayVariable(currentArray,functions[currentFunction],"parameter");
        functions[currentFunction].parameters.push({type:$$[$0-2],dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
@@ -237,7 +239,7 @@ case 38:
 break;
 case 42:
 
-            var currentParam = availableParams.pop();
+            var currentParam = availableParams.shift();
             if(currentParam === null || currentParam === undefined)
             {
                 console.log("Too many arguments for the function");
@@ -246,14 +248,7 @@ case 42:
             var operand = operandStack.pop();
             var operandType = typeStack.pop();
             var param = functionCallCurrentParam;
-            var paramType = currentParam;
-            if(operandType !== paramType)
-            {
-                console.log(`Type should be ${paramType}`);
-                throw new Error(`Type should be ${paramType}`);
-            }
-            console.log(`${param}(${paramType})=${operand}(${operandType})`);
-            quadruples.push({operator:"PARAM",value:operand,param:functionCallCurrentParam});
+            checkParams(operand,operandType,currentParam,functionCallCurrentParam,currentFunction,functions,quadruples)
             functionCallCurrentParam++;
 
 break;
@@ -269,8 +264,9 @@ case 43:
         throw new Error(`The function ${$$[$0-1]} does not exist`);
     }
     availableParams = [...functionCalled.parameters];
+    console.log("Available Params :",[...availableParams]);
     functionCallCurrentParam = 1
-    quadruples.push({operator:"ERA",functionName:$$[$0-1]});
+    quadruples.push({operator:"ERA",functionName:$$[$0-1],global:currentFunction === 0,global:currentFunction === 0});
 
 break;
 case 44:
@@ -282,7 +278,7 @@ case 44:
         throw new Error("Arguments missing for function call");
     }
     // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
-    quadruples.push({operator:"GOSUB",value:functionCalled.name});
+    quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != "void")
@@ -291,14 +287,14 @@ case 44:
         var result = nextAvail();
         var resultType = functionCalled.returnType;
         createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
+        quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
     
 
 break;
 case 45:
 
-    quadruples.push({operator:"GOSUB",value:functionCalled.name});
+    quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != "void")
@@ -307,7 +303,7 @@ case 45:
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
         createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:result,value:functionCalled.name})
+        quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
 
 break;
@@ -320,7 +316,7 @@ case 46:
         throw new Error("Arguments missing for function call");
     }
     // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
-    quadruples.push({operator:"GOSUB",value:functionCalled.name});
+    quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != "void")
@@ -329,7 +325,7 @@ case 46:
         var result = nextAvail();
         var resultType = functionCalled.returnType;
         let createdVar = createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress})
+        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
     }
@@ -338,7 +334,7 @@ case 46:
 break;
 case 47:
 
-      quadruples.push({operator:"GOSUB",value:functionCalled.name});
+      quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != "void")
@@ -347,7 +343,7 @@ case 47:
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
         let createdVar= createVariable(result, resultType, functions[currentFunction], "temporal");
-        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name})
+        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
     }else {
@@ -417,7 +413,7 @@ case 72:
             throw new Error("Operation is not valid");
         }
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand});
+        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
         }
     
 break;
@@ -438,7 +434,7 @@ case 73:
                 throw new Error("For loops only take int types");
             }
             console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-            quadruples.push({operator:operator,operand:leftOperand,value:rightOperand});
+            quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
             // this should be the reference to goto at the end of the for
             jumpStack.push(quadruples.length);
         }
@@ -448,7 +444,7 @@ case 74:
 
                 operatorStack.push('=');
                 if([...operatorStack].pop() == "="){
-                    createAssignmentQuad(quadruples,operandStack,operatorStack,typeStack);
+                    createAssignmentQuad(quadruples,operandStack,operatorStack,typeStack,currentFunction===0);
             }
         
 break;
@@ -462,7 +458,7 @@ case 79:
                 console.log("A conditional statement should be a boolean");
                 throw new Error("A conditional statement should be a boolean");
             }
-            quadruples.push({operator:"GOTOF",value:resultOperand,address:null});
+            quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
             jumpStack.push(quadruples.length-1);
         
 break;
@@ -794,7 +790,7 @@ parse: function parse(input) {
 }};
 
     const {semanticTable} = require("./semanticTable");
-    const {createReturnVar,finishFunction} = require("./functionsUtils");
+    const {createReturnVar,finishFunction,checkParams} = require("./functionsUtils");
     const {createVariable,createConstantVariable,getVariable,getArrayVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
     const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad,createReadQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");

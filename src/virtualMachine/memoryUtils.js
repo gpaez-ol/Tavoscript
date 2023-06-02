@@ -50,12 +50,23 @@ function createConstantSegment(variables,segment)
 }
 function createParameterSegment(variables,parameterValues,segment)
 {
-    console.log(parameterValues);
-
+    
     variables.forEach(variable => 
         {
-            segment[variable.address] = parameterValues.shift()
-            console.log("paramer with value:",segment[variable.address])
+            if(variable.dimensions !== null && variable.dimensions !== undefined)
+            {
+                let m0 = variable.dimensions.reduce((currentValue,currentDimension) => { return currentValue * Number(currentDimension.upperLimit)},1)
+                let x = 0;
+                while(x < m0){
+                    segment[variable.address+x]  = parameterValues.shift();
+                    console.log("array parameter with value:",segment[variable.address+x])
+                    x++;
+                }
+            }else {
+                segment[variable.address] = parameterValues.shift()
+                console.log("parameter with value:",segment[variable.address])
+
+            }
         })
 }
 
@@ -219,6 +230,17 @@ export function getVariableValue(address)
         return memory.stackSegment[address] !== null ?  Boolean(memory.stackSegment[address]) : null;
     }
     throw new Error("Address is not found in the stacks");
+}
+export function getArrayVariableValue(address,arraySize) {
+    let x = 0;
+    let values = [];
+    while(x < arraySize)
+    {
+        let value = getVariableValue(address+x);
+        values.push(isNaN(value) ?null:value);
+        x++;
+    }
+    return values;
 }
 
 export function assignVariableValue(address,value)
