@@ -5,7 +5,7 @@
     string = 3
     bool =  4
 */
-export const startingAddresses = {
+const startingAddresses = {
      // variable global 1000-4999
     global: {
         int: 1000,
@@ -50,3 +50,4 @@ export const startingAddresses = {
     }
 }
 
+module.exports = {startingAddresses};

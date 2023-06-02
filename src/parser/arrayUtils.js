@@ -1,6 +1,6 @@
-import { createOperationQuad } from "./quadrupleUtils";
-import {createConstantVariable} from "./variableUtils";
-export function createDimensionQuad(
+const { createOperationQuad } = require("./quadrupleUtils");
+const {createConstantVariable, getVariableByAddress} = require("./variableUtils");
+function createDimensionQuad(
     arrayCalled,
     currentDimension,
     currentArrayCallIndex,
@@ -9,9 +9,11 @@ export function createDimensionQuad(
     operatorStack,
     typeStack,
     nextAvail,
-    thisFunction,
-    mainFunction
+    functions,
+    currentFunction
   ) {
+    let thisFunction = functions[currentFunction];
+    let mainFunction = functions[0];
     var operand = operandStack[operandStack.length -1];
     var operandType = typeStack[typeStack.length -1];
     if(operandType !== "int")
@@ -25,11 +27,12 @@ export function createDimensionQuad(
     }
     var arrayCurrentDimension = arrayCalled.dimensions[currentDimension];
     quadruples.push({
-      operator: "VER",
-      operand,
-      upperLimit: arrayCurrentDimension.upperLimit,
-      global:thisFunction.global === true
+        operator: "VER",
+        operand,
+        upperLimit: arrayCurrentDimension.upperLimit,
+        global:thisFunction.global === true
     });
+    let operandVariable = getVariableByAddress(operand,functions,currentFunction);
     if(Object.hasOwn(arrayCurrentDimension, 'm'))
     {
         operatorStack.push("*");
@@ -40,7 +43,13 @@ export function createDimensionQuad(
         createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction);
         if(currentArrayCallIndex === undefined || currentArrayCallIndex === null)
         {
-            return;
+            if (operandVariable.varType === "constant")
+            {
+                return {label:operandVariable.name}
+            } else {
+                console.log(operandVariable);
+                return {address:operandVariable.address,variable:true}
+            }
         }
 
     }
@@ -64,10 +73,15 @@ export function createDimensionQuad(
         typeStack.push("int");
         createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction,true);
     }
-
+    if (operandVariable.varType === "constant")
+    {
+        return {label:operandVariable.name}
+    } else {
+        return {address:operandVariable.address,variable:true}
+    }
   }
 
-export function checkArraysDimensionsMatch(baseArray,argumentArray)
+function checkArraysDimensionsMatch(baseArray,argumentArray)
 {
     let x = 0;
     if(baseArray.dimensions.length !== argumentArray.dimensions.length)
@@ -85,3 +99,4 @@ export function checkArraysDimensionsMatch(baseArray,argumentArray)
         x++;
     }
 }
+module.exports = {createDimensionQuad,checkArraysDimensionsMatch};

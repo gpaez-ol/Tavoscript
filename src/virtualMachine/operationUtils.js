@@ -1,9 +1,5 @@
 const { getVariableValue,assignVariableValue,loadFunction,resetMemory,getArrayVariableValue } = require("./memoryUtils");
-// const readline = require('readline');
-// const rl = readline.createInterface({
-//     input: process.stdin,
-//     output: process.stdout
-//   });
+var readlineSync = require('readline-sync');
 let memoryStack = [];
 let quadrupleStack = [];
 let functionCalled = null;
@@ -16,7 +12,7 @@ function logger(string,object)
         console.log(string,object ?? "")
     }
 }
-export function solveOperation  (quadruples,currentQuadruple,functions,memory,global,logging=false)
+ async function  solveOperation  (quadruples,currentQuadruple,functions,memory,global,logging=false)
 {
     devMode=logging;
     let quadruple = quadruples[currentQuadruple];
@@ -211,20 +207,23 @@ export function solveOperation  (quadruples,currentQuadruple,functions,memory,gl
             }
         }
         break;
-        // case "READ":
-        // {
-        //     // check if types should work
-        //     logger("PRINTED: ",value);
-        //     rl.question(`Input value for ${quadruple.value}`, (answer) => {
-        //         // TODO: Log the answer in a database
-        //         logger(`Thank you for your valuable feedback: ${answer}`);
-        //         // Todo check input is type of value
-        //         assignValue(quadruple.value,answer);
-        //         rl.close();
-        //       });
-        //     assignValue(quadruple.value,inputValue);
-        // }
-        //break;
+        case "READ":
+        {
+            let readingAddress = quadruple.value;
+            if (quadruple.value >= 17000 && quadruple.value <= 20999)
+            {  
+                readingAddress = getVariableValue(readingAddress);
+                logger("Actual Read Value:",readingAddress);    
+            }
+            let readLabel = createReadLabel(quadruple.label);
+            // get name of variable
+            let answer =  readlineSync.question(`${readLabel}: \n`);
+            logger(`Read ${readingAddress}: ${answer}`);
+            // Todo check input is type of value
+            checkInputIsCorrectType(quadruple.type,answer)
+            assignVariableValue(readingAddress,answer);
+        }
+        break;
         case "PRINT":
         {
             let value = getVariableValue(quadruple.value)
@@ -320,3 +319,61 @@ function getParamOperands(quadruple)
     }
     return value;
 }
+function checkInputIsCorrectType(type,value)
+{
+    switch(type)
+    {
+        case "int":
+        case "float": 
+        {
+            if(isNaN(value))
+            {
+                console.log(`Value should be ${type}`);
+                throw new Error(`Value should be ${type}`);
+            }
+            if(type === "int" && Number.isInteger(Number(value)) === false)
+            {
+                console.log(`Value should be ${type}, no decimals`)
+                throw new Error(`Value should be ${type}, no decimals`);
+            }
+
+        }
+        break;
+        case "bool":
+        {
+            if(value !== "true" && value !== "false")
+            {
+                console.log(`Value should be ${type}, true or false`);
+                throw new Error(`Value should be ${type}, true or false`);
+            }
+        }
+
+
+    }
+}
+function createReadLabel(labelVar)
+{
+    if(labelVar.dimensions !== null && labelVar.dimensions !== undefined)
+    {
+        let arrayLabel = labelVar.label;
+        labelVar.dimensions.forEach(dimension => {
+            if(dimension.variable !== true)
+            {
+
+                arrayLabel += `[${dimension.label}]`;
+            }else {
+                // TODO: Add logic to get current value of that dimension index to show
+                const value = getVariableValue(dimension.address);
+                if (dimension.address >= 17000 && dimension.address <= 20999)
+                {  
+                    value = getVariableValue(value);
+                    logger("Actual Param Operand:",value);    
+                }
+                arrayLabel += `[${value}]`;
+            }
+        })
+        return arrayLabel;
+    }
+    return labelVar.label;
+}
+module.exports = {solveOperation};

@@ -1,6 +1,6 @@
 const { semanticTable } = require("./semanticTable");
-const { createVariable } = require("./variableUtils");
-export function getOperands(operandStack, operatorStack, typeStack) {
+const { createVariable, getVariableByAddress } = require("./variableUtils");
+function getOperands(operandStack, operatorStack, typeStack) {
   const rightOperand = operandStack.pop();
   const rightType = typeStack.pop();
   const leftOperand = operandStack.pop();
@@ -10,7 +10,7 @@ export function getOperands(operandStack, operatorStack, typeStack) {
 }
 
 
-export function createPrintQuad(
+function createPrintQuad(
   quadruples,
   operandStack,
   typeStack,
@@ -27,26 +27,30 @@ export function createPrintQuad(
 }
 
 // should be address
-export function createReadQuad(
+function createReadQuad(
   quadruples,
   operandStack,
   typeStack,
+  label
 ) {
-  var printValue = operandStack.pop();
-  var printType = typeStack.pop();
+  var readValue = operandStack.pop();
+  console.log(readValue);
+  var readType = typeStack.pop();
   console.log(
-    `READ(${printValue}(${printType}))`
+    `READ(${readValue}(${readType}))`
   );
   quadruples.push({
     operator: "READ",
-    value: printValue,
+    value: readValue.address,
+    type: readType,
+    label:readValue.label
   });
 }
 
 
 
 
-export function createAssignmentQuad(
+function createAssignmentQuad(
   quadruples,
   operandStack,
   operatorStack,
@@ -75,7 +79,7 @@ export function createAssignmentQuad(
   });
 }
 
-export function createOperationQuad(
+function createOperationQuad(
   quadruples,
   operandStack,
   operatorStack,
@@ -110,3 +114,4 @@ export function createOperationQuad(
   typeStack.push(resultType);
 }
 
+module.exports = {getOperands,createPrintQuad,createReadQuad,createAssignmentQuad,createOperationQuad}

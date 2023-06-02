@@ -22,7 +22,7 @@ ES
 // variable pointers de arreglos 17000-20999
 // extraSegment = [];
 
-export let memory = {dataSegment:{},codeSegment:{},stackSegment:{},extraSegment:{}};
+let memory = {dataSegment:{},codeSegment:{},stackSegment:{},extraSegment:{}};
 
 function createSegment(variables,segment)
 {
@@ -58,33 +58,34 @@ function createParameterSegment(variables,parameterValues,segment)
                 let x = 0;
                 while(x < m0){
                     segment[variable.address+x]  = parameterValues.shift();
-                    console.log("array parameter with value:",segment[variable.address+x])
                     x++;
                 }
             }else {
                 segment[variable.address] = parameterValues.shift()
-                console.log("parameter with value:",segment[variable.address])
 
             }
         })
 }
 
 // add pointer vars
-export function startVariablesMemory(functions){
+ function startVariablesMemory(functions,devMode){
     let globalVars = functions[0].variables.filter(variable => variable.varType === "global");
     createSegment(globalVars,memory.dataSegment);
     let extraSegmentVars = functions[0].variables.filter(variable => variable.varType === "temporal" || variable.varType === "pointer");
     createSegment(extraSegmentVars,memory.extraSegment);
     let constantVars = functions[0].variables.filter(variable => variable.varType === "constant");
     createConstantSegment(constantVars,memory.dataSegment);
-    console.log("data segment",memory.dataSegment)
-    console.log("stack segment", memory.stackSegment);
-    console.log("extra segment:",memory.extraSegment);
+    if(devMode)
+    {
+        console.log("data segment",memory.dataSegment)
+        console.log("stack segment", memory.stackSegment);
+        console.log("extra segment:",memory.extraSegment);
+    }
 }
 
 
 
-export function loadFunction(currentFunc,parameterValues=[])
+ function loadFunction(currentFunc,parameterValues=[])
 {
     let localVars = currentFunc.variables.filter(variable => variable.varType === "local");
     createSegment(localVars,memory.stackSegment);
@@ -94,19 +95,19 @@ export function loadFunction(currentFunc,parameterValues=[])
     createSegment(temporalVars,memory.extraSegment);
 }
 
-export function resetMemory({stackSegment,extraSegment})
+ function resetMemory({stackSegment,extraSegment})
 {
     memory.stackSegment = stackSegment;
     memory.extraSegment = extraSegment;
 }
 
-export function offloadFunction(currentFunc)
+ function offloadFunction(currentFunc)
 {
     memory.extraSegment = {};
     memory.stackSegment = {};
 }
 
-export function getVariableValue(address)
+ function getVariableValue(address)
 {
     // variable global int 1000-4999
     if( address <= 1999 && address >= 1000)
@@ -230,7 +231,7 @@ export function getVariableValue(address)
     }
     throw new Error("Address is not found in the stacks");
 }
-export function getArrayVariableValue(address,arraySize) {
+ function getArrayVariableValue(address,arraySize) {
     let x = 0;
     let values = [];
     while(x < arraySize)
@@ -242,7 +243,7 @@ export function getArrayVariableValue(address,arraySize) {
     return values;
 }
 
-export function assignVariableValue(address,value)
+ function assignVariableValue(address,value)
 {
     if( address <= 4999 && address >= 1000)
     {
@@ -262,3 +263,4 @@ export function assignVariableValue(address,value)
     throw new Error("Address is not found in the stacks");
 }
 
+module.exports = {memory,startVariablesMemory,loadFunction,resetMemory,offloadFunction,getVariableValue,getArrayVariableValue,assignVariableValue};

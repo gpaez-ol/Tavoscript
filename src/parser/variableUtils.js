@@ -1,8 +1,8 @@
-import { startingAddresses } from "./mainAddresses";
+const { startingAddresses } = require("./mainAddresses");
 
 let availableAddresses = JSON.parse(JSON.stringify(startingAddresses));
 
-export function resetAvailableAddresses()
+function resetAvailableAddresses()
 {
   let currentGlobalAddress = {...availableAddresses.global};
   let currentConst = {... availableAddresses.constant};
@@ -23,7 +23,7 @@ function assignAddress(variable,m0=null){
   return availableAddress;
 }
 
-export function createVariable(name, type, currentFunction, varType = "local") {
+function createVariable(name, type, currentFunction, varType = "local") {
   if (varType === "local" &&  currentFunction.variables.some((variable) => variable.name === name)) {
     console.log("Name is already taken", name);
     throw new Error(name, "name is already taken");
@@ -63,7 +63,7 @@ export function createVariable(name, type, currentFunction, varType = "local") {
 
 
 
-export function createArrayVariable(array, currentFunction, varType = "local") {
+function createArrayVariable(array, currentFunction, varType = "local") {
   if (currentFunction.variables.some((variable) => variable.name === array.name)) {
     console.log("Name is already taken", array.name);
     throw new Error(name, "name is already taken");
@@ -87,7 +87,7 @@ export function createArrayVariable(array, currentFunction, varType = "local") {
   currentFunction.variables.push(array);
 }
 
-export function accessArrayValue(array,indexes)
+function accessArrayValue(array,indexes)
 {
   let cell=0;
   array.forEach(dimension => {
@@ -107,7 +107,7 @@ export function accessArrayValue(array,indexes)
   return cell;
 }
 
-export function createConstantVariable(name, type, mainFunction) {
+function createConstantVariable(name, type, mainFunction) {
   if (
     !mainFunction.variables.some(
       (variable) => variable.name === name && variable.type === type
@@ -128,8 +128,10 @@ export function createConstantVariable(name, type, mainFunction) {
   }
 }
 
-export function getVariable(name, functions, currentFunction) {
+function getVariable(name, functions, currentFunction) {
   // check local vars
+  console.log(functions);
+  console.log(currentFunction);
   let funcVar = functions[currentFunction].variables.find(
     (variable) => variable.name === name
   );
@@ -144,7 +146,7 @@ export function getVariable(name, functions, currentFunction) {
   return funcVar;
 }
 
-export function getVariableByAddress(address,functions,currentFunction)
+function getVariableByAddress(address,functions,currentFunction)
 {
   let funcVar = functions[currentFunction].variables.find(
     (variable) => variable.address !== undefined &&  variable.address === address
@@ -159,7 +161,7 @@ export function getVariableByAddress(address,functions,currentFunction)
   return funcVar;
 }
 
-export function getArrayVariable(name,functions,currentFunction)
+function getArrayVariable(name,functions,currentFunction)
 {
     let arrayVariable = getVariable(name,functions,currentFunction);
     if(arrayVariable.dimensions === null || arrayVariable.dimensions === undefined)
@@ -177,3 +179,4 @@ export function getArrayVariable(name,functions,currentFunction)
     }
     return arrayVariable;
 }
+module.exports ={resetAvailableAddresses,createVariable,createArrayVariable,accessArrayValue,createConstantVariable,getVariable,getVariableByAddress,getArrayVariable};

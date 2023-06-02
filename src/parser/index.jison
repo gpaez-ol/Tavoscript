@@ -12,6 +12,7 @@
     var jumpStack = [];
     var currentDimension = 0;
     var arrayCalled = null;
+    var arrayCalledLabel = null;
     var currentArrayCallIndex = null;
 
     //for functions
@@ -275,7 +276,7 @@ FUNCRETURN:  RETURN HYPEREXPRESSION  {
 READARGUMENT:id
         {
             let readVariable = getVariable($1,functions,currentFunction);
-            operandStack.push(readVariable.address);
+            operandStack.push({address:readVariable.address,label:readVariable.name});
             typeStack.push(readVariable.type);
 
         }|ARRCALL ']'
@@ -283,9 +284,10 @@ READARGUMENT:id
             if(currentDimension <= arrayCalled.dimensions.length-1)
             {
                 console.log(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
-                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
+                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensions`);
 
             }
+            operandStack[operandStack.length] = {address:operandStack[operandStack.length -1],label:arrayCalledLabel}
             arrayCalled = null;
             currentArrayCallIndex = null;
         };
@@ -608,11 +610,13 @@ TERMS
 ARRHEADER: id '[' {
         let arrayVariable = getArrayVariable($1,functions,currentFunction);
         arrayCalled = arrayVariable;
+        arrayCalledLabel = {label:arrayVariable.name,dimensions:[]};
         currentDimension = 0;
 
 };
 ARRBODY: ARRBODY , EXPRESSION{
-     createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction],functions[0])
+     let dimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions,currentFunction)
+     arrayCalledLabel.dimensions.push(dimensionIndex);
      if(currentDimension !== arrayCalled.dimensions.length-1)
      {
      currentArrayCallIndex = operandStack.pop();
@@ -621,7 +625,8 @@ ARRBODY: ARRBODY , EXPRESSION{
      currentDimension++;
 } | EXPRESSION
 {
-    createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions[currentFunction],functions[0])
+    let lastDimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions,currentFunction)
+    arrayCalledLabel.dimensions.push(lastDimensionIndex);
     if(currentDimension !== arrayCalled.dimensions.length-1)
      {
      currentArrayCallIndex = operandStack.pop();
