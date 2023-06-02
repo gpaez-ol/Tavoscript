@@ -40,7 +40,6 @@ function createSegment(variables,segment)
         }
 
         });
-        console.log(segment);
 }
 function createConstantSegment(variables,segment)
 {

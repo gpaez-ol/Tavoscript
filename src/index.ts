@@ -10,8 +10,14 @@ const whileFibonacci = 'func void fibonacci(int number){int t1 = 0; int t2=1; in
 const recursiveFibonacci = "func int fibonacci(int number){ if(number < 2){ return number;} else { return :fibonacci(number-1) + :fibonacci(number-2); } } int x=:fibonacci(4); func void main(){    print(:fibonacci(x)); print(x); }"
 const simpleArraySum = "func int sumArray(int value){int x[1][2],y[1][2];  x[0,0]=5;  y[0,1]=x[0,0]-2; return y[0,1];} func void main(){print(:sumArray(5));}"
 const arrayAndNormalVariables = "func int sumArray(int x[1][2],int z){int y[1][2];    y[0,1]=x[0,1]-z; return y[0,1];} func void main(){ int mainArray[1][2]; mainArray[0,1]=10;  print(:sumArray(mainArray,5));}";
-const code: string = "func void multiplyMatrixes(int x[2][2],int y[2][2]){print(x[0,1]);} func void main(){int x[2][2],y[2][2];  x[0,0] = 1; x[0,1] = 5; x[1,0] = 2; x[1,1] =2; y[0,0] = 1; y[0,1] = 2; y[1,0] = 2; y[1,1] =2; :multiplyMatrixes(x,y); }";
-
+const matrixesMultiplication = "func void multiplyMatrixes(int x[2][2],int y[2][2]){  int c[2][2]; for(i=0,i<2){for(j=0,j<2){ c[i,j]=0; for(k=0,k<2){c[i,j] = c[i,j] + x[i,k] * y[k,j]; k=k+1; } j=j+1;}i=i+1; }  for(h=0,h<2){for(l=0,l<2){ print(c[h,l]); l=l+1;} h=h+1;}  } func void main(){int x[2][2],y[2][2];  x[0,0] = 7; x[0,1] = 5; x[1,0] = 6; x[1,1] = 3; y[0,0] = 2; y[0,1] = 1; y[1,0] = 5; y[1,1] =1; :multiplyMatrixes(x,y); }";
+const code: string = "func void multiplyMatrixes(int x[2][2],int y[2][2]){  int c[2][2]; for(i=0,i<2){for(j=0,j<2){ c[i,j]=0; for(k=0,k<2){c[i,j] = c[i,j] + x[i,k] * y[k,j]; k=k+1; } j=j+1;}i=i+1; }  for(h=0,h<2){for(l=0,l<2){ print(c[h,l]); l=l+1;} h=h+1;}  } func void main(){int x[2][2],y[2][2];  x[0,0] = 7; x[0,1] = 5; x[1,0] = 6; x[1,1] = 3; y[0,0] = 2; y[0,1] = 1; y[1,0] = 5; y[1,1] =1; :multiplyMatrixes(x,y); }";
+                                                                                                                                                                                              // for (i = 0; i < n; i++) {
+                                                                                                                                                                                              //   for (j = 0; j < n; j++) {
+                                                                                                                                                                                              //       printf("%d\t", c[i][j]);
+                                                                                                                                                                                              //   }
+                                                                                                                                                                                              //   printf("\n");
+                                                                                                                                                                                              // }
 const compileBtn = document.getElementById("runtimeBtn");
 onload = () => {
   try {
