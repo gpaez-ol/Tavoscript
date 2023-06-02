@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node main.js",
     "build": "webpack",
     "prebuild": "jison src/parser/index.jison -o src/parser/index.js -m amd"
   },
@@ -19,6 +20,8 @@
   },
   "dependencies": {
     "jison": "^0.4.18",
-    "readline": "^1.3.0"
+    "readline": "^1.3.0",
+    "readline-sync": "^1.4.10",
+    "yargs": "^17.7.2"
   }
 }

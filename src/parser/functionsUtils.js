@@ -1,5 +1,5 @@
-import { getVariableByAddress}  from "./variableUtils";
-import { checkArraysDimensionsMatch } from "./arrayUtils";
+const { getVariableByAddress}  = require("./variableUtils");
+const { checkArraysDimensionsMatch } = require("./arrayUtils");
 function getFunctionSize(variables) {
   let vli = 0;
   let vlf = 0;
@@ -55,14 +55,14 @@ function getFunctionSize(variables) {
   };
 }
 
-export function finishFunction(thisFunction, quadruples) {
+function finishFunction(thisFunction, quadruples) {
   thisFunction.size = getFunctionSize(thisFunction.variables);
   quadruples.push({
     operator: "ENDFUNC",
   });
 }
 
-export function createReturnVar(
+function createReturnVar(
   thisFunction,
   typeStack,
   operandStack,
@@ -83,7 +83,7 @@ export function createReturnVar(
     value: rightOperand,
   });
 }
-export function checkParams(operand,operandType,currentParam,functionCallCurrentParam,currentFunction,functions,quadruples)
+function checkParams(operand,operandType,currentParam,functionCallCurrentParam,currentFunction,functions,quadruples)
 {
   console.log("operand",operand);
   console.log("operandType",operandType);
@@ -128,3 +128,4 @@ export function checkParams(operand,operandType,currentParam,functionCallCurrent
   console.log(`${functionCallCurrentParam}(${currentParam})=${operand}(${operandType})`);
   quadruples.push({operator:"PARAM",value:operand,param:functionCallCurrentParam,global:currentFunction === 0});
 }
+module.exports = {finishFunction,createReturnVar,checkParams};

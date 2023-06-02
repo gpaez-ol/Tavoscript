@@ -270,4 +270,4 @@ semanticTable["bool"] = {
     bool: "bool",
   },
 };
-export { semanticTable };
+module.exports = {semanticTable};

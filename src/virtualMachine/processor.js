@@ -1,13 +1,16 @@
 const { startVariablesMemory,memory } = require("./memoryUtils");
 const { solveOperation} = require("./operationUtils");
-export function startProgram({quadruples,functions})
+async function startProgram({quadruples,functions},devMode)
 {
     console.log("Starting Process ------------------------")
-    startVariablesMemory(functions);
+    startVariablesMemory(functions,devMode);
     let currentQuadruple = 0;
     let globalQuads = false;
     let globalQuadruples = quadruples.filter(quadruple => quadruple.global === true);
-    console.log("globalQuads",globalQuadruples);
+    if(devMode)
+    {
+        console.log("globalQuads",globalQuadruples);
+    }
     if(globalQuadruples.length > 0)
     {
         globalQuads = true;
@@ -15,7 +18,7 @@ export function startProgram({quadruples,functions})
     }
     while(currentQuadruple !== undefined && currentQuadruple !== null)
     {
-        let solvedOperation = solveOperation(quadruples,currentQuadruple,functions,memory,globalQuads,false)
+        let solvedOperation = await solveOperation(quadruples,currentQuadruple,functions,memory,globalQuads,devMode)
 
         if(solvedOperation.currentQuadruple === undefined && globalQuads === true)
         {
@@ -29,3 +32,4 @@ export function startProgram({quadruples,functions})
         }
     }
 }
+module.exports = {startProgram};

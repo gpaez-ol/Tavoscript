@@ -61,3 +61,6 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se agregaron variables globales
 - Se agregaron arreglos como parametros de funciones
 - Maquina virtual funcionando a un 90%
+- Read funcionando al 100% 
+- Maquina virtual lista
+- Se agrego logica para correrlo desde la terminal
