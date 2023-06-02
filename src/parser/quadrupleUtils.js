@@ -51,6 +51,7 @@ export function createAssignmentQuad(
   operandStack,
   operatorStack,
   typeStack,
+  global
 ) {
   var [rightOperand, rightType, leftOperand, leftType, operator] = getOperands(
     operandStack,
@@ -70,6 +71,7 @@ export function createAssignmentQuad(
     operator: operator,
     operand: leftOperand,
     value: rightOperand,
+    global:global === true
   });
 }
 
@@ -102,6 +104,7 @@ export function createOperationQuad(
     leftOperand: leftOperand,
     rightOperand: rightOperand,
     result: newVariable.address,
+    global: thisFunction.global === true
   });
   operandStack.push(newVariable.address);
   typeStack.push(resultType);

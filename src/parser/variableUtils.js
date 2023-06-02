@@ -144,6 +144,21 @@ export function getVariable(name, functions, currentFunction) {
   return funcVar;
 }
 
+export function getVariableByAddress(address,functions,currentFunction)
+{
+  let funcVar = functions[currentFunction].variables.find(
+    (variable) => variable.address !== undefined &&  variable.address === address
+  );
+  if (funcVar === undefined || funcVar === null) {
+    funcVar = functions[0].variables.find((variable) => variable.address !== undefined && variable.address === address);
+    if (funcVar === undefined || funcVar === null) {
+      console.log(`Variable ${address} does not exist at this point in time.`);
+      throw new Error(`Variable ${address} does not exist at this point`);
+    }
+  }
+  return funcVar;
+}
+
 export function getArrayVariable(name,functions,currentFunction)
 {
     let arrayVariable = getVariable(name,functions,currentFunction);

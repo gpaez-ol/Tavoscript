@@ -28,6 +28,7 @@ export function createDimensionQuad(
       operator: "VER",
       operand,
       upperLimit: arrayCurrentDimension.upperLimit,
+      global:thisFunction.global === true
     });
     if(Object.hasOwn(arrayCurrentDimension, 'm'))
     {
@@ -65,3 +66,22 @@ export function createDimensionQuad(
     }
 
   }
+
+export function checkArraysDimensionsMatch(baseArray,argumentArray)
+{
+    let x = 0;
+    if(baseArray.dimensions.length !== argumentArray.dimensions.length)
+    {
+        console.log("Arrays dimensions length do not match");
+        throw new Error("Arrays dimensions length do not match");
+    }
+    while(x<baseArray.dimensions.length)
+    {
+        if(baseArray.dimensions[x] !== argumentArray.dimensions[x].upperLimit)
+        {
+            console.log("Arrays dimensions sizes do not match");
+            throw new Error("Arrays dimensions sizes do not match");
+        }
+        x++;
+    }
+}
