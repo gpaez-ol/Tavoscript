@@ -229,7 +229,12 @@ export function solveOperation  (quadruples,currentQuadruple,functions,memory,gl
         //break;
         case "PRINT":
         {
-            const value = getVariableValue(quadruple.value)
+            let value = getVariableValue(quadruple.value)
+            if (quadruple.value >= 17000 && quadruple.value <= 20999)
+            {  
+                value = getVariableValue(value);
+                logger("Actual Print Operand:",value);    
+            }
             console.log("System Out: ",value);
         }
         break;

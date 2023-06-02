@@ -10,7 +10,7 @@ const whileFibonacci = 'func void fibonacci(int number){int t1 = 0; int t2=1; in
 const recursiveFibonacci = "func int fibonacci(int number){ if(number < 2){ return number;} else { return :fibonacci(number-1) + :fibonacci(number-2); } } int x=:fibonacci(4); func void main(){    print(:fibonacci(x)); print(x); }"
 const simpleArraySum = "func int sumArray(int value){int x[1][2],y[1][2];  x[0,0]=5;  y[0,1]=x[0,0]-2; return y[0,1];} func void main(){print(:sumArray(5));}"
 const arrayAndNormalVariables = "func int sumArray(int x[1][2],int z){int y[1][2];    y[0,1]=x[0,1]-z; return y[0,1];} func void main(){ int mainArray[1][2]; mainArray[0,1]=10;  print(:sumArray(mainArray,5));}";
-const code: string = 'func int sumArray(int x[1][2],int z){int y[1][2];    y[0,1]=x[0,1]-z; return y[0,1];} func void main(){ int mainArray[1][2]; mainArray[0,1]=10;  print(:sumArray(mainArray,5));}';
+const code: string = "func void multiplyMatrixes(int x[2][2],int y[2][2]){print(x[0,1]);} func void main(){int x[2][2],y[2][2];  x[0,0] = 1; x[0,1] = 5; x[1,0] = 2; x[1,1] =2; y[0,0] = 1; y[0,1] = 2; y[1,0] = 2; y[1,1] =2; :multiplyMatrixes(x,y); }";
 
 const compileBtn = document.getElementById("runtimeBtn");
 onload = () => {
