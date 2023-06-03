@@ -75,7 +75,7 @@ var index = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[1,12],$V2=[1,13],$V3=[1,14],$V4=[1,18],$V5=[1,17],$V6=[5,7,8,9,10,50,57],$V7=[1,25],$V8=[1,28],$V9=[1,42],$Va=[1,48],$Vb=[1,39],$Vc=[1,40],$Vd=[1,41],$Ve=[1,45],$Vf=[1,46],$Vg=[1,47],$Vh=[26,28],$Vi=[13,26,28],$Vj=[1,62],$Vk=[1,65],$Vl=[1,66],$Vm=[1,85],$Vn=[1,86],$Vo=[1,87],$Vp=[1,84],$Vq=[1,77],$Vr=[1,79],$Vs=[1,78],$Vt=[26,36,38,57,67,79,83,84,85,86],$Vu=[1,91],$Vv=[1,92],$Vw=[13,26,28,29,36,38,57,67,69,70,79,83,84,85,86],$Vx=[1,93],$Vy=[1,94],$Vz=[1,95],$VA=[1,96],$VB=[1,97],$VC=[1,98],$VD=[13,26,28,29,36,38,57,67,69,70,71,72,73,74,75,76,83,84,85,86],$VE=[1,99],$VF=[1,100],$VG=[13,26,28,29,36,38,57,67,69,70,71,72,73,74,75,76,78,79,83,84,85,86],$VH=[1,101],$VI=[1,102],$VJ=[13,26,28,29,36,38,57,67,69,70,71,72,73,74,75,76,78,79,80,82,83,84,85,86],$VK=[1,105],$VL=[7,8,9,10,26,34,35,36,41,43,44,55,57,67,79,83,84,85,86,89,91],$VM=[1,128],$VN=[13,29,38],$VO=[26,36,57,67,79,83,84,85,86],$VP=[26,28,36,57,67,83,84,85,86],$VQ=[7,8,9,10,38],$VR=[1,166],$VS=[26,38];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"START":3,"MAININSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"stringType":10,"MAININSTRUCTION":11,"DECLARATION":12,";":13,"FUNCTION":14,"FUNCCALLS":15,"INSTRUCTIONS":16,"INSTRUCTION":17,"SUPRAEXPRESSION":18,"FUNCRETURN":19,"PRINTFUNC":20,"READFUNC":21,"HYPERCONDITIONALS":22,"LOOPS":23,"ASSIGNMENTS":24,"ASSIGNMENT":25,"ID":26,"DIMENSIONS":27,"]":28,"=":29,"HYPEREXPRESSION":30,"CONDITIONAL":31,"CONDITIONALELSE":32,"{":33,"}":34,"IF":35,"(":36,"CONDITIONALHYPEREXPRESSION":37,")":38,"ELSE":39,"WHILECOMMAND":40,"WHILE":41,"DOCOMMAND":42,"DO":43,"FOR":44,"FORASSIGNMENT":45,"PARAMETER":46,"PARAMETERS":47,"FUNCTYPE":48,"FUNCDEFINITION":49,"FUNC":50,"VOIDFUNCDEFINITION":51,"voidType":52,"FUNCHEADER":53,"VOIDFUNCHEADER":54,"RETURN":55,"FUNCCALLHEADER":56,"CallType":57,"ARGUMENTS":58,"ARGUMENT":59,"FACTFUNCCALLS":60,"ARRHEADER":61,"[":62,"ARRBODY":63,"EXPRESSION":64,"ARRCALL":65,"DIMENSION":66,"NUMBER":67,"SUPEREXPRESSION":68,"&&":69,"||":70,"<":71,"<=":72,">":73,">=":74,"!=":75,"==":76,"TERMS":77,"+":78,"-":79,"*":80,"FACTOR":81,"/":82,"FLOAT":83,"TEXT":84,"TRUE":85,"FALSE":86,"READARGUMENT":87,"READBODY":88,"READ":89,"PRINTBODY":90,"PRINT":91,"$accept":0,"$end":1},
+symbols_: {"error":2,"START":3,"MAININSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"stringType":10,"MAININSTRUCTION":11,"DECLARATION":12,";":13,"FUNCTION":14,"FUNCCALLS":15,"INSTRUCTIONS":16,"INSTRUCTION":17,"SUPRAEXPRESSION":18,"FUNCRETURN":19,"PRINTFUNC":20,"READFUNC":21,"HYPERCONDITIONAL":22,"LOOPS":23,"ASSIGNMENTS":24,"ASSIGNMENT":25,"ID":26,"DIMENSIONS":27,"]":28,"=":29,"HYPEREXPRESSION":30,"CONDITIONAL":31,"CONDITIONALELSE":32,"{":33,"}":34,"IF":35,"(":36,"CONDITIONALHYPEREXPRESSION":37,")":38,"ELSE":39,"WHILECOMMAND":40,"WHILE":41,"DOCOMMAND":42,"DO":43,"FOR":44,"FORASSIGNMENT":45,"PARAMETER":46,"PARAMETERS":47,"FUNCTYPE":48,"FUNCDEFINITION":49,"FUNC":50,"VOIDFUNCDEFINITION":51,"voidType":52,"FUNCHEADER":53,"VOIDFUNCHEADER":54,"RETURN":55,"FUNCCALLHEADER":56,"CallType":57,"ARGUMENTS":58,"ARGUMENT":59,"FACTFUNCCALLS":60,"ARRHEADER":61,"[":62,"ARRBODY":63,"EXPRESSION":64,"ARRCALL":65,"DIMENSION":66,"NUMBER":67,"SUPEREXPRESSION":68,"&&":69,"||":70,"<":71,"<=":72,">":73,">=":74,"!=":75,"==":76,"TERMS":77,"+":78,"-":79,"*":80,"FACTOR":81,"/":82,"FLOAT":83,"TEXT":84,"TRUE":85,"FALSE":86,"READARGUMENT":87,"READBODY":88,"READ":89,"PRINTBODY":90,"PRINT":91,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"stringType",13:";",26:"ID",28:"]",29:"=",33:"{",34:"}",35:"IF",36:"(",38:")",39:"ELSE",41:"WHILE",43:"DO",44:"FOR",50:"FUNC",52:"voidType",55:"RETURN",57:"CallType",62:"[",67:"NUMBER",69:"&&",70:"||",71:"<",72:"<=",73:">",74:">=",75:"!=",76:"==",78:"+",79:"-",80:"*",82:"/",83:"FLOAT",84:"TEXT",85:"TRUE",86:"FALSE",89:"READ",91:"PRINT"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[11,2],[11,1],[11,2],[4,2],[4,1],[16,2],[16,1],[17,2],[17,2],[17,2],[17,2],[17,2],[17,1],[17,1],[12,2],[24,2],[24,1],[25,1],[25,2],[25,3],[22,1],[22,4],[31,7],[32,8],[37,1],[40,1],[42,1],[23,7],[23,8],[23,8],[45,3],[46,2],[46,3],[47,2],[47,1],[48,1],[48,1],[48,1],[48,1],[49,3],[51,3],[53,4],[53,3],[54,4],[54,3],[14,4],[14,4],[19,2],[56,3],[58,2],[58,1],[59,1],[15,3],[15,2],[60,3],[60,2],[61,2],[63,2],[63,1],[65,2],[27,2],[27,1],[66,3],[66,3],[18,3],[18,1],[30,1],[30,3],[30,3],[68,3],[68,3],[68,3],[68,3],[68,3],[68,3],[68,1],[64,1],[64,3],[64,3],[77,3],[77,3],[77,1],[81,1],[81,2],[81,1],[81,2],[81,1],[81,2],[81,1],[81,1],[81,1],[81,1],[81,3],[87,1],[87,2],[88,2],[88,1],[21,4],[90,2],[90,1],[20,4]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
@@ -162,7 +162,7 @@ case 27:
 break;
 case 28:
 
-        var end = jumpStack.pop();
+                var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 quadruple.address = quadruples.length;
 
@@ -171,9 +171,9 @@ case 29:
 
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
-                quadruple.address = quadruples.length+1;
+                jumpStack.push(quadruples.length);
                 quadruples.push({operator:"GOTO",address:result,global:currentFunction === 0});
-                jumpStack.push(quadruples.length-1);
+                quadruple.address = quadruples.length;
       
 
 break;
@@ -187,8 +187,8 @@ case 30:
                 console.log("A conditional statement should be a boolean");
                 throw new Error("A conditional statement should be a boolean");
             }
+            jumpStack.push(quadruples.length);
             quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
-            jumpStack.push(quadruples.length-1);
         
 break;
 case 31: case 32:

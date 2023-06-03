@@ -126,7 +126,7 @@ INSTRUCTION : DECLARATION ';'
             | FUNCRETURN ';' 
             | PRINTFUNC ';' 
             | READFUNC ';'
-            | HYPERCONDITIONALS 
+            | HYPERCONDITIONAL 
             | LOOPS;
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
@@ -158,7 +158,7 @@ ASSIGNMENT
     ;
 
 // condicionales 
-HYPERCONDITIONALS: CONDITIONAL | CONDITIONALELSE '{'  INSTRUCTIONS '}'{
+HYPERCONDITIONAL: CONDITIONAL | CONDITIONALELSE '{'  INSTRUCTIONS '}'{
             var end = jumpStack.pop();
             var quadruple = quadruples[end];
             quadruple.address = quadruples.length;
@@ -166,16 +166,16 @@ HYPERCONDITIONALS: CONDITIONAL | CONDITIONALELSE '{'  INSTRUCTIONS '}'{
 };
 
 CONDITIONAL: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
-        var end = jumpStack.pop();
+                var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 quadruple.address = quadruples.length;
 };
 CONDITIONALELSE: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE {
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
-                quadruple.address = quadruples.length+1;
+                jumpStack.push(quadruples.length);
                 quadruples.push({operator:"GOTO",address:result,global:currentFunction === 0});
-                jumpStack.push(quadruples.length-1);
+                quadruple.address = quadruples.length;
       
 };
 CONDITIONALHYPEREXPRESSION
@@ -188,8 +188,8 @@ CONDITIONALHYPEREXPRESSION
                 console.log("A conditional statement should be a boolean");
                 throw new Error("A conditional statement should be a boolean");
             }
+            jumpStack.push(quadruples.length);
             quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
-            jumpStack.push(quadruples.length-1);
         };
 // Loops
 WHILECOMMAND: WHILE {jumpStack.push(quadruples.length);};
