@@ -206,6 +206,7 @@ function logger(string,object)
                 return {currentQuadruple:address,global};
             }
         }
+        break;
         case "GOTOT":
             {
                 const address = quadruple.address;
