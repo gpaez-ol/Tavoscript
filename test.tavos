@@ -2,8 +2,8 @@ func void main()
 {
     int x[1][2]; 
     int z = 0;
-    float y;
-    read(x[z,1]);
+    string y = "hola";
     read(y);
-    print(x[0,1] + y);
+    read(x[z,1]);
+    print(y);
 }
