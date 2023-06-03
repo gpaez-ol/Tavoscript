@@ -137,7 +137,11 @@ function logger(string,object)
         {
             const value = getParamOperands(quadruple,parameterValues);
             logger(value,"para el parametro")
-            if(value.length !== null && value.length !== undefined)
+            if (typeof value === 'string' || value instanceof String)
+            {
+                parameterValues.push(value);
+            }
+            else if(value.length !== null && value.length !== undefined)
             {
                 value.forEach(innerValue => {
                     parameterValues.push(innerValue);

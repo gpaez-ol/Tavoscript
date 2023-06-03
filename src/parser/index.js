@@ -143,7 +143,7 @@ case 25:
         var leftOperand = declaredVar.address;
         var leftType = currentType;
         var operator = "=";
-        if(rightType != leftType)
+        if(rightType != leftType && !(rightType === "int" && leftType === "float"))
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
@@ -236,7 +236,7 @@ case 36:
         var leftOperand = forVar.address;
         var leftType = "int";
         var operator = "=";
-        if(rightType != leftType)
+        if(rightType != leftType && !(rightType === "int" && leftType === "float")) 
         {
             console.log("Type should be int");
             throw new Error("For loops only take int types");
