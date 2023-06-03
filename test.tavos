@@ -1,7 +1,5 @@
 func void main()
 {
-    int x[1][2]; 
-    x[0,1] = 4;
-    int z = x[0,1];
-    print(z);
+    int x =2;
+    if(x>2){print(x);}else{print("entro al else");}
 }
