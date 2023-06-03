@@ -131,16 +131,16 @@ INSTRUCTION : DECLARATION ';'
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 };
-// assigments
+
 ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
-ASSIGNMENT 
+ASSIGNMENT
     : ID {
         createVariable($1,currentType,functions[currentFunction]);
-    } | DIMENSIONS ']'{
+    } | ARRAYDEF {
         createArrayVariable(currentArray,functions[currentFunction]);
         currentArray = null;
     }
-    | ID '=' HYPEREXPRESSION {
+    |  ID '=' HYPEREXPRESSION {
         let declaredVar = createVariable($1,currentType,functions[currentFunction]);
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
@@ -241,10 +241,10 @@ FORASSIGNMENT : ID '=' HYPEREXPRESSION {
 PARAMETER: TYPE ID {
          createVariable($2,$1,functions[currentFunction],"parameter");
          functions[currentFunction].parameters.push($1);
-} | TYPE DIMENSIONS ']'{
+} | TYPE ARRAYDEF{
         currentArray.type = $1;
         createArrayVariable(currentArray,functions[currentFunction],"parameter");
-       functions[currentFunction].parameters.push({type:$1,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
+        functions[currentFunction].parameters.push({type:$1,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
         currentArray = null;
 };
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
@@ -305,7 +305,6 @@ FUNCRETURN:  RETURN HYPEREXPRESSION  {
 FUNCCALLHEADER: CallType ID '('{
     // prepara el numero de parametros
     // genera ERA size para traer el new size
-    // check function exist
     functionCalled = functions.find(func => func.name === $2);
     if(!functionCalled)
     {
@@ -443,30 +442,26 @@ ARRBODY: ARRBODY , EXPRESSION{
 };
 ARRCALL: ARRHEADER ARRBODY;
 
-DIMENSIONS: DIMENSIONS DIMENSION | DIMENSION;
-DIMENSION: ']''[' NUMBER {
+ARRAYDEF: ARRAYID DIMENSIONS;
+ARRAYID:  ID '['{
+    currentArray = {type:currentType,name:$1,varType:currentFunction.global === true ? "global" : "local",dimensions:[]};
+};
+DIMENSIONS:  DIMENSIONS '[' DIMENSION | DIMENSION;
+
+DIMENSION:  NUMBER ']'{
     if(currentArray === null)
     {
         console.log("Dimensions can only be created within a named array");
         throw new Error("Dimensions can only be created within a named array");
     }
-    if($3 < 1)
+    if($1 < 1)
     {
         console.log("Array limits must be positive values");
         throw new Error("Array limits must be positive values");
     }
-    createConstantVariable($3,"int",functions[0])
-    currentArray.dimensions.push({upperLimit:$3,m:0});
-} | ID '[' NUMBER{
-    if($3< 1)
-    {
-        console.log("Array limits must be positive values");
-        throw new Error("Array limits must be positive values");
-    }
-    createConstantVariable($3,"int",functions[0])
-    currentArray = {type:currentType,name:$1,varType:currentFunction.global === true ? "global" : "local",dimensions:[{upperLimit:$3}]};
-
-};
+    createConstantVariable($1,"int",functions[0])
+    currentArray.dimensions.push({upperLimit:$1,m:0});
+} ;
 SUPRAEXPRESSION 
         : SUPRAEXPRESSION '=' HYPEREXPRESSION {
             createAssignmentQuad(quadruples,operandStack,"=",typeStack,currentFunction===0);
@@ -544,7 +539,6 @@ FACTOR
             operandStack.push(floatAddress);
             typeStack.push("float");
         }
-        
         | '-' FLOAT %prec UMINUS
         {
             console.log($2*-1);
