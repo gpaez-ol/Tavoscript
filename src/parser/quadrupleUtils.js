@@ -61,7 +61,7 @@ function createAssignmentQuad(
     typeStack
   );
   // add more validations later but for now strict typing
-  if (rightType != leftType) {
+  if (rightType != leftType && !(rightType === "int" && leftType === "float")) {
     console.log("Operation", leftType, operator, rightType, "is not valid");
     throw new Error("Operation is not valid");
   }

@@ -147,7 +147,7 @@ ASSIGNMENT
         var leftOperand = declaredVar.address;
         var leftType = currentType;
         var operator = "=";
-        if(rightType != leftType)
+        if(rightType != leftType && !(rightType === "int" && leftType === "float"))
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
@@ -227,7 +227,7 @@ FORASSIGNMENT : ID '=' HYPEREXPRESSION {
         var leftOperand = forVar.address;
         var leftType = "int";
         var operator = "=";
-        if(rightType != leftType)
+        if(rightType != leftType && !(rightType === "int" && leftType === "float")) 
         {
             console.log("Type should be int");
             throw new Error("For loops only take int types");

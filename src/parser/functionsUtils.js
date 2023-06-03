@@ -72,7 +72,7 @@ function createReturnVar(
   var rightType = typeStack.pop();
   var leftType = thisFunction.returnType;
   console.log("rightTtype",rightType)
-  if (rightType != leftType) {
+  if (rightType != leftType && !(rightType === "int" && leftType === "float")) {
     console.log(`Type should be ${leftType}`);
     throw new Error(`Function return type should be ${leftType}`);
   }
@@ -98,7 +98,7 @@ function checkParams(operand,operandType,currentParam,functionCallCurrentParam,c
         console.log("Function Parameter should be an array");
         throw new Error("Function Parameter should be an array");
       }
-      if(argumentArray.type !== currentParam.type)
+      if(argumentArray.type !== currentParam.type && !(currentParam.type === "float" && argumentArray.type === "int"))
       {
         console.log(operand,"operand");
         console.log(operandType);
@@ -120,7 +120,7 @@ function checkParams(operand,operandType,currentParam,functionCallCurrentParam,c
     console.log("Function Parameter cannot be an array");
     throw new Error("Function Parameter cannot be an array");
   }
-  if(operandType !== currentParam)
+  if(operandType !== currentParam && !(operandType === "int" && currentParam === "float"))
   {
       console.log(`Type should be ${currentParam}`);
       throw new Error(`Type should be ${currentParam}`);
