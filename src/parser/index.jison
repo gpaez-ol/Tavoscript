@@ -116,6 +116,48 @@ TYPE : intType {
     currentType = "string";
 };
 
+MAININSTRUCTION: DECLARATION ';' | FUNCTION | FUNCCALLS ';';
+MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
+
+INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
+
+INSTRUCTION : DECLARATION ';' 
+            | SUPRAEXPRESSION ';' 
+            | FUNCRETURN ';' 
+            | PRINTFUNC ';' 
+            | READFUNC ';'
+            | HYPERCONDITIONALS 
+            | LOOPS;
+DECLARATION : TYPE ASSIGNMENTS {
+        currentType = null;
+};
+// assigments
+ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
+ASSIGNMENT 
+    : ID {
+        createVariable($1,currentType,functions[currentFunction]);
+    } | DIMENSIONS ']'{
+        createArrayVariable(currentArray,functions[currentFunction]);
+        currentArray = null;
+    }
+    | ID '=' HYPEREXPRESSION {
+        let declaredVar = createVariable($1,currentType,functions[currentFunction]);
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = declaredVar.address;
+        var leftType = currentType;
+        var operator = "=";
+        if(rightType != leftType)
+        {
+            console.log("Operation",leftType,operator,rightType,"is not valid");
+            throw new Error("Operation is not valid");
+        }
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
+    }
+    ;
+
+// condicionales 
 HYPERCONDITIONALS: CONDITIONALS | CONDITIONALS '{'  INSTRUCTIONS '}'{
             var end = jumpStack.pop();
             var quadruple = quadruples[end];
@@ -137,6 +179,20 @@ CONDITIONALS: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
                 jumpStack.push(quadruples.length-1);
       
 };
+CONDITIONALHYPEREXPRESSION
+        : HYPEREXPRESSION {
+            // check if there is a result  if no result its an error
+            var resultOperand = operandStack.pop();
+            var resultType = typeStack.pop();
+            if(resultType != "bool")
+            {
+                console.log("A conditional statement should be a boolean");
+                throw new Error("A conditional statement should be a boolean");
+            }
+            quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
+            jumpStack.push(quadruples.length-1);
+        };
+// Loops
 WHILECOMMAND: WHILE {jumpStack.push(quadruples.length);};
 DOCOMMAND: DO {jumpStack.push(quadruples.length);};
 LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
@@ -165,13 +221,28 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
         quadruple.address = quadruples.length;
 
 };
-// contabilizar parametros, variables locales y las variables temporales para saber de que tamano es el pedazo de memoria
+FORASSIGNMENT : ID '=' HYPEREXPRESSION {
+        let forVar = createVariable($1,"int",functions[currentFunction]);
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = forVar.address;
+        var leftType = "int";
+        var operator = "=";
+        if(rightType != leftType)
+        {
+            console.log("Type should be int");
+            throw new Error("For loops only take int types");
+        }
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
+        // this should be the reference to goto at the end of the for
+        jumpStack.push(quadruples.length);
+    };
+// Funciones
 PARAMETER: TYPE ID {
-         console.log("esta creando parametro normal");
          createVariable($2,$1,functions[currentFunction],"parameter");
          functions[currentFunction].parameters.push($1);
 } | TYPE DIMENSIONS ']'{
-        console.log("Esta creando parametro de tipo dimension");
         currentArray.type = $1;
         createArrayVariable(currentArray,functions[currentFunction],"parameter");
        functions[currentFunction].parameters.push({type:$1,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
@@ -255,56 +326,8 @@ FUNCRETURN:  RETURN HYPEREXPRESSION  {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
             createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples);
 };
-READARGUMENT:ID
-        {
-            let readVariable = getVariable($1,functions,currentFunction);
-            operandStack.push({address:readVariable.address,label:readVariable.name});
-            typeStack.push(readVariable.type);
 
-        }|ARRCALL ']'
-        {
-            if(currentDimension <= arrayCalled.dimensions.length-1)
-            {
-                console.log(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
-                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensions`);
-
-            }
-            operandStack[operandStack.length] = {address:operandStack[operandStack.length -1],label:arrayCalledLabel}
-            arrayCalled = null;
-            arrayCalledLabel =  null;
-            currentArrayCallIndex = null;
-        };
-READBODY:  READBODY , READARGUMENT  {
-                createReadQuad(quadruples,operandStack,typeStack)
-            }
-            | READARGUMENT{
-                createReadQuad(quadruples,operandStack,typeStack)
-            };
-READFUNC:  READ '(' READBODY ')';
-
-PRINTBODY:  PRINTBODY , HYPEREXPRESSION  {
-                createPrintQuad(quadruples,operandStack,typeStack)
-                
-            }
-            | HYPEREXPRESSION{
-                createPrintQuad(quadruples,operandStack,typeStack)
-            };
-PRINTFUNC:  PRINT '(' PRINTBODY ')';
-
-ARGUMENTS: ARGUMENTS , ARGUMENT | ARGUMENT;
-ARGUMENT: HYPEREXPRESSION {
-            var currentParam = availableParams.shift();
-            if(currentParam === null || currentParam === undefined)
-            {
-                console.log("Too many arguments for the function");
-                throw new Error("Too many arguments for the function")
-            }
-            var operand = operandStack.pop();
-            var operandType = typeStack.pop();
-            var param = functionCallCurrentParam;
-            checkParams(operand,operandType,currentParam,functionCallCurrentParam,currentFunction,functions,quadruples)
-            functionCallCurrentParam++;
-};
+// Function Calling
 FUNCCALLHEADER: CallType ID '('{
     // prepara el numero de parametros
     // genera ERA size para traer el new size
@@ -319,6 +342,21 @@ FUNCCALLHEADER: CallType ID '('{
     console.log("Available Params :",[...availableParams]);
     functionCallCurrentParam = 1
     quadruples.push({operator:"ERA",functionName:$2,global:currentFunction === 0,global:currentFunction === 0});
+};
+
+ARGUMENTS: ARGUMENTS , ARGUMENT | ARGUMENT;
+ARGUMENT: HYPEREXPRESSION {
+            var currentParam = availableParams.shift();
+            if(currentParam === null || currentParam === undefined)
+            {
+                console.log("Too many arguments for the function");
+                throw new Error("Too many arguments for the function")
+            }
+            var operand = operandStack.pop();
+            var operandType = typeStack.pop();
+            var param = functionCallCurrentParam;
+            checkParams(operand,operandType,currentParam,functionCallCurrentParam,currentFunction,functions,quadruples)
+            functionCallCurrentParam++;
 };
 FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     // revisar que los parametros usados este vacio
@@ -402,25 +440,35 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     }
 };
 
+ARRHEADER: ID '[' {
+        let arrayVariable = getArrayVariable($1,functions,currentFunction);
+        arrayCalled = arrayVariable;
+        arrayCalledLabel = {label:arrayVariable.name,dimensions:[]};
+        currentDimension = 0;
 
-
-MAININSTRUCTION: DECLARATION ';' | FUNCTION | FUNCCALLS ';';
-MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
-
-INSTRUCTIONS : INSTRUCTIONS  INSTRUCTION | INSTRUCTION ;
-
-
-INSTRUCTION : DECLARATION ';' 
-            | SUPRAEXPRESSION ';' 
-            | FUNCRETURN ';' 
-            | PRINTFUNC ';' 
-            | READFUNC ';'
-            | HYPERCONDITIONALS 
-            | LOOPS;
-DECLARATION : TYPE ASSIGNMENTS {
-        currentType = null;
 };
-ARRAYID: ID;
+ARRBODY: ARRBODY , EXPRESSION{
+     let dimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
+     arrayCalledLabel.dimensions.push(dimensionIndex);
+     if(currentDimension !== arrayCalled.dimensions.length-1)
+     {
+     currentArrayCallIndex = operandStack.pop();
+     typeStack.pop();
+     }
+     currentDimension++;
+} | EXPRESSION
+{
+    let lastDimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
+    arrayCalledLabel.dimensions.push(lastDimensionIndex);
+    if(currentDimension !== arrayCalled.dimensions.length-1)
+     {
+     currentArrayCallIndex = operandStack.pop();
+     typeStack.pop();
+     }
+    currentDimension++;
+};
+ARRCALL: ARRHEADER ARRBODY;
+
 DIMENSIONS: DIMENSIONS DIMENSION | DIMENSION;
 DIMENSION: ']''[' NUMBER {
     if(currentArray === null)
@@ -445,48 +493,6 @@ DIMENSION: ']''[' NUMBER {
     currentArray = {type:currentType,name:$1,varType:currentFunction.global === true ? "global" : "local",dimensions:[{upperLimit:$3}]};
 
 };
-
-ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
-ASSIGNMENT 
-    : ID {
-        createVariable($1,currentType,functions[currentFunction]);
-    } | DIMENSIONS ']'{
-        createArrayVariable(currentArray,functions[currentFunction]);
-        currentArray = null;
-    }
-    | ID '=' HYPEREXPRESSION {
-        let declaredVar = createVariable($1,currentType,functions[currentFunction]);
-        var rightOperand = operandStack.pop();
-        var rightType = typeStack.pop();
-        var leftOperand = declaredVar.address;
-        var leftType = currentType;
-        var operator = "=";
-        if(rightType != leftType)
-        {
-            console.log("Operation",leftType,operator,rightType,"is not valid");
-            throw new Error("Operation is not valid");
-        }
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
-    }
-    ;
-FORASSIGNMENT : ID '=' HYPEREXPRESSION {
-        let forVar = createVariable($1,"int",functions[currentFunction]);
-        var rightOperand = operandStack.pop();
-        var rightType = typeStack.pop();
-        var leftOperand = forVar.address;
-        var leftType = "int";
-        var operator = "=";
-        if(rightType != leftType)
-        {
-            console.log("Type should be int");
-            throw new Error("For loops only take int types");
-        }
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
-        // this should be the reference to goto at the end of the for
-        jumpStack.push(quadruples.length);
-    };
 SUPRAEXPRESSION 
         : SUPRAEXPRESSION '=' HYPEREXPRESSION {
             createAssignmentQuad(quadruples,operandStack,"=",typeStack,currentFunction===0);
@@ -498,19 +504,6 @@ HYPEREXPRESSION
         | HYPEREXPRESSION '&&' SUPEREXPRESSION
         | HYPEREXPRESSION '||' SUPEREXPRESSION;
 
-CONDITIONALHYPEREXPRESSION
-        : HYPEREXPRESSION {
-            // check if there is a result  if no result its an error
-            var resultOperand = operandStack.pop();
-            var resultType = typeStack.pop();
-            if(resultType != "bool")
-            {
-                console.log("A conditional statement should be a boolean");
-                throw new Error("A conditional statement should be a boolean");
-            }
-            quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
-            jumpStack.push(quadruples.length-1);
-        };
 
 SUPEREXPRESSION
         : SUPEREXPRESSION '<' EXPRESSION {
@@ -555,34 +548,6 @@ TERMS
         }
         | FACTOR;     
         
-ARRHEADER: ID '[' {
-        let arrayVariable = getArrayVariable($1,functions,currentFunction);
-        arrayCalled = arrayVariable;
-        arrayCalledLabel = {label:arrayVariable.name,dimensions:[]};
-        currentDimension = 0;
-
-};
-ARRBODY: ARRBODY , EXPRESSION{
-     let dimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
-     arrayCalledLabel.dimensions.push(dimensionIndex);
-     if(currentDimension !== arrayCalled.dimensions.length-1)
-     {
-     currentArrayCallIndex = operandStack.pop();
-     typeStack.pop();
-     }
-     currentDimension++;
-} | EXPRESSION
-{
-    let lastDimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
-    arrayCalledLabel.dimensions.push(lastDimensionIndex);
-    if(currentDimension !== arrayCalled.dimensions.length-1)
-     {
-     currentArrayCallIndex = operandStack.pop();
-     typeStack.pop();
-     }
-    currentDimension++;
-};
-ARRCALL: ARRHEADER ARRBODY;
 FACTOR
         : NUMBER 
         {
@@ -651,3 +616,39 @@ FACTOR
             typeStack.push("bool");
         }
         | '('  SUPRAEXPRESSION ')'; 
+READARGUMENT:ID
+        {
+            let readVariable = getVariable($1,functions,currentFunction);
+            operandStack.push({address:readVariable.address,label:readVariable.name});
+            typeStack.push(readVariable.type);
+
+        }| ARRCALL ']'
+        {
+            if(currentDimension <= arrayCalled.dimensions.length-1)
+            {
+                console.log(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
+                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensions`);
+
+            }
+            operandStack[operandStack.length] = {address:operandStack[operandStack.length -1],label:arrayCalledLabel}
+            arrayCalled = null;
+            arrayCalledLabel =  null;
+            currentArrayCallIndex = null;
+        };
+// Reading and Writing
+READBODY:  READBODY , READARGUMENT  {
+                createReadQuad(quadruples,operandStack,typeStack)
+            }
+            | READARGUMENT{
+                createReadQuad(quadruples,operandStack,typeStack)
+            };
+READFUNC:  READ '(' READBODY ')';
+
+PRINTBODY:  PRINTBODY , HYPEREXPRESSION  {
+                createPrintQuad(quadruples,operandStack,typeStack)
+                
+            }
+            | HYPEREXPRESSION{
+                createPrintQuad(quadruples,operandStack,typeStack)
+            };
+PRINTFUNC:  PRINT '(' PRINTBODY ')';
