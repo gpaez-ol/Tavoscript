@@ -6,7 +6,6 @@ function createDimensionQuad(
     currentArrayCallIndex,
     quadruples,
     operandStack,
-    operatorStack,
     typeStack,
     nextAvail,
     functions,
@@ -35,12 +34,11 @@ function createDimensionQuad(
     let operandVariable = getVariableByAddress(operand,functions,currentFunction);
     if(Object.hasOwn(arrayCurrentDimension, 'm'))
     {
-        operatorStack.push("*");
         let constantVarAddress = createConstantVariable(arrayCurrentDimension.m,"int", mainFunction)
         console.log(constantVarAddress, "constantVar created");
         operandStack.push(constantVarAddress);
         typeStack.push("int");
-        createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction);
+        createOperationQuad(quadruples,operandStack,"*",typeStack,nextAvail,thisFunction);
         if(currentArrayCallIndex === undefined || currentArrayCallIndex === null)
         {
             if (operandVariable.varType === "constant")
@@ -54,24 +52,21 @@ function createDimensionQuad(
 
     }
     if(currentArrayCallIndex !== undefined && currentArrayCallIndex !== null){
-        operatorStack.push("+");
         operandStack.push(currentArrayCallIndex);
         typeStack.push("int");
-        createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction);
+        createOperationQuad(quadruples,operandStack,"+",typeStack,nextAvail,thisFunction);
     }
     if(Object.hasOwn(arrayCurrentDimension, 'k'))
     {
-        operatorStack.push("+");
         let constantVarKAddress = createConstantVariable(arrayCurrentDimension.k,"int", mainFunction)
         operandStack.push(constantVarKAddress );
         typeStack.push("int");
-        createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction);
-        
-        operatorStack.push("+");
+        createOperationQuad(quadruples,operandStack,"+",typeStack,nextAvail,thisFunction);
+
         let constantArrayBaseAddress = createConstantVariable(arrayCalled.address,"int", mainFunction)
         operandStack.push(constantArrayBaseAddress);
         typeStack.push("int");
-        createOperationQuad(quadruples,operandStack,operatorStack,typeStack,nextAvail,thisFunction,true);
+        createOperationQuad(quadruples,operandStack,"+",typeStack,nextAvail,thisFunction,true);
     }
     if (operandVariable.varType === "constant")
     {

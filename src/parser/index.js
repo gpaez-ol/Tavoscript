@@ -75,8 +75,8 @@ var index = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[1,12],$V2=[1,13],$V3=[1,14],$V4=[1,18],$V5=[1,17],$V6=[5,7,8,9,10,36,55],$V7=[1,25],$V8=[1,28],$V9=[1,48],$Va=[1,42],$Vb=[1,39],$Vc=[1,40],$Vd=[1,41],$Ve=[1,45],$Vf=[1,46],$Vg=[1,47],$Vh=[30,32],$Vi=[30,32,60],$Vj=[1,62],$Vk=[1,65],$Vl=[1,66],$Vm=[1,84],$Vn=[1,85],$Vo=[1,86],$Vp=[1,83],$Vq=[1,77],$Vr=[1,79],$Vs=[1,78],$Vt=[17,19,30,55,67,82,88,89,90,91],$Vu=[1,90],$Vv=[1,91],$Vw=[17,19,30,32,55,60,67,69,71,72,82,88,89,90,91],$Vx=[1,92],$Vy=[1,93],$Vz=[1,94],$VA=[1,95],$VB=[1,96],$VC=[1,97],$VD=[17,19,30,32,55,60,67,69,71,72,73,75,76,77,78,79,88,89,90,91],$VE=[1,98],$VF=[1,99],$VG=[17,19,30,32,55,60,67,69,71,72,73,75,76,77,78,79,81,82,88,89,90,91],$VH=[1,100],$VI=[1,101],$VJ=[17,19,30,32,55,60,67,69,71,72,73,75,76,77,78,79,81,82,83,85,88,89,90,91],$VK=[1,104],$VL=[7,8,9,10,15,16,17,22,24,27,30,43,48,51,55,67,82,88,89,90,91],$VM=[1,127],$VN=[19,60,69],$VO=[17,30,55,67,82,88,89,90,91],$VP=[17,30,32,55,67,88,89,90,91],$VQ=[7,8,9,10,19],$VR=[1,165],$VS=[19,30],$VT=[7,8,9,10,13,15,16,17,22,24,27,30,43,48,51,55,67,82,88,89,90,91];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"START":3,"MAININSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"stringType":10,"HYPERCONDITIONALS":11,"CONDITIONALS":12,"{":13,"INSTRUCTIONS":14,"}":15,"IF":16,"(":17,"CONDITIONALHYPEREXPRESSION":18,")":19,"ELSE":20,"WHILECOMMAND":21,"WHILE":22,"DOCOMMAND":23,"DO":24,"LOOPS":25,"HYPEREXPRESSION":26,"FOR":27,"FORASSIGNMENT":28,"PARAMETER":29,"id":30,"DIMENSIONS":31,"]":32,"PARAMETERS":33,"FUNCTYPE":34,"FUNCDEFINITION":35,"FUNC":36,"VOIDFUNCDEFINITION":37,"voidType":38,"FUNCHEADER":39,"VOIDFUNCHEADER":40,"FUNCTION":41,"FUNCRETURN":42,"RETURN":43,"READARGUMENT":44,"ARRCALL":45,"READBODY":46,"READFUNC":47,"READ":48,"PRINTBODY":49,"PRINTFUNC":50,"PRINT":51,"ARGUMENTS":52,"ARGUMENT":53,"FUNCCALLHEADER":54,"CallType":55,"FUNCCALLS":56,"FACTFUNCCALLS":57,"MAININSTRUCTION":58,"DECLARATION":59,";":60,"INSTRUCTION":61,"SUPRAEXPRESSION":62,"ASSIGNMENTS":63,"ARRAYID":64,"DIMENSION":65,"[":66,"NUMBER":67,"ASSIGNMENT":68,"=":69,"SUPEREXPRESSION":70,"&&":71,"||":72,"<":73,"EXPRESSION":74,"<=":75,">":76,">=":77,"!=":78,"==":79,"TERMS":80,"+":81,"-":82,"*":83,"FACTOR":84,"/":85,"ARRHEADER":86,"ARRBODY":87,"FLOAT":88,"text":89,"TRUE":90,"FALSE":91,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"stringType",13:"{",15:"}",16:"IF",17:"(",19:")",20:"ELSE",22:"WHILE",24:"DO",27:"FOR",30:"id",32:"]",36:"FUNC",38:"voidType",43:"RETURN",48:"READ",51:"PRINT",55:"CallType",60:";",66:"[",67:"NUMBER",69:"=",71:"&&",72:"||",73:"<",75:"<=",76:">",77:">=",78:"!=",79:"==",81:"+",82:"-",83:"*",85:"/",88:"FLOAT",89:"text",90:"TRUE",91:"FALSE"},
+symbols_: {"error":2,"START":3,"MAININSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"floatType":8,"boolType":9,"stringType":10,"HYPERCONDITIONALS":11,"CONDITIONALS":12,"{":13,"INSTRUCTIONS":14,"}":15,"IF":16,"(":17,"CONDITIONALHYPEREXPRESSION":18,")":19,"ELSE":20,"WHILECOMMAND":21,"WHILE":22,"DOCOMMAND":23,"DO":24,"LOOPS":25,"HYPEREXPRESSION":26,"FOR":27,"FORASSIGNMENT":28,"PARAMETER":29,"ID":30,"DIMENSIONS":31,"]":32,"PARAMETERS":33,"FUNCTYPE":34,"FUNCDEFINITION":35,"FUNC":36,"VOIDFUNCDEFINITION":37,"voidType":38,"FUNCHEADER":39,"VOIDFUNCHEADER":40,"FUNCTION":41,"FUNCRETURN":42,"RETURN":43,"READARGUMENT":44,"ARRCALL":45,"READBODY":46,"READFUNC":47,"READ":48,"PRINTBODY":49,"PRINTFUNC":50,"PRINT":51,"ARGUMENTS":52,"ARGUMENT":53,"FUNCCALLHEADER":54,"CallType":55,"FUNCCALLS":56,"FACTFUNCCALLS":57,"MAININSTRUCTION":58,"DECLARATION":59,";":60,"INSTRUCTION":61,"SUPRAEXPRESSION":62,"ASSIGNMENTS":63,"ARRAYID":64,"DIMENSION":65,"[":66,"NUMBER":67,"ASSIGNMENT":68,"=":69,"SUPEREXPRESSION":70,"&&":71,"||":72,"<":73,"EXPRESSION":74,"<=":75,">":76,">=":77,"!=":78,"==":79,"TERMS":80,"+":81,"-":82,"*":83,"FACTOR":84,"/":85,"ARRHEADER":86,"ARRBODY":87,"FLOAT":88,"TEXT":89,"TRUE":90,"FALSE":91,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"intType",8:"floatType",9:"boolType",10:"stringType",13:"{",15:"}",16:"IF",17:"(",19:")",20:"ELSE",22:"WHILE",24:"DO",27:"FOR",30:"ID",32:"]",36:"FUNC",38:"voidType",43:"RETURN",48:"READ",51:"PRINT",55:"CallType",60:";",66:"[",67:"NUMBER",69:"=",71:"&&",72:"||",73:"<",75:"<=",76:">",77:">=",78:"!=",79:"==",81:"+",82:"-",83:"*",85:"/",88:"FLOAT",89:"TEXT",90:"TRUE",91:"FALSE"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[11,1],[11,4],[12,7],[12,8],[21,1],[23,1],[25,7],[25,8],[25,8],[29,2],[29,3],[33,2],[33,1],[34,1],[34,1],[34,1],[34,1],[35,3],[37,3],[39,4],[39,3],[40,4],[40,3],[41,4],[41,4],[42,2],[44,1],[44,2],[46,2],[46,1],[47,4],[49,2],[49,1],[50,4],[52,2],[52,1],[53,1],[54,3],[56,3],[56,2],[57,3],[57,2],[58,2],[58,1],[58,2],[4,2],[4,1],[14,2],[14,1],[61,2],[61,2],[61,2],[61,2],[61,2],[61,1],[61,1],[59,2],[64,1],[31,2],[31,1],[65,3],[65,3],[63,2],[63,1],[68,1],[68,2],[68,3],[28,3],[62,3],[62,1],[26,1],[26,3],[26,3],[18,1],[70,3],[70,3],[70,3],[70,3],[70,3],[70,3],[70,1],[74,1],[74,3],[74,3],[80,3],[80,3],[80,1],[86,2],[87,2],[87,1],[45,2],[84,1],[84,2],[84,1],[84,2],[84,1],[84,2],[84,1],[84,1],[84,1],[84,1],[84,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
@@ -92,7 +92,6 @@ case 1:
     }
     // aqui deberia regresar la tabla de memoria de las funciones, etc
     console.log("quadruples:",quadruples);
-    console.log("operators:",operatorStack);
     console.log("operands:",operandStack);
     console.log("jumps:",jumpStack);
     console.log("functions:",functions);
@@ -471,14 +470,11 @@ break;
 case 72:
 
         let declaredVar = createVariable($$[$0-2],currentType,functions[currentFunction]);
-        operatorStack.push('=');
-        if([...operatorStack].pop() == "=")
-        {
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = declaredVar.address;
         var leftType = currentType;
-        var operator = operatorStack.pop();
+        var operator = "=";
         if(rightType != leftType)
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
@@ -486,38 +482,30 @@ case 72:
         }
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
         quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
-        }
     
 break;
 case 73:
 
         let forVar = createVariable($$[$0-2],"int",functions[currentFunction]);
-        operatorStack.push('=');
-        if([...operatorStack].pop() == "=")
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = forVar.address;
+        var leftType = "int";
+        var operator = "=";
+        if(rightType != leftType)
         {
-            var rightOperand = operandStack.pop();
-            var rightType = typeStack.pop();
-            var leftOperand = forVar.address;
-            var leftType = "int";
-            var operator = operatorStack.pop();
-            if(rightType != leftType)
-            {
-                console.log("Type should be int");
-                throw new Error("For loops only take int types");
-            }
-            console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-            quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
-            // this should be the reference to goto at the end of the for
-            jumpStack.push(quadruples.length);
+            console.log("Type should be int");
+            throw new Error("For loops only take int types");
         }
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
+        // this should be the reference to goto at the end of the for
+        jumpStack.push(quadruples.length);
     
 break;
 case 74:
 
-                operatorStack.push('=');
-                if([...operatorStack].pop() == "="){
-                    createAssignmentQuad(quadruples,operandStack,operatorStack,typeStack,currentFunction===0);
-            }
+            createAssignmentQuad(quadruples,operandStack,"=",typeStack,currentFunction===0);
         
 break;
 case 79:
@@ -536,83 +524,52 @@ case 79:
 break;
 case 80:
 
-                operatorStack.push('<');
-                if([...operatorStack].pop() == "<"){
-                createOperationQuad(quadruples,operandStack, operatorStack,typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples,operandStack, "<",typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 81:
 
-            operatorStack.push('<=');
-            if([...operatorStack].pop() == "<="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '<=', typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 82:
 
-            operatorStack.push('>');
-            if([...operatorStack].pop() == ">"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '>', typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 83:
 
-            operatorStack.push('>=');
-            if([...operatorStack].pop() == ">="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '>=', typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 84:
 
-            operatorStack.push('!=');
-            if([...operatorStack].pop() == "!="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '!=', typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 85:
 
-            operatorStack.push('==');
-            if([...operatorStack].pop() == "=="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '==', typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 88:
 
-            operatorStack.push('+');
-            if([...operatorStack].pop() == "+"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack,nextAvail, functions[currentFunction]);
-            }
-            
+            createOperationQuad(quadruples, operandStack, '+', typeStack,nextAvail, functions[currentFunction]);
         
 break;
 case 89:
 
-            operatorStack.push('-');
-            if([...operatorStack].pop() == "-"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '-', typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 90:
 
-            operatorStack.push('*');
-            if([...operatorStack].pop() == "*"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '*', typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 91:
 
-            operatorStack.push('/');
-            if([...operatorStack].pop() == "/"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, "/", typeStack, nextAvail, functions[currentFunction]);
         
 break;
 case 93:
@@ -626,7 +583,7 @@ case 93:
 break;
 case 94:
 
-     let dimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions,currentFunction)
+     let dimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
      arrayCalledLabel.dimensions.push(dimensionIndex);
      if(currentDimension !== arrayCalled.dimensions.length-1)
      {
@@ -638,7 +595,7 @@ case 94:
 break;
 case 95:
 
-    let lastDimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions,currentFunction)
+    let lastDimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
     arrayCalledLabel.dimensions.push(lastDimensionIndex);
     if(currentDimension !== arrayCalled.dimensions.length-1)
      {
@@ -882,7 +839,6 @@ parse: function parse(input) {
     const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad,createReadQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
 
-    var operatorStack = [];
     var operandStack = [];
     var typeStack = [];
     var jumpStack = [];
@@ -891,7 +847,7 @@ parse: function parse(input) {
     var arrayCalledLabel = null;
     var currentArrayCallIndex = null;
 
-    //for functions
+    //  for functions
     var availableParams = [];
     var functionCalled = null;
     var functionCallCurrentParam = 0;
