@@ -6,7 +6,6 @@
     const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad,createReadQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
 
-    var operatorStack = [];
     var operandStack = [];
     var typeStack = [];
     var jumpStack = [];
@@ -107,7 +106,6 @@ START : MAININSTRUCTIONS EOF {
     }
     // aqui deberia regresar la tabla de memoria de las funciones, etc
     console.log("quadruples:",quadruples);
-    console.log("operators:",operatorStack);
     console.log("operands:",operandStack);
     console.log("jumps:",jumpStack);
     console.log("functions:",functions);
@@ -466,14 +464,11 @@ ASSIGNMENT
     }
     | ID '=' HYPEREXPRESSION {
         let declaredVar = createVariable($1,currentType,functions[currentFunction]);
-        operatorStack.push('=');
-        if([...operatorStack].pop() == "=")
-        {
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = declaredVar.address;
         var leftType = currentType;
-        var operator = operatorStack.pop();
+        var operator = "=";
         if(rightType != leftType)
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
@@ -481,36 +476,28 @@ ASSIGNMENT
         }
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
         quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
-        }
     }
     ;
 FORASSIGNMENT : ID '=' HYPEREXPRESSION {
         let forVar = createVariable($1,"int",functions[currentFunction]);
-        operatorStack.push('=');
-        if([...operatorStack].pop() == "=")
+        var rightOperand = operandStack.pop();
+        var rightType = typeStack.pop();
+        var leftOperand = forVar.address;
+        var leftType = "int";
+        var operator = "=";
+        if(rightType != leftType)
         {
-            var rightOperand = operandStack.pop();
-            var rightType = typeStack.pop();
-            var leftOperand = forVar.address;
-            var leftType = "int";
-            var operator = operatorStack.pop();
-            if(rightType != leftType)
-            {
-                console.log("Type should be int");
-                throw new Error("For loops only take int types");
-            }
-            console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-            quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
-            // this should be the reference to goto at the end of the for
-            jumpStack.push(quadruples.length);
+            console.log("Type should be int");
+            throw new Error("For loops only take int types");
         }
+        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
+        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
+        // this should be the reference to goto at the end of the for
+        jumpStack.push(quadruples.length);
     };
 SUPRAEXPRESSION 
         : SUPRAEXPRESSION '=' HYPEREXPRESSION {
-                operatorStack.push('=');
-                if([...operatorStack].pop() == "="){
-                    createAssignmentQuad(quadruples,operandStack,operatorStack,typeStack,currentFunction===0);
-            }
+            createAssignmentQuad(quadruples,operandStack,"=",typeStack,currentFunction===0);
         }
         | HYPEREXPRESSION;
 
@@ -535,40 +522,22 @@ CONDITIONALHYPEREXPRESSION
 
 SUPEREXPRESSION
         : SUPEREXPRESSION '<' EXPRESSION {
-                operatorStack.push('<');
-                if([...operatorStack].pop() == "<"){
-                createOperationQuad(quadruples,operandStack, operatorStack,typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples,operandStack, "<",typeStack, nextAvail, functions[currentFunction]);
         }
         | SUPEREXPRESSION '<=' EXPRESSION {
-            operatorStack.push('<=');
-            if([...operatorStack].pop() == "<="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '<=', typeStack, nextAvail, functions[currentFunction]);
         }
         | SUPEREXPRESSION '>' EXPRESSION {
-            operatorStack.push('>');
-            if([...operatorStack].pop() == ">"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '>', typeStack, nextAvail, functions[currentFunction]);
         }
         | SUPEREXPRESSION '>=' EXPRESSION {
-            operatorStack.push('>=');
-            if([...operatorStack].pop() == ">="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '>=', typeStack, nextAvail, functions[currentFunction]);
         }
         | SUPEREXPRESSION '!=' EXPRESSION {
-            operatorStack.push('!=');
-            if([...operatorStack].pop() == "!="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '!=', typeStack, nextAvail, functions[currentFunction]);
         }
         | SUPEREXPRESSION '==' EXPRESSION {
-            operatorStack.push('==');
-            if([...operatorStack].pop() == "=="){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '==', typeStack, nextAvail, functions[currentFunction]);
         }
         | EXPRESSION;
 
@@ -576,34 +545,21 @@ EXPRESSION
         : TERMS 
         | EXPRESSION '+' TERMS
         {
-            operatorStack.push('+');
-            if([...operatorStack].pop() == "+"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack,nextAvail, functions[currentFunction]);
-            }
-            
+            createOperationQuad(quadruples, operandStack, '+', typeStack,nextAvail, functions[currentFunction]);
         }
         | EXPRESSION '-' TERMS
         {
-            operatorStack.push('-');
-            if([...operatorStack].pop() == "-"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '-', typeStack, nextAvail, functions[currentFunction]);
         };
 
 TERMS
         : TERMS '*' FACTOR
         {
-            operatorStack.push('*');
-            if([...operatorStack].pop() == "*"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, '*', typeStack, nextAvail, functions[currentFunction]);
         }
         | TERMS '/' FACTOR
         {
-            operatorStack.push('/');
-            if([...operatorStack].pop() == "/"){
-                createOperationQuad(quadruples, operandStack, operatorStack, typeStack, nextAvail, functions[currentFunction]);
-            }
+            createOperationQuad(quadruples, operandStack, "/", typeStack, nextAvail, functions[currentFunction]);
         }
         | FACTOR;     
         
@@ -615,7 +571,7 @@ ARRHEADER: ID '[' {
 
 };
 ARRBODY: ARRBODY , EXPRESSION{
-     let dimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions,currentFunction)
+     let dimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
      arrayCalledLabel.dimensions.push(dimensionIndex);
      if(currentDimension !== arrayCalled.dimensions.length-1)
      {
@@ -625,7 +581,7 @@ ARRBODY: ARRBODY , EXPRESSION{
      currentDimension++;
 } | EXPRESSION
 {
-    let lastDimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,operatorStack,typeStack,nextAvail,functions,currentFunction)
+    let lastDimensionIndex = createDimensionQuad(arrayCalled,currentDimension,currentArrayCallIndex,quadruples,operandStack,typeStack,nextAvail,functions,currentFunction)
     arrayCalledLabel.dimensions.push(lastDimensionIndex);
     if(currentDimension !== arrayCalled.dimensions.length-1)
      {

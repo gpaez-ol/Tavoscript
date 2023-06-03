@@ -1,12 +1,11 @@
 const { semanticTable } = require("./semanticTable");
 const { createVariable, getVariableByAddress } = require("./variableUtils");
-function getOperands(operandStack, operatorStack, typeStack) {
+function getOperands(operandStack,typeStack) {
   const rightOperand = operandStack.pop();
   const rightType = typeStack.pop();
   const leftOperand = operandStack.pop();
   const leftType = typeStack.pop();
-  const operator = operatorStack.pop();
-  return [rightOperand, rightType, leftOperand, leftType, operator];
+  return [rightOperand, rightType, leftOperand, leftType];
 }
 
 
@@ -53,13 +52,12 @@ function createReadQuad(
 function createAssignmentQuad(
   quadruples,
   operandStack,
-  operatorStack,
+  operator,
   typeStack,
   global
 ) {
-  var [rightOperand, rightType, leftOperand, leftType, operator] = getOperands(
+  var [rightOperand, rightType, leftOperand, leftType] = getOperands(
     operandStack,
-    operatorStack,
     typeStack
   );
   // add more validations later but for now strict typing
@@ -82,15 +80,14 @@ function createAssignmentQuad(
 function createOperationQuad(
   quadruples,
   operandStack,
-  operatorStack,
+  operator,
   typeStack,
   nextAvail,
   thisFunction,
   pointer = false
 ) {
-  var [rightOperand, rightType, leftOperand, leftType, operator] = getOperands(
+  var [rightOperand, rightType, leftOperand, leftType] = getOperands(
     operandStack,
-    operatorStack,
     typeStack
   );
   var resultType = semanticTable[leftType][operator][rightType];
