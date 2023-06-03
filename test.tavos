@@ -1,5 +1,5 @@
 func void main()
 {
     int x =2;
-    if(x>2){print(x);}else{print("entro al else");}
+    if(x>2){print(x);}else{  if(x==2){print("la X es igual a 2");}  print("entro al else");}
 }
