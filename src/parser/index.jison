@@ -8,7 +8,6 @@
 
     var operandStack = [];
     var typeStack = [];
-    var jumpStack = [];
     var currentDimension = 0;
     var arrayCalled = null; 
     var arrayCalledLabel = null;
