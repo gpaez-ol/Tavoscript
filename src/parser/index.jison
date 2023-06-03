@@ -248,26 +248,13 @@ PARAMETER: TYPE ID {
         currentArray = null;
 };
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
-FUNCTYPE: intType  | floatType   | boolType  | stringType;
+FUNCTYPE: intType  | floatType   | boolType  | stringType | voidType;
 FUNCDEFINITION: FUNC FUNCTYPE ID{
-    if($3 === "main"){
+    if($3 === "main" && $2 !== "void"){
         console.log("Main function should be void");
         throw new Error("Main function should be void");
     }
-    if(functions.some((func) => func.name === $3))
-    {
-        console.log(`Function ${$3} already exists`);
-        throw new Error(`Function ${$3} was already declared`);
-    }
-    let functionVariable =  createVariable($3, $2, functions[0], "local");
-    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
-    currentFunction = functions.length-1;
-    nextAvailable=1;
-    nextPointerAvailable=1;
-    resetAvailableAddresses();
-};
-VOIDFUNCDEFINITION: FUNC voidType ID{
-    if(functions.some((func) => func.name === $3) && $3 !== "main")
+    if(functions.some((func) => func.name === $3)  && $3 !== "main")
     {
         console.log(`Function ${$3} already exists`);
         throw new Error(`Function ${$3} was already declared`);
@@ -276,50 +263,38 @@ VOIDFUNCDEFINITION: FUNC voidType ID{
         console.log('Main was already declared');
         throw new Error("Main was already declared");
     }
-    // check if variable name exists because global variable will exist
-    // talvez tmbn pushear a las variables globales una variable con el mismo nombre d ela funcion ,para tener el valor asignado
     if($3 !== "main" )
     {
-    let voidFunctionVariable =  createVariable($3, $2, functions[0], "local");
-    functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null});
-    currentFunction = functions.length-1;
+        let functionVariable =  createVariable($3, $2, functions[0], "local");
+        functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
+        currentFunction = functions.length-1;
+    }else {
+        currentFunction=1;
+    }
     nextAvailable=1;
     nextPointerAvailable=1;
     resetAvailableAddresses();
-    }else {
-        currentFunction = 1;
-        nextAvailable=1;
-        nextPointerAvailable=1;
-        resetAvailableAddresses();
-    }
 };
+
 FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
+    if(functions[currentFunction].name === "main")
+    {
+        console.log("Main function should not have parameters");
+        throw new Error("Main function should not have parameters");
+    }
     functions[currentFunction].quadruplesStart = quadruples.length;
 } | FUNCDEFINITION '(' ')' {
-    functions[currentFunction].quadruplesStart = quadruples.length;
-};
-VOIDFUNCHEADER: VOIDFUNCDEFINITION '('PARAMETERS ')' {
-    functions[currentFunction].quadruplesStart = quadruples.length;
     if(functions[currentFunction].name === "main")
     {
         quadruples[0].address = quadruples.length;
     }
-} |  VOIDFUNCDEFINITION '(' ')' {
     functions[currentFunction].quadruplesStart = quadruples.length;
-    if(functions[currentFunction].name === "main")
-    {
-        quadruples[0].address = quadruples.length;
-    }
 };
 FUNCTION: FUNCHEADER '{'  INSTRUCTIONS '}'{
     finishFunction(functions[currentFunction],quadruples)
     currentFunction = 0;
     nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
-} | VOIDFUNCHEADER '{'  INSTRUCTIONS '}'{
-    finishFunction(functions[currentFunction],quadruples)
-    currentFunction = 0;
-    nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
-} ;
+};
 
 FUNCRETURN:  RETURN HYPEREXPRESSION  {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
