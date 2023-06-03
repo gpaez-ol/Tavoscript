@@ -10,7 +10,7 @@
     var typeStack = [];
     var jumpStack = [];
     var currentDimension = 0;
-    var arrayCalled = null;
+    var arrayCalled = null; 
     var arrayCalledLabel = null;
     var currentArrayCallIndex = null;
 
@@ -287,6 +287,7 @@ READARGUMENT:ID
             }
             operandStack[operandStack.length] = {address:operandStack[operandStack.length -1],label:arrayCalledLabel}
             arrayCalled = null;
+            arrayCalledLabel =  null;
             currentArrayCallIndex = null;
         };
 READBODY:  READBODY , READARGUMENT  {
