@@ -206,6 +206,15 @@ function logger(string,object)
                 return {currentQuadruple:address,global};
             }
         }
+        case "GOTOT":
+            {
+                const address = quadruple.address;
+                const value = getVariableValue(quadruple.value);
+                if(value)
+                {
+                    return {currentQuadruple:address,global};
+                }
+            }
         break;
         case "READ":
         {
