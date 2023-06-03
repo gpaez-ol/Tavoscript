@@ -1,0 +1,9 @@
+func int sum(int x)
+{
+    return x+2;
+}
+
+func void main() 
+{
+    print(:sum(2));
+}

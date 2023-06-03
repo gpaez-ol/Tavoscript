@@ -210,8 +210,6 @@ case 23:
         console.log(`Function ${$$[$0]} already exists`);
         throw new Error(`Function ${$$[$0]} was already declared`);
     }
-    // check if variable name exists because global variable will exist
-    // talvez tmbn pushear a las variables globales una variable con el mismo nombre de la funcion ,para tener el valor asignado
     let functionVariable =  createVariable($$[$0], $$[$0-1], functions[0], "local");
     functions.push({name:$$[$0],returnType:$$[$0-1],parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
     currentFunction = functions.length-1;
@@ -249,7 +247,12 @@ case 24:
     }
 
 break;
-case 25: case 26: case 27: case 28:
+case 25: case 26:
+
+    functions[currentFunction].quadruplesStart = quadruples.length;
+
+break;
+case 27: case 28:
 
     functions[currentFunction].quadruplesStart = quadruples.length;
     if(functions[currentFunction].name === "main")
@@ -289,6 +292,7 @@ case 33:
             }
             operandStack[operandStack.length] = {address:operandStack[operandStack.length -1],label:arrayCalledLabel}
             arrayCalled = null;
+            arrayCalledLabel =  null;
             currentArrayCallIndex = null;
         
 break;
@@ -365,6 +369,11 @@ case 44:
 break;
 case 45:
 
+    if(availableParams.length > 0)
+    {
+        console.log("Arguments missing");
+        throw new Error("Arguments missing for function call");
+    }
     quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
@@ -405,6 +414,11 @@ case 46:
 break;
 case 47:
 
+    if(availableParams.length > 0)
+    {
+        console.log("Arguments missing");
+        throw new Error("Arguments missing for function call");
+    }
       quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
@@ -417,9 +431,6 @@ case 47:
         quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
-    }else {
-        console.log("You cannot use a void function within a expression");
-        throw new Error("You cannot use a void function within an expression");
     }
 
 break;
@@ -843,18 +854,13 @@ parse: function parse(input) {
     var typeStack = [];
     var jumpStack = [];
     var currentDimension = 0;
-    var arrayCalled = null;
+    var arrayCalled = null; 
     var arrayCalledLabel = null;
     var currentArrayCallIndex = null;
 
-    //  for functions
     var availableParams = [];
     var functionCalled = null;
     var functionCallCurrentParam = 0;
-    // t1 registro temporal
-    // operacion,   operandoizq,operandoder,res
-    // el primer quadruple debe ser un GOTO main () ya que main es la primera funcion, si no existe main , tirar error
-    // should be main if its still null after everything that is the error
     var quadruples = [{operator:"GOTO",address:null}];
     
     var functions = [{variables:[],global:true},{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
