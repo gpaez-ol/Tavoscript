@@ -130,8 +130,6 @@ function createConstantVariable(name, type, mainFunction) {
 
 function getVariable(name, functions, currentFunction) {
   // check local vars
-  console.log(functions);
-  console.log(currentFunction);
   let funcVar = functions[currentFunction].variables.find(
     (variable) => variable.name === name
   );

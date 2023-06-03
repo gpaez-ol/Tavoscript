@@ -130,7 +130,7 @@ semanticTable["string"] = {
   "+": {
     int: undefined,
     float: undefined,
-    string: undefined,
+    string: "string",
     bool: undefined,
   },
   "-": {
@@ -246,12 +246,6 @@ semanticTable["bool"] = {
     bool: "bool",
   },
   "||": {
-    int: undefined,
-    float: undefined,
-    string: undefined,
-    bool: "bool",
-  },
-  "!": {
     int: undefined,
     float: undefined,
     string: undefined,

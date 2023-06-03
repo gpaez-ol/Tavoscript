@@ -158,22 +158,21 @@ ASSIGNMENT
     ;
 
 // condicionales 
-HYPERCONDITIONALS: CONDITIONALS | CONDITIONALS '{'  INSTRUCTIONS '}'{
+HYPERCONDITIONALS: CONDITIONAL | CONDITIONALELSE '{'  INSTRUCTIONS '}'{
             var end = jumpStack.pop();
             var quadruple = quadruples[end];
             quadruple.address = quadruples.length;
 
 };
 
-CONDITIONALS: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
-                var end = jumpStack.pop();
+CONDITIONAL: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
+        var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 quadruple.address = quadruples.length;
-      
-} | IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE {
+};
+CONDITIONALELSE: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE {
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
-                console.log(quadruple);
                 quadruple.address = quadruples.length+1;
                 quadruples.push({operator:"GOTO",address:result,global:currentFunction === 0});
                 jumpStack.push(quadruples.length-1);
