@@ -374,6 +374,6 @@ function createReadLabel(labelVar)
         })
         return arrayLabel;
     }
-    return labelVar.label;
+    return labelVar;
 }
 module.exports = {solveOperation};

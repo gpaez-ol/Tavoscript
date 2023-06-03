@@ -15,7 +15,7 @@
     var arrayCalledLabel = null;
     var currentArrayCallIndex = null;
 
-    //for functions
+    //  for functions
     var availableParams = [];
     var functionCalled = null;
     var functionCallCurrentParam = 0;
@@ -86,8 +86,8 @@
 "return"                    return 'RETURN'
 "print"                     return 'PRINT'
 "read"                      return 'READ'
-\"[^\"]*\"				    return 'text'
-([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
+\"[^\"]*\"				    return 'TEXT'
+([a-zA-Z])[a-zA-Z0-9_]*	    return 'ID'
 <<EOF>>				        return 'EOF'
 .                           {}
 /lex
@@ -174,7 +174,7 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
 
 };
 // contabilizar parametros, variables locales y las variables temporales para saber de que tamano es el pedazo de memoria
-PARAMETER: TYPE id {
+PARAMETER: TYPE ID {
          console.log("esta creando parametro normal");
          createVariable($2,$1,functions[currentFunction],"parameter");
          functions[currentFunction].parameters.push($1);
@@ -187,7 +187,7 @@ PARAMETER: TYPE id {
 };
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
 FUNCTYPE: intType  | floatType   | boolType  | stringType;
-FUNCDEFINITION: FUNC FUNCTYPE id{
+FUNCDEFINITION: FUNC FUNCTYPE ID{
     if($3 === "main"){
         console.log("Main function should be void");
         throw new Error("Main function should be void");
@@ -206,7 +206,7 @@ FUNCDEFINITION: FUNC FUNCTYPE id{
     nextPointerAvailable=1;
     resetAvailableAddresses();
 };
-VOIDFUNCDEFINITION: FUNC voidType id{
+VOIDFUNCDEFINITION: FUNC voidType ID{
     if(functions.some((func) => func.name === $3) && $3 !== "main")
     {
         console.log(`Function ${$3} already exists`);
@@ -273,7 +273,7 @@ FUNCRETURN:  RETURN HYPEREXPRESSION  {
             // aqui podria asignarse el valor obtenido a la variable global con el mismo nombre de la funcion
             createReturnVar(functions[currentFunction],typeStack,operandStack,quadruples);
 };
-READARGUMENT:id
+READARGUMENT:ID
         {
             let readVariable = getVariable($1,functions,currentFunction);
             operandStack.push({address:readVariable.address,label:readVariable.name});
@@ -322,7 +322,7 @@ ARGUMENT: HYPEREXPRESSION {
             checkParams(operand,operandType,currentParam,functionCallCurrentParam,currentFunction,functions,quadruples)
             functionCallCurrentParam++;
 };
-FUNCCALLHEADER: CallType id '('{
+FUNCCALLHEADER: CallType ID '('{
     // prepara el numero de parametros
     // genera ERA size para traer el new size
     // check function exist
@@ -430,7 +430,7 @@ INSTRUCTION : DECLARATION ';'
 DECLARATION : TYPE ASSIGNMENTS {
         currentType = null;
 };
-ARRAYID: id;
+ARRAYID: ID;
 DIMENSIONS: DIMENSIONS DIMENSION | DIMENSION;
 DIMENSION: ']''[' NUMBER {
     if(currentArray === null)
@@ -445,7 +445,7 @@ DIMENSION: ']''[' NUMBER {
     }
     createConstantVariable($3,"int",functions[0])
     currentArray.dimensions.push({upperLimit:$3,m:0});
-} | id '[' NUMBER{
+} | ID '[' NUMBER{
     if($3< 1)
     {
         console.log("Array limits must be positive values");
@@ -458,13 +458,13 @@ DIMENSION: ']''[' NUMBER {
 
 ASSIGNMENTS : ASSIGNMENTS , ASSIGNMENT | ASSIGNMENT;
 ASSIGNMENT 
-    : id {
+    : ID {
         createVariable($1,currentType,functions[currentFunction]);
     } | DIMENSIONS ']'{
         createArrayVariable(currentArray,functions[currentFunction]);
         currentArray = null;
     }
-    | id '=' HYPEREXPRESSION {
+    | ID '=' HYPEREXPRESSION {
         let declaredVar = createVariable($1,currentType,functions[currentFunction]);
         operatorStack.push('=');
         if([...operatorStack].pop() == "=")
@@ -484,7 +484,7 @@ ASSIGNMENT
         }
     }
     ;
-FORASSIGNMENT : id '=' HYPEREXPRESSION {
+FORASSIGNMENT : ID '=' HYPEREXPRESSION {
         let forVar = createVariable($1,"int",functions[currentFunction]);
         operatorStack.push('=');
         if([...operatorStack].pop() == "=")
@@ -607,7 +607,7 @@ TERMS
         }
         | FACTOR;     
         
-ARRHEADER: id '[' {
+ARRHEADER: ID '[' {
         let arrayVariable = getArrayVariable($1,functions,currentFunction);
         arrayCalled = arrayVariable;
         arrayCalledLabel = {label:arrayVariable.name,dimensions:[]};
@@ -666,7 +666,7 @@ FACTOR
             operandStack.push(negativeFAddress);
             typeStack.push("float");
         }
-        | id
+        | ID
         {
             // check var exists
             // if var doesnt exist throw error
@@ -685,7 +685,7 @@ FACTOR
             currentArrayCallIndex = null;
         }
         |FACTFUNCCALLS 
-        | text {
+        | TEXT {
             let stringAddress = createConstantVariable($1,"string",functions[0])
             operandStack.push(stringAddress);
             typeStack.push("string");
