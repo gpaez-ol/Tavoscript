@@ -281,7 +281,14 @@ function getOperationOperands(quadruple)
 }
 function getAssignmentOperands(quadruple)
 {
-    const value = getVariableValue(quadruple.value);
+    // check if assigning an array value is possible
+    // maybe the quadruple.operand >= 17000 logic needs to happen also
+    let value = getVariableValue(quadruple.value);
+    if( quadruple.value >= 17000 && quadruple.value <= 20999)
+    {
+        value = getVariableValue(value);
+        logger("Actual Assignment Value:",value);
+    }
     let assignmentOperand = quadruple.operand;
     if (quadruple.operand >= 17000 && quadruple.operand <= 20999)
     {  
