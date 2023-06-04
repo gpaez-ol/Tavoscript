@@ -23,8 +23,8 @@ function assignAddress(variable,m0=null){
   return availableAddress;
 }
 
-function createVariable(name, type, currentFunction, varType = "local") {
-  if (varType === "local" &&  currentFunction.variables.some((variable) => variable.name === name)) {
+function createVariable(name, type, currentFunction, varType = 6) {
+  if (varType === 6 &&  currentFunction.variables.some((variable) => variable.name === name)) {
     console.log("Name is already taken", name);
     throw new Error(name, "name is already taken");
   }
@@ -33,7 +33,7 @@ function createVariable(name, type, currentFunction, varType = "local") {
     name,
     address:null,
     varType,varType:
-    currentFunction.global === true && varType == "local" ? "global" : varType,
+    currentFunction.global === true && varType == 6 ? 7 : varType,
   }
   if(variable.type !== 5)
   {
@@ -58,7 +58,7 @@ function createVariable(name, type, currentFunction, varType = "local") {
 
 
 
-function createArrayVariable(array, currentFunction, varType = "local") {
+function createArrayVariable(array, currentFunction, varType = 6) {
   if (currentFunction.variables.some((variable) => variable.name === array.name)) {
     console.log("Name is already taken", array.name);
     throw new Error(name, "name is already taken");
@@ -76,7 +76,7 @@ function createArrayVariable(array, currentFunction, varType = "local") {
   // mn * lln  + mn *lln (lower limit)
   array.dimensions[array.dimensions.length-1]['k'] = 0 * -1;
   delete array.dimensions[array.dimensions.length-1]['m'];
-  array.varType = currentFunction.global === true && varType == "local" ? "global" : varType;
+  array.varType = currentFunction.global === true && varType == 6 ? 7 : varType;
   array.address = assignAddress(array,m0);
   // add logic for the upper limits?
   currentFunction.variables.push(array);

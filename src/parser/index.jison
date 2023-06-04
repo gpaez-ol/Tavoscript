@@ -269,7 +269,7 @@ FUNCDEFINITION: FUNC FUNCTYPE ID{
     }
     if($3 !== "main" )
     {
-        let functionVariable =  createVariable($3, typeMapper.get($2), functions[0], "local");
+        let functionVariable =  createVariable($3, typeMapper.get($2), functions[0], 6);
         functions.push({name:$3,returnType:typeMapper.get($2),parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
         currentFunction = functions.length-1;
     }else {
@@ -297,7 +297,8 @@ FUNCHEADER: FUNCDEFINITION '(' PARAMETERS ')' {
 FUNCTION: FUNCHEADER '{'  INSTRUCTIONS '}'{
     finishFunction(functions[currentFunction],quadruples)
     currentFunction = 0;
-    nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
+    // Temporal Values = 8
+    nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == 8).length + 1
 };
 
 FUNCRETURN:  RETURN HYPEREXPRESSION  {
@@ -318,7 +319,7 @@ FUNCCALLHEADER: CallType ID '('{
     availableParams = [...functionCalled.parameters];
     console.log("Available Params :",[...availableParams]);
     functionCallCurrentParam = 1
-    quadruples.push({operator:"ERA",functionName:$2,global:currentFunction === 0,global:currentFunction === 0});
+    quadruples.push({operator:"ERA",functionName:$2,global:currentFunction === 0});
 };
 
 ARGUMENTS: ARGUMENTS , ARGUMENT | ARGUMENT;
@@ -351,7 +352,8 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
         var resultType = functionCalled.returnType;
-        createVariable(result, resultType, functions[currentFunction], "temporal");
+        // Temporal Values = 8
+        createVariable(result, resultType, functions[currentFunction], 8);
         quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
     
@@ -369,7 +371,8 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
-        createVariable(result, resultType, functions[currentFunction], "temporal");
+        // Temporal Values = 8
+        createVariable(result, resultType, functions[currentFunction], 8);
         quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
 };
@@ -390,7 +393,8 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
         var resultType = functionCalled.returnType;
-        let createdVar = createVariable(result, resultType, functions[currentFunction], "temporal");
+        // Temporal Values = 8
+        let createdVar = createVariable(result, resultType, functions[currentFunction], 8);
         quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
@@ -410,7 +414,8 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
-        let createdVar= createVariable(result, resultType, functions[currentFunction], "temporal");
+        // Temporal Values = 8
+        let createdVar= createVariable(result, resultType, functions[currentFunction], 8);
         quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
@@ -448,7 +453,7 @@ ARRCALL: ARRHEADER ARRBODY ']';
 
 ARRAYDEF: ARRAYID DIMENSIONS;
 ARRAYID:  ID '['{
-    currentArray = {type:currentType,name:$1,varType:currentFunction.global === true ? "global" : "local",dimensions:[]};
+    currentArray = {type:currentType,name:$1,varType:currentFunction.global === true ? 7 : 6,dimensions:[]};
 };
 DIMENSIONS:  DIMENSIONS '[' DIMENSION | DIMENSION;
 
@@ -526,6 +531,7 @@ FACTOR
         {
             // add check constants
             let numberAddress = createConstantVariable($1,1,functions[0])
+            // Int Var Type = 1
             typeStack.push(1);
             operandStack.push(numberAddress);
         }
@@ -535,20 +541,22 @@ FACTOR
             let negativeNAddress =createConstantVariable($2*-1,1,functions[0])
             // add check constants
             operandStack.push(negativeNAddress);
+            // Int Var Type = 1
             typeStack.push(1);
         }
         | FLOAT 
         {
             let floatAddress = createConstantVariable($1,2,functions[0])
             operandStack.push(floatAddress);
+            // Float Var Type = 2
             typeStack.push(2);
         }
         | '-' FLOAT %prec UMINUS
         {
             console.log($2*-1);
-            // add check constants
             let negativeFAddress = createConstantVariable($2*-1,2,functions[0])
             operandStack.push(negativeFAddress);
+            // Float Var Type = 2
             typeStack.push(2);
         }
         | ID
@@ -573,18 +581,21 @@ FACTOR
         | TEXT {
             let stringAddress = createConstantVariable($1,3,functions[0])
             operandStack.push(stringAddress);
+            // String Var Type = 3
             typeStack.push(3);
         } |
         TRUE{
-            let booleanTAddress = createConstantVariable("true",4,functions[0])
+            let booleanTAddress = createConstantVariable($1,4,functions[0])
             // constant address
             operandStack.push(booleanTAddress);
+            // Bool Var Type = 4
             typeStack.push(4);
         } |
         FALSE {
             // constant address
-            let booleanFAddress = createConstantVariable("false",4,functions[0])
+            let booleanFAddress = createConstantVariable($1,4,functions[0])
             operandStack.push(booleanFAddress);
+            // Bool Var Type = 4
             typeStack.push(4);
         }
         | '('  SUPRAEXPRESSION ')'; 
