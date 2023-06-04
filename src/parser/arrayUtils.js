@@ -15,7 +15,6 @@ function createDimensionQuad(
     let mainFunction = functions[0];
     var operand = operandStack[operandStack.length -1];
     var operandType = typeStack[typeStack.length -1];
-    console.log("Operand Type",operandType);
     if(operandType !== 1)
     {
         console.log(`Index for ${arrayCalled.name} should be of type int`);
@@ -48,7 +47,6 @@ function createDimensionQuad(
             {
                 return {label:operandVariable.name}
             } else {
-                console.log(operandVariable);
                 return {address:operandVariable.address,variable:true}
             }
         }

@@ -16,7 +16,6 @@ ES
 // variables parameter 21000-23999
 // stackSegment = [];
 // for files etc, pointers o espacio extra (en este caso los registros temporales) igual se mueren al terminar una funcion
-// constantes "PRINT() LETRERO"
 // variable temporal 9000-12999
 // variable constantes 13000-16999
 // variable pointers de arreglos 17000-20999
@@ -67,7 +66,7 @@ function createParameterSegment(variables,parameterValues,segment)
         })
 }
 
-// add pointer vars
+
  function startVariablesMemory(functions,globalQuadruples,devMode){
     // Global Var Type = 7
     let globalVars = functions[0].variables.filter(variable => variable.varType === 7);
@@ -110,18 +109,12 @@ function createParameterSegment(variables,parameterValues,segment)
     memory.codeSegment = codeSegment;
 }
 
- function offloadFunction(currentFunc)
-{
-    memory.extraSegment = {};
-    memory.stackSegment = {};
-    memory.codeSegment = [];
-}
 
 var booleanRegexPattern = new RegExp("true");
 
  function getVariableValue(address)
 {
-    // variable global int 1000-4999
+    // variable global int 1000-1999
     if( address <= 1999 && address >= 1000)
     {   
         return memory.dataSegment[address] !== null ?  Number(memory.dataSegment[address]) : null;
@@ -243,7 +236,7 @@ var booleanRegexPattern = new RegExp("true");
     }
     throw new Error("Address is not found in the stacks");
 }
- function getArrayVariableValue(address,arraySize) {
+ function getArrayVariableValues(address,arraySize) {
     let x = 0;
     let values = [];
     while(x < arraySize)
@@ -288,4 +281,4 @@ function getCodeSegmentIndex(id)
     return arrayIndex;
 }
 
-module.exports = {memory,startVariablesMemory,getCodeSegmentIndex,loadFunction,resetMemory,offloadFunction,getVariableValue,getArrayVariableValue,assignVariableValue};
+module.exports = {memory,startVariablesMemory,getCodeSegmentIndex,loadFunction,resetMemory,getVariableValue,getArrayVariableValues,assignVariableValue};

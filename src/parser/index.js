@@ -90,12 +90,6 @@ case 1:
         console.log("Main function is missing");
         throw new Error("Main function is missing");
     }
-    // aqui deberia regresar la tabla de memoria de las funciones, etc
-    console.log("quadruples:",quadruples);
-    console.log("operands:",operandStack);
-    console.log("jumps:",jumpStack);
-    console.log("functions:",functions);
-    console.log("current function:",currentFunction)
     return {quadruples,functions};
     
 break;
@@ -141,7 +135,6 @@ case 25:
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = declaredVar.address;
-        console.log("current Type",currentType);
         var leftType = currentType;
         var operator = "=";
         if(rightType != leftType && !(rightType === 1 && leftType === 2))
@@ -149,7 +142,6 @@ case 25:
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
         }
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
         quadruples.push({id:quadruples.length,operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
     
 break;
@@ -209,7 +201,6 @@ case 34:
 
         var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
-            console.log(resultOperand,resultType);
             if(resultType != 4)
             {
                 console.log("A conditional statement should be a bool");
@@ -242,7 +233,6 @@ case 36:
             console.log("Type should be int");
             throw new Error("For loops only take int types");
         }
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
         quadruples.push({id:quadruples.length,operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
         // this should be the reference to goto at the end of the for
         jumpStack.push(quadruples.length);
@@ -334,11 +324,10 @@ case 51:
     functionCalled = functions.find(func => func.name === $$[$0-1]);
     if(!functionCalled)
     {
-        console.log(`The function ${$$[$0-1]}does not exist`);
+        console.log(`The function ${$$[$0-1]} does not exist`);
         throw new Error(`The function ${$$[$0-1]} does not exist`);
     }
     availableParams = [...functionCalled.parameters];
-    console.log("Available Params :",[...availableParams]);
     functionCallCurrentParam = 1
     quadruples.push({id:quadruples.length,operator:"ERA",functionName:$$[$0-1],global:currentFunction === 0});
 
@@ -571,8 +560,6 @@ case 83:
                 operandStack[operandStack.length-1] = {address:expOperand,negative:true};
             }else 
             {
-                console.log("operand",hyperExpoperand);
-                console.log("hyperType",hyperType);
                 throw new Error("Only Int or Float values can be negative");
             }
         
