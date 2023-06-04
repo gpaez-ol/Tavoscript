@@ -71,7 +71,7 @@ function createReturnVar(
   var rightType = typeStack.pop();
   var leftType = thisFunction.returnType;
   if (rightType != leftType && !(rightType === "int" && leftType === "float")) {
-    console.log(`Type should be ${leftType}`);
+    console.log(`Function return Type should be ${leftType}`);
     throw new Error(`Function return type should be ${leftType}`);
   }
   // aqui podria ser la variable global con el mismo nombre que la funcion
@@ -101,8 +101,8 @@ function checkParams(operand,operandType,currentParam,functionCallCurrentParam,c
   let argument = getVariableByAddress(operand,functions,currentFunction);
   if(argument.dimensions)
   {
-    console.log("Function Parameter cannot be an array");
-    throw new Error("Function Parameter cannot be an array");
+    console.log("Function Argument cannot be an array");
+    throw new Error("Function Argument cannot be an array");
   }
   if(operandType !== currentParam && !(operandType === "int" && currentParam === "float"))
   {
