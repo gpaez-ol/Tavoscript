@@ -41,11 +41,6 @@ function createVariable(name, type, currentFunction, varType = "local") {
   }else {
     delete variable.address;
   }
-  if(variable.type === "void")
-  {
-    console.log("Fue void el tipo",variable);
-
-  }
   currentFunction.variables.push(variable);
   return variable;
 }
@@ -85,26 +80,6 @@ function createArrayVariable(array, currentFunction, varType = "local") {
   array.address = assignAddress(array,m0);
   // add logic for the upper limits?
   currentFunction.variables.push(array);
-}
-
-function accessArrayValue(array,indexes)
-{
-  let cell=0;
-  array.forEach(dimension => {
-    index = indexes.pop();
-    if(index === null || index === undefined)
-    {
-      console.log("Array has more dimensions that the ones specified");
-      throw new Error("array has more dimensions that the ones specified");
-    }
-    if(Object.hasOwn(dimension, 'k'))
-    {
-      cell += index;
-    }else{
-      cell += dimension.m * index;
-    }
-  })
-  return cell;
 }
 
 function createConstantVariable(name, type, mainFunction) {
@@ -177,4 +152,4 @@ function getArrayVariable(name,functions,currentFunction)
     }
     return arrayVariable;
 }
-module.exports ={resetAvailableAddresses,createVariable,createArrayVariable,accessArrayValue,createConstantVariable,getVariable,getVariableByAddress,getArrayVariable};
+module.exports ={resetAvailableAddresses,createVariable,createArrayVariable,createConstantVariable,getVariable,getVariableByAddress,getArrayVariable};

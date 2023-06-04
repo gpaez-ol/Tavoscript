@@ -15,10 +15,7 @@ function createPrintQuad(
   typeStack,
 ) {
   var printValue = operandStack.pop();
-  var printType = typeStack.pop();
-  console.log(
-    `PRINT(${printValue}(${printType}))`
-  );
+  typeStack.pop();
   quadruples.push({
     operator: "PRINT",
     value: printValue,
@@ -29,15 +26,10 @@ function createPrintQuad(
 function createReadQuad(
   quadruples,
   operandStack,
-  typeStack,
-  label
+  typeStack
 ) {
   var readValue = operandStack.pop();
-  console.log(readValue);
   var readType = typeStack.pop();
-  console.log(
-    `READ(${readValue}(${readType}))`
-  );
   quadruples.push({
     operator: "READ",
     value: readValue.address,
@@ -52,7 +44,6 @@ function createReadQuad(
 function createAssignmentQuad(
   quadruples,
   operandStack,
-  operator,
   typeStack,
   global
 ) {
@@ -62,15 +53,11 @@ function createAssignmentQuad(
   );
   // add more validations later but for now strict typing
   if (rightType != leftType && !(rightType === "int" && leftType === "float")) {
-    console.log("Operation", leftType, operator, rightType, "is not valid");
+    console.log("Operation", leftType, "=", rightType, "is not valid");
     throw new Error("Operation is not valid");
   }
-  console.log(
-    `${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`
-  );
-  console.log(leftOperand,"left operand assignment")
   quadruples.push({
-    operator: operator,
+    operator: "=",
     operand: leftOperand,
     value: rightOperand,
     global:global === true
@@ -96,9 +83,6 @@ function createOperationQuad(
     throw new Error("Operation is not valid");
   }
   var result = nextAvail(pointer);
-  console.log(
-    `${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})=${result}(${resultType})`
-  );
   let newVariable = createVariable(result, resultType, thisFunction, pointer ? "pointer" : "temporal");
   quadruples.push({
     operator: operator,
