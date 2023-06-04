@@ -440,7 +440,7 @@ ARRBODY: ARRBODY , EXPRESSION{
      }
     currentDimension++;
 };
-ARRCALL: ARRHEADER ARRBODY;
+ARRCALL: ARRHEADER ARRBODY ']';
 
 ARRAYDEF: ARRAYID DIMENSIONS;
 ARRAYID:  ID '['{
@@ -464,7 +464,7 @@ DIMENSION:  NUMBER ']'{
 } ;
 SUPRAEXPRESSION 
         : SUPRAEXPRESSION '=' HYPEREXPRESSION {
-            createAssignmentQuad(quadruples,operandStack,"=",typeStack,currentFunction===0);
+            createAssignmentQuad(quadruples,operandStack,typeStack,currentFunction===0);
         }
         | HYPEREXPRESSION;
 
@@ -554,7 +554,7 @@ FACTOR
             let variable = getVariable($1,functions,currentFunction);
             operandStack.push(variable.address);
             typeStack.push(variable.type);
-        }|ARRCALL ']'
+        }|ARRCALL
         {
             if(currentDimension <= arrayCalled.dimensions.length-1)
             {
@@ -590,7 +590,7 @@ READARGUMENT:ID
             operandStack.push({address:readVariable.address,label:readVariable.name});
             typeStack.push(readVariable.type);
 
-        }| ARRCALL ']'
+        }| ARRCALL
         {
             if(currentDimension <= arrayCalled.dimensions.length-1)
             {
@@ -598,7 +598,7 @@ READARGUMENT:ID
                 throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensions`);
 
             }
-            operandStack[operandStack.length] = {address:operandStack[operandStack.length -1],label:arrayCalledLabel}
+            operandStack.push({address:operandStack[operandStack.length-1],label:arrayCalledLabel});
             arrayCalled = null;
             arrayCalledLabel =  null;
             currentArrayCallIndex = null;

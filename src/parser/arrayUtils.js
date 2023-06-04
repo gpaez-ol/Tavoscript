@@ -35,7 +35,6 @@ function createDimensionQuad(
     if(Object.hasOwn(arrayCurrentDimension, 'm'))
     {
         let constantVarAddress = createConstantVariable(arrayCurrentDimension.m,"int", mainFunction)
-        console.log(constantVarAddress, "constantVar created");
         operandStack.push(constantVarAddress);
         typeStack.push("int");
         createOperationQuad(quadruples,operandStack,"*",typeStack,nextAvail,thisFunction);

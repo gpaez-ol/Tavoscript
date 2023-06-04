@@ -14,7 +14,6 @@ async function startProgram({quadruples,functions},devMode)
     if(globalQuadruples.length > 0)
     {
         globalQuads = true;
-        console.log("Hay globales")
     }
     while(currentQuadruple !== undefined && currentQuadruple !== null)
     {
