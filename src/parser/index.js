@@ -101,22 +101,22 @@ case 1:
 break;
 case 2:
 
-      currentType = "int";
+      currentType = 1;
 
 break;
 case 3:
 
-    currentType = "float";
+    currentType = 2;
 
 break;
 case 4:
 
-    currentType = "bool";
+    currentType = 4;
 
 break;
 case 5:
 
-    currentType = "string";
+    currentType = 3;
 
 break;
 case 20:
@@ -141,9 +141,10 @@ case 25:
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = declaredVar.address;
+        console.log("current Type",currentType);
         var leftType = currentType;
         var operator = "=";
-        if(rightType != leftType && !(rightType === "int" && leftType === "float"))
+        if(rightType != leftType && !(rightType === 1 && leftType === 2))
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
@@ -182,7 +183,7 @@ case 30:
             // check if there is a result  if no result its an error
             var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
-            if(resultType != "bool")
+            if(resultType != 4)
             {
                 console.log("A conditional statement should be a bool");
                 throw new Error("A conditional statement should be a bool");
@@ -209,7 +210,7 @@ case 34:
         var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
             console.log(resultOperand,resultType);
-            if(resultType != "bool")
+            if(resultType != 4)
             {
                 console.log("A conditional statement should be a bool");
                 throw new Error("A conditional statement should be a bool");
@@ -230,11 +231,11 @@ case 35:
 break;
 case 36:
 
-        let forVar = createVariable($$[$0-2],"int",functions[currentFunction]);
+        let forVar = createVariable($$[$0-2],1,functions[currentFunction]);
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = forVar.address;
-        var leftType = "int";
+        var leftType = 1;
         var operator = "=";
         if(rightType != leftType)
         {
@@ -249,21 +250,23 @@ case 36:
 break;
 case 37:
 
-         createVariable($$[$0],$$[$0-1],functions[currentFunction],"parameter");
-         functions[currentFunction].parameters.push($$[$0-1]);
+         let parameterType = typeMapper.get($$[$0-1]);
+         createVariable($$[$0],parameterType,functions[currentFunction],"parameter");
+         functions[currentFunction].parameters.push(parameterType);
 
 break;
 case 38:
 
-        currentArray.type = $$[$0-1];
+        let arrayParameterType = typeMapper.get($$[$0-1]);
+        currentArray.type = arrayParameterType;
         createArrayVariable(currentArray,functions[currentFunction],"parameter");
-        functions[currentFunction].parameters.push({type:$$[$0-1],dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
+        functions[currentFunction].parameters.push({type:arrayParameterType,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
         currentArray = null;
 
 break;
 case 46:
 
-    if($$[$0] === "main" && $$[$0-1] !== "void"){
+    if($$[$0] === "main" && typeMapper.get($$[$0-1]) !== 5){
         console.log("Main function should be void");
         throw new Error("Main function should be void");
     }
@@ -278,8 +281,8 @@ case 46:
     }
     if($$[$0] !== "main" )
     {
-        let functionVariable =  createVariable($$[$0], $$[$0-1], functions[0], "local");
-        functions.push({name:$$[$0],returnType:$$[$0-1],parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
+        let functionVariable =  createVariable($$[$0], typeMapper.get($$[$0-1]), functions[0], "local");
+        functions.push({name:$$[$0],returnType:typeMapper.get($$[$0-1]),parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
         currentFunction = functions.length-1;
     }else {
         currentFunction=1;
@@ -360,11 +363,11 @@ case 55:
         console.log("Arguments missing");
         throw new Error("Arguments missing for function call");
     }
-    // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
+    // aqui va a generar go sub, procedure_name,initial-address 
     quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
@@ -385,7 +388,7 @@ case 56:
     quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
@@ -407,7 +410,7 @@ case 57:
     quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
@@ -430,7 +433,7 @@ case 58:
       quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
@@ -492,7 +495,7 @@ case 67:
         console.log("Array limits must be positive values");
         throw new Error("Array limits must be positive values");
     }
-    createConstantVariable($$[$0-1],"int",functions[0])
+    createConstantVariable($$[$0-1],1,functions[0])
     currentArray.dimensions.push({upperLimit:$$[$0-1],m:0});
 
 break;
@@ -554,34 +557,34 @@ break;
 case 86:
 
             // add check constants
-            let numberAddress = createConstantVariable($$[$0],"int",functions[0])
-            typeStack.push("int");
+            let numberAddress = createConstantVariable($$[$0],1,functions[0])
+            typeStack.push(1);
             operandStack.push(numberAddress);
         
 break;
 case 87:
 
             console.log($$[$0]*-1);
-            let negativeNAddress =createConstantVariable($$[$0]*-1,"int",functions[0])
+            let negativeNAddress =createConstantVariable($$[$0]*-1,1,functions[0])
             // add check constants
             operandStack.push(negativeNAddress);
-            typeStack.push("int");
+            typeStack.push(1);
         
 break;
 case 88:
 
-            let floatAddress = createConstantVariable($$[$0],"float",functions[0])
+            let floatAddress = createConstantVariable($$[$0],2,functions[0])
             operandStack.push(floatAddress);
-            typeStack.push("float");
+            typeStack.push(2);
         
 break;
 case 89:
 
             console.log($$[$0]*-1);
             // add check constants
-            let negativeFAddress = createConstantVariable($$[$0]*-1,"float",functions[0])
+            let negativeFAddress = createConstantVariable($$[$0]*-1,2,functions[0])
             operandStack.push(negativeFAddress);
-            typeStack.push("float");
+            typeStack.push(2);
         
 break;
 case 90:
@@ -598,7 +601,7 @@ case 91:
             if(currentDimension <= arrayCalled.dimensions.length-1)
             {
                 console.log(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
-                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
+                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensions`);
 
             }
             arrayCalled = null;
@@ -607,25 +610,25 @@ case 91:
 break;
 case 93:
 
-            let stringAddress = createConstantVariable($$[$0],"string",functions[0])
+            let stringAddress = createConstantVariable($$[$0],3,functions[0])
             operandStack.push(stringAddress);
-            typeStack.push("string");
+            typeStack.push(3);
         
 break;
 case 94:
 
-            let booleanTAddress = createConstantVariable("true","bool",functions[0])
+            let booleanTAddress = createConstantVariable("true",4,functions[0])
             // constant address
             operandStack.push(booleanTAddress);
-            typeStack.push("bool");
+            typeStack.push(4);
         
 break;
 case 95:
 
             // constant address
-            let booleanFAddress = createConstantVariable("false","bool",functions[0])
+            let booleanFAddress = createConstantVariable("false",4,functions[0])
             operandStack.push(booleanFAddress);
-            typeStack.push("bool");
+            typeStack.push(4);
         
 break;
 case 97:
@@ -822,6 +825,7 @@ parse: function parse(input) {
     const {createVariable,createConstantVariable,getVariable,getArrayVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
     const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad,createReadQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
+    const {typeMapper} = require("./mainAddresses");
 
     var operandStack = [];
     var typeStack = [];
@@ -835,7 +839,7 @@ parse: function parse(input) {
     var functionCallCurrentParam = 0;
     var quadruples = [{operator:"GOTO",address:null}];
     
-    var functions = [{variables:[],global:true},{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
+    var functions = [{variables:[],global:true},{name:"main",returnType:5,parameters:[],variables:[],size:null,quadruplesStart:null}];
     let currentFunction = 0;
     var jumpStack = [];
     let nextAvailable = 1;

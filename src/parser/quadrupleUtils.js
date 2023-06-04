@@ -52,7 +52,7 @@ function createAssignmentQuad(
     typeStack
   );
   // add more validations later but for now strict typing
-  if (rightType != leftType && !(rightType === "int" && leftType === "float")) {
+  if (rightType != leftType && !(rightType === 1 && leftType === 2)) {
     console.log("Operation", leftType, "=", rightType, "is not valid");
     throw new Error("Operation is not valid");
   }
@@ -77,6 +77,9 @@ function createOperationQuad(
     operandStack,
     typeStack
   );
+  console.log(leftType,"left Type");
+  console.log(operator,"operator");
+  console.log(rightType,"rightType");
   var resultType = semanticTable[leftType][operator][rightType];
   if (resultType === undefined) {
     console.log("Operation", leftType, operator, rightType, "is not valid");

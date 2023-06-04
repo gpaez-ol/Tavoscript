@@ -5,6 +5,7 @@
     const {createVariable,createConstantVariable,getVariable,getArrayVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
     const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad,createReadQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
+    const {typeMapper} = require("./mainAddresses");
 
     var operandStack = [];
     var typeStack = [];
@@ -18,7 +19,7 @@
     var functionCallCurrentParam = 0;
     var quadruples = [{operator:"GOTO",address:null}];
     
-    var functions = [{variables:[],global:true},{name:"main",returnType:"void",parameters:[],variables:[],size:null,quadruplesStart:null}];
+    var functions = [{variables:[],global:true},{name:"main",returnType:5,parameters:[],variables:[],size:null,quadruplesStart:null}];
     let currentFunction = 0;
     var jumpStack = [];
     let nextAvailable = 1;
@@ -107,14 +108,14 @@ START : MAININSTRUCTIONS EOF {
     return {quadruples,functions};
     };
 TYPE : intType {
-      currentType = "int";
+      currentType = 1;
 } | floatType {
-    currentType = "float";
+    currentType = 2;
 }  | boolType {
-    currentType = "bool";
+    currentType = 4;
 } | stringType {
-    currentType = "string";
-};
+    currentType = 3;
+} ;
 
 MAININSTRUCTION: DECLARATION ';' | FUNCTION | FUNCCALLS ';';
 MAININSTRUCTIONS: MAININSTRUCTIONS  MAININSTRUCTION | MAININSTRUCTION;
@@ -145,9 +146,10 @@ ASSIGNMENT
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = declaredVar.address;
+        console.log("current Type",currentType);
         var leftType = currentType;
         var operator = "=";
-        if(rightType != leftType && !(rightType === "int" && leftType === "float"))
+        if(rightType != leftType && !(rightType === 1 && leftType === 2))
         {
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
@@ -183,7 +185,7 @@ CONDITIONALHYPEREXPRESSION
             // check if there is a result  if no result its an error
             var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
-            if(resultType != "bool")
+            if(resultType != 4)
             {
                 console.log("A conditional statement should be a bool");
                 throw new Error("A conditional statement should be a bool");
@@ -205,7 +207,7 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
         var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
             console.log(resultOperand,resultType);
-            if(resultType != "bool")
+            if(resultType != 4)
             {
                 console.log("A conditional statement should be a bool");
                 throw new Error("A conditional statement should be a bool");
@@ -221,11 +223,11 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
 
 };
 FORASSIGNMENT : ID '=' HYPEREXPRESSION {
-        let forVar = createVariable($1,"int",functions[currentFunction]);
+        let forVar = createVariable($1,1,functions[currentFunction]);
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = forVar.address;
-        var leftType = "int";
+        var leftType = 1;
         var operator = "=";
         if(rightType != leftType)
         {
@@ -239,18 +241,20 @@ FORASSIGNMENT : ID '=' HYPEREXPRESSION {
     };
 // Funciones
 PARAMETER: TYPE ID {
-         createVariable($2,$1,functions[currentFunction],"parameter");
-         functions[currentFunction].parameters.push($1);
+         let parameterType = typeMapper.get($1);
+         createVariable($2,parameterType,functions[currentFunction],"parameter");
+         functions[currentFunction].parameters.push(parameterType);
 } | TYPE ARRAYDEF{
-        currentArray.type = $1;
+        let arrayParameterType = typeMapper.get($1);
+        currentArray.type = arrayParameterType;
         createArrayVariable(currentArray,functions[currentFunction],"parameter");
-        functions[currentFunction].parameters.push({type:$1,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
+        functions[currentFunction].parameters.push({type:arrayParameterType,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
         currentArray = null;
 };
 PARAMETERS: PARAMETERS , PARAMETER | PARAMETER;
 FUNCTYPE: intType  | floatType   | boolType  | stringType | voidType;
 FUNCDEFINITION: FUNC FUNCTYPE ID{
-    if($3 === "main" && $2 !== "void"){
+    if($3 === "main" && typeMapper.get($2) !== 5){
         console.log("Main function should be void");
         throw new Error("Main function should be void");
     }
@@ -265,8 +269,8 @@ FUNCDEFINITION: FUNC FUNCTYPE ID{
     }
     if($3 !== "main" )
     {
-        let functionVariable =  createVariable($3, $2, functions[0], "local");
-        functions.push({name:$3,returnType:$2,parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
+        let functionVariable =  createVariable($3, typeMapper.get($2), functions[0], "local");
+        functions.push({name:$3,returnType:typeMapper.get($2),parameters:[],size:null,variables:[],quadruplesStart:null,globalAddress:functionVariable.address});
         currentFunction = functions.length-1;
     }else {
         currentFunction=1;
@@ -276,7 +280,7 @@ FUNCDEFINITION: FUNC FUNCTYPE ID{
     resetAvailableAddresses();
 };
 
-FUNCHEADER: FUNCDEFINITION '('PARAMETERS ')' {
+FUNCHEADER: FUNCDEFINITION '(' PARAMETERS ')' {
     if(functions[currentFunction].name === "main")
     {
         console.log("Main function should not have parameters");
@@ -338,11 +342,11 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         console.log("Arguments missing");
         throw new Error("Arguments missing for function call");
     }
-    // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
+    // aqui va a generar go sub, procedure_name,initial-address 
     quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
@@ -360,7 +364,7 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
@@ -381,7 +385,7 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
     quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
@@ -401,7 +405,7 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
       quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
-    if(functionCalled.returnType != "void")
+    if(functionCalled.returnType != 5)
     {
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
@@ -459,7 +463,7 @@ DIMENSION:  NUMBER ']'{
         console.log("Array limits must be positive values");
         throw new Error("Array limits must be positive values");
     }
-    createConstantVariable($1,"int",functions[0])
+    createConstantVariable($1,1,functions[0])
     currentArray.dimensions.push({upperLimit:$1,m:0});
 } ;
 SUPRAEXPRESSION 
@@ -521,31 +525,31 @@ FACTOR
         : NUMBER 
         {
             // add check constants
-            let numberAddress = createConstantVariable($1,"int",functions[0])
-            typeStack.push("int");
+            let numberAddress = createConstantVariable($1,1,functions[0])
+            typeStack.push(1);
             operandStack.push(numberAddress);
         }
         | '-' NUMBER %prec UMINUS
         {
             console.log($2*-1);
-            let negativeNAddress =createConstantVariable($2*-1,"int",functions[0])
+            let negativeNAddress =createConstantVariable($2*-1,1,functions[0])
             // add check constants
             operandStack.push(negativeNAddress);
-            typeStack.push("int");
+            typeStack.push(1);
         }
         | FLOAT 
         {
-            let floatAddress = createConstantVariable($1,"float",functions[0])
+            let floatAddress = createConstantVariable($1,2,functions[0])
             operandStack.push(floatAddress);
-            typeStack.push("float");
+            typeStack.push(2);
         }
         | '-' FLOAT %prec UMINUS
         {
             console.log($2*-1);
             // add check constants
-            let negativeFAddress = createConstantVariable($2*-1,"float",functions[0])
+            let negativeFAddress = createConstantVariable($2*-1,2,functions[0])
             operandStack.push(negativeFAddress);
-            typeStack.push("float");
+            typeStack.push(2);
         }
         | ID
         {
@@ -567,21 +571,21 @@ FACTOR
         }
         |FACTFUNCCALLS 
         | TEXT {
-            let stringAddress = createConstantVariable($1,"string",functions[0])
+            let stringAddress = createConstantVariable($1,3,functions[0])
             operandStack.push(stringAddress);
-            typeStack.push("string");
+            typeStack.push(3);
         } |
         TRUE{
-            let booleanTAddress = createConstantVariable("true","bool",functions[0])
+            let booleanTAddress = createConstantVariable("true",4,functions[0])
             // constant address
             operandStack.push(booleanTAddress);
-            typeStack.push("bool");
+            typeStack.push(4);
         } |
         FALSE {
             // constant address
-            let booleanFAddress = createConstantVariable("false","bool",functions[0])
+            let booleanFAddress = createConstantVariable("false",4,functions[0])
             operandStack.push(booleanFAddress);
-            typeStack.push("bool");
+            typeStack.push(4);
         }
         | '('  SUPRAEXPRESSION ')'; 
 READARGUMENT:ID
