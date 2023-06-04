@@ -59,6 +59,7 @@ function getFunctionSize(variables) {
 function finishFunction(thisFunction, quadruples) {
   thisFunction.size = getFunctionSize(thisFunction.variables);
   quadruples.push({
+    id:quadruples.length,
     operator: "ENDFUNC",
   });
 }
@@ -78,6 +79,7 @@ function createReturnVar(
   }
   // aqui podria ser la variable global con el mismo nombre que la funcion
   quadruples.push({
+    id:quadruples.length,
     operator: "RETURN",
     value: rightOperand,
   });
@@ -97,7 +99,7 @@ function checkParams(operand,operandType,currentParam,functionCallCurrentParam,c
       // TODO: Add logic to check both dimensions match
       checkArraysDimensionsMatch(currentParam,argumentArray)
       let argumentM0 = argumentArray.dimensions.reduce((currentValue,currentDimension) => { return currentValue * Number(currentDimension.upperLimit)},1);
-      quadruples.push({operator:"PARAM",value:operand,param:functionCallCurrentParam,global:currentFunction === 0,m0:argumentM0});
+      quadruples.push({id:quadruples.length,operator:"PARAM",value:operand,param:functionCallCurrentParam,global:currentFunction === 0,m0:argumentM0});
       return;
     }
   let argument = getVariableByAddress(operand,functions,currentFunction);
@@ -111,6 +113,6 @@ function checkParams(operand,operandType,currentParam,functionCallCurrentParam,c
       console.log(`Type should be ${currentParam}`);
       throw new Error(`Type should be ${currentParam}`);
   }
-  quadruples.push({operator:"PARAM",value:operand,param:functionCallCurrentParam,global:currentFunction === 0});
+  quadruples.push({id:quadruples.length,operator:"PARAM",value:operand,param:functionCallCurrentParam,global:currentFunction === 0});
 }
 module.exports = {finishFunction,createReturnVar,checkParams};
