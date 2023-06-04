@@ -4,11 +4,13 @@ let availableAddresses = JSON.parse(JSON.stringify(startingAddresses));
 
 function resetAvailableAddresses()
 {
-  let currentGlobalAddress = {...availableAddresses.global};
-  let currentConst = {... availableAddresses.constant};
+  // Global Var Type = 7
+  let currentGlobalAddress = {...availableAddresses[7]};
+  // Const Var Type = 9
+  let currentConst = {... availableAddresses[9]};
   availableAddresses = JSON.parse(JSON.stringify(startingAddresses));
-  availableAddresses.global = currentGlobalAddress;
-  availableAddresses.constant = currentConst;
+  availableAddresses[7] = currentGlobalAddress;
+  availableAddresses[9] = currentConst;
 }
 
 function assignAddress(variable,m0=null){
@@ -88,13 +90,14 @@ function createConstantVariable(name, type, mainFunction) {
       (variable) => variable.name === name && variable.type === type
     )
   ) {
+    // Const Var Type = 9
     let newConstantVar = {
       type,
       name,
       address:null,
-      varType: "constant",
+      varType: 9,
     }
-    newConstantVar.address =assignAddress(newConstantVar);
+    newConstantVar.address = assignAddress(newConstantVar);
     mainFunction.variables.push(newConstantVar);
     return newConstantVar.address;
   }else {

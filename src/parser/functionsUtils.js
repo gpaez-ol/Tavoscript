@@ -9,10 +9,11 @@ function getFunctionSize(variables) {
   let vtf = 0;
   let vts = 0;
   let vtb = 0;
+  // Local Var Type = 6,  // Parameter Var Type = 11
   variables
     .filter(
       (variable) =>
-        variable.varType == 6 || variable.varType == "parameter"
+        variable.varType == 6 || variable.varType == 11
     )
     .forEach((variable) => {
       switch (variable.type) {
