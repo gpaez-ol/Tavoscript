@@ -1,0 +1,35 @@
+func void main()
+{
+    int x = 5;
+    int y = 5;
+    float w = 4.5;
+    float z = 4.5;
+
+    int intSum = x+y;
+    int intConstantSum = x+8;
+    float intFloatSum = x+w;
+    float floatSum =  w+z;
+    float floatConstantSum = w+13.5;
+    print("Expected 10:",intSum,"Expected 13:"intConstantSum,"Expected 9.5:",intFloatSum,"Expected 9",floatSum,"Expected 18",floatConstantSum);
+
+    int intSubtract = x-y;
+    int intConstantSubtract = x-(-8);
+    float intFloatSubtract = x-w;
+    float floatSubtract =  w-z;
+    float floatConstantSubtract = w-13.5;
+    print("Expected 0:",intSubtract,"Expected -3:"intConstantSubtract,"Expected 13:",intFloatSubtract,"Expected 0",floatSubtract,"Expected -9",floatConstantSubtract);
+
+    int intMult = x*y;
+    float intFloatMult = x*w;
+    float floatMult = w*z;
+    print("Expected 25:", intMult,"Expected 22.5",intFloatMult,"Expected 20.25",floatMult);
+
+    float intDivision = x/y;
+    float intFloatDivision = x/w;
+    float floatDivision = w/z;
+    print("Expected 1:", intDivision,"Expected 1.111",intFloatDivision,"Expected 1",floatDivision);
+
+    float complexExp = z+w*x/y;
+    float complexExpPriorities = (x+y)*(z+15)/w;
+    print("Expecte 9:",complexExp,"Expected 43.3333:",complexExpPriorities);
+}

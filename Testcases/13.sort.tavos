@@ -1,0 +1,30 @@
+
+func void main()
+{
+    int array[4];
+    array[0]=5;
+    array[1]=1;
+    array[2]=7;
+    array[3]=4;
+    int temp;
+    for(x=0,x<4)
+    {
+        for(j=x+1,j<4)
+        {
+            if(array[j] < array[x])
+            {
+                temp = array[x];
+                array[x] = array[j];
+                array[j] = temp;
+            }
+
+            j=j+1;
+        }
+        x=x+1;
+    }
+    for(t=0,t<4)
+    {
+        print(array[t]);
+        t=t+1;
+    }
+}

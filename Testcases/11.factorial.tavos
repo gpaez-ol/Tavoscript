@@ -1,0 +1,14 @@
+func int factorial(int number)
+    {
+        int total = 1;
+        for(x=1,x:<number)
+        {
+            total = total*x;
+            x = x+1;
+        } 
+        return total;
+    } 
+func void main()
+    {
+        print(:factorial(3));
+    }

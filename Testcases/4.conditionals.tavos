@@ -1,0 +1,28 @@
+func void main ()
+{
+    int x = 2; 
+    
+    if(x>1)
+    {
+        print("Esta en el if");
+    }
+
+    if(x<1)
+    {
+        print("Esta en el segundo if");
+    }else {
+        print("Esta en el else");
+    }
+
+    int y = 0;
+    while(y :< 1)
+    {
+        y = y+1;
+        print("Esta en el primerwhile",y);
+    }
+    
+    do {
+        y=y+1;
+        print("esta en el do-while",y);
+    }while(y==2)
+}

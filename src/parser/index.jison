@@ -481,9 +481,7 @@ SUPRAEXPRESSION
         | HYPEREXPRESSION;
 
 HYPEREXPRESSION
-        : SUPEREXPRESSION
-        | HYPEREXPRESSION '&&' SUPEREXPRESSION
-        | HYPEREXPRESSION '||' SUPEREXPRESSION;
+        : SUPEREXPRESSION;
 
 
 SUPEREXPRESSION
@@ -527,6 +525,19 @@ TERMS
         {
             createOperationQuad(quadruples, operandStack, "/", typeStack, nextAvail, functions[currentFunction]);
         }
+        |   '('  '-' FACTOR  ')'  {
+            let hyperType = typeStack[typeStack.length - 1];
+            if(hyperType === 1 || hyperType === 2)
+            {
+                let expOperand = operandStack[operandStack.length-1];
+                operandStack[operandStack.length-1] = {address:expOperand,negative:true};
+            }else 
+            {
+                console.log("operand",hyperExpoperand);
+                console.log("hyperType",hyperType);
+                throw new Error("Only Int or Float values can be negative");
+            }
+        }
         | FACTOR;     
         
 FACTOR
@@ -538,27 +549,11 @@ FACTOR
             typeStack.push(1);
             operandStack.push(numberAddress);
         }
-        | '-' NUMBER %prec UMINUS
-        {
-            // Int Var Type = 1
-            let negativeNAddress =createConstantVariable($2*-1,1,functions[0])
-            operandStack.push(negativeNAddress);
-            // Int Var Type = 1
-            typeStack.push(1);
-        }
         | FLOAT 
         {
             // Float Var Type = 2
             let floatAddress = createConstantVariable($1,2,functions[0])
             operandStack.push(floatAddress);
-            // Float Var Type = 2
-            typeStack.push(2);
-        }
-        | '-' FLOAT %prec UMINUS
-        {
-            // Float Var Type = 2
-            let negativeFAddress = createConstantVariable($2*-1,2,functions[0])
-            operandStack.push(negativeFAddress);
             // Float Var Type = 2
             typeStack.push(2);
         }

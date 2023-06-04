@@ -27,6 +27,7 @@ async function startProgram({quadruples,functions},devMode)
         {
             globalQuads = false;
             currentQuadruple=0;
+            if(devMode)
             console.log("Global Quads finished")
             let mainFunctionQuadruples = getFunctionQuadruples(functions[1].quadruplesStart,quadruples);
             loadFunction(functions[1],[],mainFunctionQuadruples);

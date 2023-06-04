@@ -1,0 +1,20 @@
+func void main()
+{
+    bool trueValue = true;
+    bool falseValue = false;
+    bool boolExp = trueValue == falseValue;
+    bool boolConstExp = true != falseValue;
+    print(boolExp,boolConstExp);
+
+    int two = 2;
+    int three = 3;
+
+    bool lessThan = two < three; 
+    bool lessEqualTo =  two :< 2;
+    bool greaterThan = two > three;
+    bool greaterEqualThan = three :> 3;
+
+    print(lessThan,lessEqualTo,greaterThan,greaterEqualThan);
+
+
+}

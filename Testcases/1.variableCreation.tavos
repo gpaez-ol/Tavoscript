@@ -1,0 +1,20 @@
+int xGlobal = 15;
+float yGlobal = 12.8;
+string wGlobal = "adios";
+bool vGlobal = false;
+func void main()
+{
+    int x = 5;
+    float y = 4.5;
+    string w = "hola";
+    bool v = true;
+    print("int",x);
+    print("float",y);
+    print("string",w);
+    print("bool",v);
+
+    print("int Global",xGlobal);
+    print("float Global",yGlobal);
+    print("string Global",wGlobal);
+    print("bool Global",vGlobal);
+}

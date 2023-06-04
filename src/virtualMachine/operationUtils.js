@@ -240,11 +240,20 @@ function logger(string,object)
         break;
         case "PRINT":
         {
-            let value = getVariableValue(quadruple.value)
-            if (quadruple.value >= 17000 && quadruple.value <= 20999)
+            valueAddress = quadruple.value;
+            if(quadruple.value.negative)
+            {
+                valueAddress = quadruple.value.address;
+            }
+            let value = getVariableValue(valueAddress)
+            if (valueAddress >= 17000 && valueAddress <= 20999)
             {  
                 value = getVariableValue(value);
                 logger("Actual Print Operand:",value);    
+            }
+            if(quadruple.value.negative)
+            {
+                value = value*-1;
             }
             console.log("System Out: ",value);
         }
@@ -257,19 +266,33 @@ function getOperationOperands(quadruple)
 {
     let leftOperand = null;
     let rightOperand = null;
-    if (quadruple.leftOperand >= 17000 && quadruple.leftOperand <= 20999)
+    let leftOperandAddress = quadruple.leftOperand;
+    let leftOperandNegative = false; 
+    if(quadruple.leftOperand.negative)
+    {
+        leftOperandAddress = quadruple.leftOperand.address;
+        leftOperandNegative = true;
+    }
+    let rightOperandAddress = quadruple.rightOperand;
+    let rightOperandNegative = false; 
+    if(quadruple.rightOperand.negative)
+    {
+        rightOperandAddress = quadruple.rightOperand.address;
+        rightOperandNegative = true;
+    }
+    if (leftOperandAddress >= 17000 && leftOperandAddress <= 20999)
     {  
-        leftOperand = getVariableValue(getVariableValue(quadruple.leftOperand));
+        leftOperand = getVariableValue(getVariableValue(leftOperandAddress));
         logger("Actual Left Operand:",leftOperand);    
     }else {
-        leftOperand = getVariableValue(quadruple.leftOperand);
+        leftOperand = getVariableValue(leftOperandAddress);
     }
-    if (quadruple.rightOperand >= 17000 && quadruple.rightOperand <= 20999)
+    if (rightOperandAddress >= 17000 && rightOperandAddress <= 20999)
     {  
-        rightOperand = getVariableValue(getVariableValue(quadruple.rightOperand));
+        rightOperand = getVariableValue(getVariableValue(rightOperandAddress));
         logger("Actual Right Operand:",rightOperand);    
     }else {
-        rightOperand = getVariableValue(quadruple.rightOperand);
+        rightOperand = getVariableValue(rightOperandAddress);
     }
     if(leftOperand === null)
     {
@@ -281,14 +304,29 @@ function getOperationOperands(quadruple)
         logger("Right Operand is null");
         throw new Error("Right Operand is null")
     }
+    if (leftOperandNegative)
+    {
+        leftOperand = leftOperand * -1;
+    }
+    if (rightOperandNegative)
+    {
+        rightOperand = rightOperand * -1;
+    }
     return [leftOperand,rightOperand];
 }
 function getAssignmentOperands(quadruple)
 {
+    let valueAddress = quadruple.value;
+    let valueNegative = false;
+    if(quadruple.value.negative)
+    {
+        valueAddress = quadruple.value.address;
+        valueNegative = true;
+    }
     // check if assigning an array value is possible
     // maybe the quadruple.operand >= 17000 logic needs to happen also
-    let value = getVariableValue(quadruple.value);
-    if( quadruple.value >= 17000 && quadruple.value <= 20999)
+    let value = getVariableValue(valueAddress);
+    if( valueAddress >= 17000 && valueAddress <= 20999)
     {
         value = getVariableValue(value);
         logger("Actual Assignment Value:",value);
@@ -299,44 +337,81 @@ function getAssignmentOperands(quadruple)
         assignmentOperand = getVariableValue(assignmentOperand);
         logger("Actual Assignment Operand:",assignmentOperand);    
     }
+    if(valueNegative)
+    {
+        value = value*-1;
+    }
     return [value,assignmentOperand];
 }
 function getVerificationOperands(quadruple)
 {
-    let operand = getVariableValue(quadruple.operand);
-    if (quadruple.operand >= 17000 && quadruple.operand <= 20999)
+    let operandAddress = quadruple.operand;
+    let operandNegative = false; 
+    if(quadruple.operand.negative)
+    {
+        operandAddress = quadruple.operand.address;
+        operandNegative = true;
+    }
+    let operand = getVariableValue(operandAddress);
+    if (operandAddress >= 17000 && operandAddress <= 20999)
     {  
         operand = getVariableValue(operand);
         logger("Actual Verification Operand:",operand);    
     }
     // check if upper limit should be a constant
     const upperLimit = quadruple.upperLimit //getVariableValue(quadruple.upperLimit);
+    if(operandNegative)
+    {
+        operand = operand*-1;
+    }
     return [operand,upperLimit];
 }
 function assignFunctionVariable(quadruple)
 {
     let functionVar = functionCalled.globalAddress;
-    let returnValue = getVariableValue(quadruple.value);
-    if (quadruple.value >= 17000 && quadruple.value <= 20999)
+    let valueAddress = quadruple.value;
+    let valueNegative = false;
+    if(quadruple.value.negative)
+    {
+        valueAddress = quadruple.value.address;
+        valueNegative = true;
+    }
+    let returnValue = getVariableValue(valueAddress);
+    if (valueAddress >= 17000 && valueAddress <= 20999)
     {  
         returnValue = getVariableValue(returnValue);
         logger("Actual Function Return Operand:",returnValue);    
     }
     // TODO: Check if functionVar is an existing variable (should be)
+    if(valueNegative)
+    {
+        returnValue = returnValue*-1;
+    }
     assignVariableValue(functionVar,returnValue);
 }
 function getParamOperands(quadruple)
 {
+    let valueAddress = quadruple.value;
+    let valueNegative = false;
+    if(quadruple.negative)
+    {
+        valueAddress=quadruple.value.address;
+        valueNegative = true;
+    }
     if(quadruple.m0)
     {
-        let values = getArrayVariableValue(quadruple.value,quadruple.m0);
+        let values = getArrayVariableValue(valueAddress,quadruple.m0);
         return values;
     }
-    let value = getVariableValue(quadruple.value);
-    if (quadruple.value >= 17000 && quadruple.value <= 20999)
+    let value = getVariableValue(valueAddress);
+    if (valueAddress >= 17000 && valueAddress <= 20999)
     {  
         value = getVariableValue(value);
         logger("Actual Param Operand:",value);    
+    }
+    if(valueNegative)
+    {
+        value = value*-1;
     }
     return value;
 }
