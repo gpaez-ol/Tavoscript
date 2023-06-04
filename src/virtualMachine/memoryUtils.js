@@ -69,7 +69,7 @@ function createParameterSegment(variables,parameterValues,segment)
 
 // add pointer vars
  function startVariablesMemory(functions,devMode){
-    let globalVars = functions[0].variables.filter(variable => variable.varType === "global");
+    let globalVars = functions[0].variables.filter(variable => variable.varType === 7);
     createSegment(globalVars,memory.dataSegment);
     let extraSegmentVars = functions[0].variables.filter(variable => variable.varType === "temporal" || variable.varType === "pointer");
     createSegment(extraSegmentVars,memory.extraSegment);
@@ -87,7 +87,7 @@ function createParameterSegment(variables,parameterValues,segment)
 
  function loadFunction(currentFunc,parameterValues=[])
 {
-    let localVars = currentFunc.variables.filter(variable => variable.varType === "local");
+    let localVars = currentFunc.variables.filter(variable => variable.varType === 6);
     createSegment(localVars,memory.stackSegment);
     let parameterVars = currentFunc.variables.filter(variable => variable.varType === "parameter");
     createParameterSegment(parameterVars,parameterValues,memory.stackSegment)
@@ -106,6 +106,8 @@ function createParameterSegment(variables,parameterValues,segment)
     memory.extraSegment = {};
     memory.stackSegment = {};
 }
+
+var booleanRegexPattern = new RegExp("true");
 
  function getVariableValue(address)
 {
@@ -127,7 +129,7 @@ function createParameterSegment(variables,parameterValues,segment)
     // variable global bool 4000-4999
     if( address <= 4999 && address >= 4000)
     {
-        return memory.dataSegment[address] !== null ? Boolean(memory.dataSegment[address]) : null;
+        return memory.dataSegment[address] !== null ? booleanRegexPattern.test(memory.dataSegment[address]) : null;
     }
     // local int 5000-5999
     if( address <= 5999 && address >= 5000)
@@ -147,7 +149,7 @@ function createParameterSegment(variables,parameterValues,segment)
     // local bool 8000-8999
     if( address <= 8999 && address >= 8000)
     {
-        return memory.stackSegment[address] !== null ?  Boolean(memory.stackSegment[address]) : null;
+        return memory.stackSegment[address] !== null ?  booleanRegexPattern.test(memory.stackSegment[address]) : null;
     }
     // temporal int  9000-9999
     if( address <= 9999 && address >= 9000)
@@ -167,7 +169,7 @@ function createParameterSegment(variables,parameterValues,segment)
     // temporal bool  12000-12999
     if( address <= 12999 && address >= 12000)
     {
-        return memory.extraSegment[address] !== null ?  Boolean(memory.extraSegment[address]) : null;
+        return memory.extraSegment[address] !== null ? booleanRegexPattern.test(memory.extraSegment[address]) : null;
     }
     // constant int 13000 - 13999
     if( address <= 13999 && address >= 13000)
@@ -187,7 +189,7 @@ function createParameterSegment(variables,parameterValues,segment)
     // constant bool 16000 - 16999
     if( address <= 16999 && address >= 16000)
     {
-        return memory.dataSegment[address] !== null ?  Boolean(memory.dataSegment[address]) : null;
+        return memory.dataSegment[address] !== null ? booleanRegexPattern.test(memory.dataSegment[address]): null;
     }
     // pointer int 17000 - 17999
     if( address <= 17999 && address >= 17000)
@@ -207,7 +209,7 @@ function createParameterSegment(variables,parameterValues,segment)
     // pointer bool 20000 - 20999
     if( address <= 20999 && address >= 20000)
     {
-        return memory.extraSegment[address] !== null ?  Boolean(memory.extraSegment[address]) : null;
+        return memory.extraSegment[address] !== null ? booleanRegexPattern.test(memory.extraSegment[address]): null;
     }
     // parameter int 21000 - 21999
     if( address <= 21999 && address >= 21000)
@@ -227,7 +229,7 @@ function createParameterSegment(variables,parameterValues,segment)
     // parameter bool 24000 - 24999
     if( address <= 24999 && address >= 24000)
     {
-        return memory.stackSegment[address] !== null ?  Boolean(memory.stackSegment[address]) : null;
+        return memory.stackSegment[address] !== null ?  booleanRegexPattern.test(memory.stackSegment[address]): null;
     }
     throw new Error("Address is not found in the stacks");
 }
