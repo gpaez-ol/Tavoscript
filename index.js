@@ -315,8 +315,7 @@ case 49:
 
     finishFunction(functions[currentFunction],quadruples)
     currentFunction = 0;
-    // Temporal Values = 8
-    nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == 8).length + 1
+    nextAvailable = functions[currentFunction].variables.filter(variable => variable.varType == "temporal").length + 1
 
 break;
 case 50:
@@ -373,8 +372,7 @@ case 55:
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
         var resultType = functionCalled.returnType;
-        // Temporal Values = 8
-        createVariable(result, resultType, functions[currentFunction], 8);
+        createVariable(result, resultType, functions[currentFunction], "temporal");
         quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
     
@@ -395,8 +393,7 @@ case 56:
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
-        // Temporal Values = 8
-        createVariable(result, resultType, functions[currentFunction], 8);
+        createVariable(result, resultType, functions[currentFunction], "temporal");
         quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
 
@@ -418,8 +415,7 @@ case 57:
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();
         var resultType = functionCalled.returnType;
-        // Temporal Values = 8
-        let createdVar = createVariable(result, resultType, functions[currentFunction], 8);
+        let createdVar = createVariable(result, resultType, functions[currentFunction], "temporal");
         quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
@@ -442,8 +438,7 @@ case 58:
         // la variable global con el mismo nombre de la funcion deberia tener el valor necesario;
         var result = nextAvail();[]
         var resultType = functionCalled.returnType;
-        // Temporal Values = 8
-        let createdVar= createVariable(result, resultType, functions[currentFunction], 8);
+        let createdVar= createVariable(result, resultType, functions[currentFunction], "temporal");
         quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
@@ -563,7 +558,6 @@ case 86:
 
             // add check constants
             let numberAddress = createConstantVariable($$[$0],1,functions[0])
-            // Int Var Type = 1
             typeStack.push(1);
             operandStack.push(numberAddress);
         
@@ -574,7 +568,6 @@ case 87:
             let negativeNAddress =createConstantVariable($$[$0]*-1,1,functions[0])
             // add check constants
             operandStack.push(negativeNAddress);
-            // Int Var Type = 1
             typeStack.push(1);
         
 break;
@@ -582,16 +575,15 @@ case 88:
 
             let floatAddress = createConstantVariable($$[$0],2,functions[0])
             operandStack.push(floatAddress);
-            // Float Var Type = 2
             typeStack.push(2);
         
 break;
 case 89:
 
             console.log($$[$0]*-1);
+            // add check constants
             let negativeFAddress = createConstantVariable($$[$0]*-1,2,functions[0])
             operandStack.push(negativeFAddress);
-            // Float Var Type = 2
             typeStack.push(2);
         
 break;
@@ -625,6 +617,8 @@ case 93:
 break;
 case 94:
 
+            console.log("entro al true",$$[$0])
+            throw new Error("entro al true")
             let booleanTAddress = createConstantVariable($$[$0],4,functions[0])
             // constant address
             operandStack.push(booleanTAddress);
@@ -634,6 +628,8 @@ break;
 case 95:
 
             // constant address
+            console.log("entro al false",$$[$0])
+            throw new Error("entro al false")
             let booleanFAddress = createConstantVariable($$[$0],4,functions[0])
             operandStack.push(booleanFAddress);
             typeStack.push(4);

@@ -12,7 +12,7 @@ function getFunctionSize(variables) {
   variables
     .filter(
       (variable) =>
-        variable.varType == "local" || variable.varType == "parameter"
+        variable.varType == 6 || variable.varType == "parameter"
     )
     .forEach((variable) => {
       switch (variable.type) {
@@ -30,8 +30,9 @@ function getFunctionSize(variables) {
           break;
       }
     });
+  // Temporal Values = 8
   variables
-    .filter((variable) => variable.varType == "temporal")
+    .filter((variable) => variable.varType == 8)
     .forEach((variable) => {
       switch (variable.type) {
         case 1:

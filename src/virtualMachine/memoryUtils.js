@@ -69,10 +69,13 @@ function createParameterSegment(variables,parameterValues,segment)
 
 // add pointer vars
  function startVariablesMemory(functions,devMode){
+    // Global Var Type = 7
     let globalVars = functions[0].variables.filter(variable => variable.varType === 7);
     createSegment(globalVars,memory.dataSegment);
-    let extraSegmentVars = functions[0].variables.filter(variable => variable.varType === "temporal" || variable.varType === "pointer");
+    // Temporal Var Type = 8
+    let extraSegmentVars = functions[0].variables.filter(variable => variable.varType === 8 || variable.varType === "pointer");
     createSegment(extraSegmentVars,memory.extraSegment);
+    // Constant Var Type = 9
     let constantVars = functions[0].variables.filter(variable => variable.varType === "constant");
     createConstantSegment(constantVars,memory.dataSegment);
     if(devMode)
@@ -91,7 +94,8 @@ function createParameterSegment(variables,parameterValues,segment)
     createSegment(localVars,memory.stackSegment);
     let parameterVars = currentFunc.variables.filter(variable => variable.varType === "parameter");
     createParameterSegment(parameterVars,parameterValues,memory.stackSegment)
-    let temporalVars = currentFunc.variables.filter(variable => variable.varType === "temporal" || variable.varType === "pointer");
+    // Temporal Values = 8
+    let temporalVars = currentFunc.variables.filter(variable => variable.varType === 8 || variable.varType === "pointer");
     createSegment(temporalVars,memory.extraSegment);
 }
 

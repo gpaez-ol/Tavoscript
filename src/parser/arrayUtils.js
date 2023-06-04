@@ -41,6 +41,7 @@ function createDimensionQuad(
         createOperationQuad(quadruples,operandStack,"*",typeStack,nextAvail,thisFunction);
         if(currentArrayCallIndex === undefined || currentArrayCallIndex === null)
         {
+            // Constant Var Type = 9
             if (operandVariable.varType === "constant")
             {
                 return {label:operandVariable.name}
@@ -68,6 +69,7 @@ function createDimensionQuad(
         typeStack.push(1);
         createOperationQuad(quadruples,operandStack,"+",typeStack,nextAvail,thisFunction,true);
     }
+    // Constant Var Type = 9
     if (operandVariable.varType === "constant")
     {
         return {label:operandVariable.name}
