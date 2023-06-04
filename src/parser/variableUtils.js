@@ -1,4 +1,4 @@
-const { startingAddresses } = require("./mainAddresses");
+const { startingAddresses,validateAddress } = require("./mainAddresses");
 
 let availableAddresses = JSON.parse(JSON.stringify(startingAddresses));
 
@@ -18,8 +18,11 @@ function assignAddress(variable,m0=null){
   let availableAddress = Number(availableAddresses[variable.varType][variable.type]);
   if(m0 != null && variable.dimensions !== null && variable.dimensions !== undefined)
   {
+    let lastUsedAddress = availableAddress + Number(m0)-1;
+    validateAddress(lastUsedAddress,variable.varType,variable.type);
     availableAddresses[variable.varType][variable.type] += Number(m0);
   }else {
+    validateAddress(availableAddress,variable.varType,variable.type);
     availableAddresses[variable.varType][variable.type]++;
   }
   return availableAddress;

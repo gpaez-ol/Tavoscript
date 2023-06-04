@@ -18,7 +18,7 @@ ES
 // for files etc, pointers o espacio extra (en este caso los registros temporales) igual se mueren al terminar una funcion
 // constantes "PRINT() LETRERO"
 // variable temporal 9000-12999
-// variable constantes 13000-15999
+// variable constantes 13000-16999
 // variable pointers de arreglos 17000-20999
 // extraSegment = [];
 
