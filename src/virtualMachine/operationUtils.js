@@ -1,4 +1,5 @@
-const { getVariableValue,assignVariableValue,loadFunction,resetMemory,getArrayVariableValue } = require("./memoryUtils");
+const { getVariableValue,assignVariableValue,getCodeSegmentIndex,loadFunction,resetMemory,getArrayVariableValue } = require("./memoryUtils");
+const {getFunctionQuadruples} = require("./functionUtils");
 var readlineSync = require('readline-sync');
 let memoryStack = [];
 let quadrupleStack = [];
@@ -15,11 +16,7 @@ function logger(string,object)
  async function  solveOperation  (quadruples,currentQuadruple,functions,memory,global,logging=false)
 {
     devMode=logging;
-    let quadruple = quadruples[currentQuadruple];
-    if(global)
-    {
-        quadruple = quadruples.filter(quadruple => quadruple.global === true)[currentQuadruple];    
-    }   
+    let quadruple = memory.codeSegment[currentQuadruple];
     if(quadruple === null || quadruple === undefined)
     {
         logger("quadruple was not found",global);
@@ -156,13 +153,15 @@ function logger(string,object)
              // take screenshot
              logger(memory.stackSegment,"stack segment");
              logger(memory.extraSegment,"extra Segment");
-             memoryStack.push({stackSegment:{...memory.stackSegment},extraSegment:{...memory.extraSegment}})
+             // check copy of code segment is working
+             memoryStack.push({stackSegment:{...memory.stackSegment},extraSegment:{...memory.extraSegment},codeSegment:[...memory.codeSegment]})
              quadrupleStack.push({lastQuadruple:currentQuadruple,wasGlobal:global});
              logger("screenshot memory: ", memoryStack[memoryStack.length - 1]);
              logger("left a breadcrum at: " ,quadrupleStack[quadrupleStack.length -1])
-             loadFunction(functionCalled,parameterValues);
+             let functionQuadruples = getFunctionQuadruples(functionCalled.quadruplesStart,quadruples);
+             loadFunction(functionCalled,parameterValues,functionQuadruples);
              parameterValues = [];
-             return {currentQuadruple:functionCalled.quadruplesStart,global:false};
+             return {currentQuadruple:0,global:false};
         }
         break;
         case "ENDFUNC":
@@ -191,33 +190,34 @@ function logger(string,object)
             }else {
                 let lastMemory = memoryStack.pop();
                 resetMemory(lastMemory);
+                
                 return {currentQuadruple:qStack.lastQuadruple+1,global:qStack.wasGlobal};
             }
         }
         break;
         case "GOTO":    
         {
-            const address = quadruple.address;
-            return {currentQuadruple:address,global}
+            let arrayIndex = getCodeSegmentIndex(quadruple.address);
+            return {currentQuadruple:arrayIndex,global}
         }
         break;
         case "GOTOF":
         {
-            const address = quadruple.address;
             const value = getVariableValue(quadruple.value);
             if(!value)
             {
-                return {currentQuadruple:address,global};
+                let arrayIndex = getCodeSegmentIndex(quadruple.address);
+                return {currentQuadruple:arrayIndex,global};
             }
         }
         break;
         case "GOTOT":
             {
-                const address = quadruple.address;
                 const value = getVariableValue(quadruple.value);
                 if(value)
                 {
-                    return {currentQuadruple:address,global};
+                    let arrayIndex = getCodeSegmentIndex(quadruple.address);
+                    return {currentQuadruple:arrayIndex,global};
                 }
             }
         break;

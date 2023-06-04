@@ -64,3 +64,5 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Read funcionando al 100% 
 - Maquina virtual lista
 - Se agrego logica para correrlo desde la terminal
+- Se removieron variables sin usar
+- Utiliza code segment para cargar y descargar los quadruplos de memoria

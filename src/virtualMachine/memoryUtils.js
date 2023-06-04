@@ -22,7 +22,7 @@ ES
 // variable pointers de arreglos 17000-20999
 // extraSegment = [];
 
-let memory = {dataSegment:{},codeSegment:{},stackSegment:{},extraSegment:{}};
+let memory = {dataSegment:{},codeSegment:[],stackSegment:{},extraSegment:{}};
 
 function createSegment(variables,segment)
 {
@@ -68,7 +68,7 @@ function createParameterSegment(variables,parameterValues,segment)
 }
 
 // add pointer vars
- function startVariablesMemory(functions,devMode){
+ function startVariablesMemory(functions,globalQuadruples,devMode){
     // Global Var Type = 7
     let globalVars = functions[0].variables.filter(variable => variable.varType === 7);
     createSegment(globalVars,memory.dataSegment);
@@ -78,17 +78,19 @@ function createParameterSegment(variables,parameterValues,segment)
     // Constant Var Type = 9
     let constantVars = functions[0].variables.filter(variable => variable.varType === 9);
     createConstantSegment(constantVars,memory.dataSegment);
+    memory.codeSegment = globalQuadruples;
     if(devMode)
     {
         console.log("data segment",memory.dataSegment)
         console.log("stack segment", memory.stackSegment);
         console.log("extra segment:",memory.extraSegment);
+        console.log("code segment:",memory.codeSegment);
     }
 }
 
 
 
- function loadFunction(currentFunc,parameterValues=[])
+ function loadFunction(currentFunc,parameterValues=[],quadruples)
 {
     let localVars = currentFunc.variables.filter(variable => variable.varType === 6);
     createSegment(localVars,memory.stackSegment);
@@ -98,18 +100,21 @@ function createParameterSegment(variables,parameterValues,segment)
     // Temporal Values = 8 // Pointer Var Type = 10
     let temporalVars = currentFunc.variables.filter(variable => variable.varType === 8 || variable.varType === 10);
     createSegment(temporalVars,memory.extraSegment);
+    memory.codeSegment = quadruples;
 }
 
- function resetMemory({stackSegment,extraSegment})
+ function resetMemory({stackSegment,extraSegment,codeSegment})
 {
     memory.stackSegment = stackSegment;
     memory.extraSegment = extraSegment;
+    memory.codeSegment = codeSegment;
 }
 
  function offloadFunction(currentFunc)
 {
     memory.extraSegment = {};
     memory.stackSegment = {};
+    memory.codeSegment = [];
 }
 
 var booleanRegexPattern = new RegExp("true");
@@ -270,4 +275,17 @@ var booleanRegexPattern = new RegExp("true");
     throw new Error("Address is not found in the stacks");
 }
 
-module.exports = {memory,startVariablesMemory,loadFunction,resetMemory,offloadFunction,getVariableValue,getArrayVariableValue,assignVariableValue};
+function getCodeSegmentIndex(id)
+{
+    let arrayIndex = memory.codeSegment.findIndex( quadruple => {
+        return  quadruple.id === id;
+      });
+    if(arrayIndex === null || arrayIndex === undefined)
+    {
+        console.log(`${address} was not found in the loaded function`);
+        throw new Error(`${address} was not found in the loaded function`);
+    }
+    return arrayIndex;
+}
+
+module.exports = {memory,startVariablesMemory,getCodeSegmentIndex,loadFunction,resetMemory,offloadFunction,getVariableValue,getArrayVariableValue,assignVariableValue};
