@@ -21,6 +21,7 @@ async function main()
     let buffer = await readFile(argv.file);
     let fileContent = buffer.toString();
     let result = parser.parse(fileContent);
+    fs.writeFileSync('./output.json', JSON.stringify(result, null, 2) , 'utf-8');
     if(devMode)
     {
         console.log(result);

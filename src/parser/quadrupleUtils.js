@@ -80,9 +80,6 @@ function createOperationQuad(
     operandStack,
     typeStack
   );
-  console.log(leftType,"left Type");
-  console.log(operator,"operator");
-  console.log(rightType,"rightType");
   var resultType = semanticTable[leftType][operator][rightType];
   if (resultType === undefined) {
     console.log("Operation", leftType, operator, rightType, "is not valid");

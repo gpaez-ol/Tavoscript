@@ -99,12 +99,6 @@ START : MAININSTRUCTIONS EOF {
         console.log("Main function is missing");
         throw new Error("Main function is missing");
     }
-    // aqui deberia regresar la tabla de memoria de las funciones, etc
-    console.log("quadruples:",quadruples);
-    console.log("operands:",operandStack);
-    console.log("jumps:",jumpStack);
-    console.log("functions:",functions);
-    console.log("current function:",currentFunction)
     return {quadruples,functions};
     };
 TYPE : intType {
@@ -146,7 +140,6 @@ ASSIGNMENT
         var rightOperand = operandStack.pop();
         var rightType = typeStack.pop();
         var leftOperand = declaredVar.address;
-        console.log("current Type",currentType);
         var leftType = currentType;
         var operator = "=";
         if(rightType != leftType && !(rightType === 1 && leftType === 2))
@@ -154,7 +147,6 @@ ASSIGNMENT
             console.log("Operation",leftType,operator,rightType,"is not valid");
             throw new Error("Operation is not valid");
         }
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
         quadruples.push({id:quadruples.length,operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
     }
     ;
@@ -206,7 +198,6 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
 } | DOCOMMAND '{' INSTRUCTIONS'}' WHILE '(' HYPEREXPRESSION ')' {
         var resultOperand = operandStack.pop();
             var resultType = typeStack.pop();
-            console.log(resultOperand,resultType);
             if(resultType != 4)
             {
                 console.log("A conditional statement should be a bool");
@@ -234,7 +225,6 @@ FORASSIGNMENT : ID '=' HYPEREXPRESSION {
             console.log("Type should be int");
             throw new Error("For loops only take int types");
         }
-        console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
         quadruples.push({id:quadruples.length,operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
         // this should be the reference to goto at the end of the for
         jumpStack.push(quadruples.length);
@@ -315,11 +305,10 @@ FUNCCALLHEADER: CallType ID '('{
     functionCalled = functions.find(func => func.name === $2);
     if(!functionCalled)
     {
-        console.log(`The function ${$2}does not exist`);
+        console.log(`The function ${$2} does not exist`);
         throw new Error(`The function ${$2} does not exist`);
     }
     availableParams = [...functionCalled.parameters];
-    console.log("Available Params :",[...availableParams]);
     functionCallCurrentParam = 1
     quadruples.push({id:quadruples.length,operator:"ERA",functionName:$2,global:currentFunction === 0});
 };
@@ -533,8 +522,6 @@ TERMS
                 operandStack[operandStack.length-1] = {address:expOperand,negative:true};
             }else 
             {
-                console.log("operand",hyperExpoperand);
-                console.log("hyperType",hyperType);
                 throw new Error("Only Int or Float values can be negative");
             }
         }

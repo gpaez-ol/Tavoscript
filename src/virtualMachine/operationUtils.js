@@ -1,4 +1,4 @@
-const { getVariableValue,assignVariableValue,getCodeSegmentIndex,loadFunction,resetMemory,getArrayVariableValue } = require("./memoryUtils");
+const { getVariableValue,assignVariableValue,getCodeSegmentIndex,loadFunction,resetMemory,getArrayVariableValues } = require("./memoryUtils");
 const {getFunctionQuadruples} = require("./functionUtils");
 var readlineSync = require('readline-sync');
 let memoryStack = [];
@@ -400,7 +400,7 @@ function getParamOperands(quadruple)
     }
     if(quadruple.m0)
     {
-        let values = getArrayVariableValue(valueAddress,quadruple.m0);
+        let values = getArrayVariableValues(valueAddress,quadruple.m0);
         return values;
     }
     let value = getVariableValue(valueAddress);
