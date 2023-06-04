@@ -184,8 +184,8 @@ case 30:
             var resultType = typeStack.pop();
             if(resultType != "bool")
             {
-                console.log("A conditional statement should be a boolean");
-                throw new Error("A conditional statement should be a boolean");
+                console.log("A conditional statement should be a bool");
+                throw new Error("A conditional statement should be a bool");
             }
             jumpStack.push(quadruples.length);
             quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
@@ -211,8 +211,8 @@ case 34:
             console.log(resultOperand,resultType);
             if(resultType != "bool")
             {
-                console.log("A conditional statement should be a boolean");
-                throw new Error("A conditional statement should be a boolean");
+                console.log("A conditional statement should be a bool");
+                throw new Error("A conditional statement should be a bool");
             }
             var end = jumpStack.pop();
             quadruples.push({operator:"GOTOT",value:resultOperand,address:end,global:currentFunction === 0});
@@ -236,7 +236,7 @@ case 36:
         var leftOperand = forVar.address;
         var leftType = "int";
         var operator = "=";
-        if(rightType != leftType && !(rightType === "int" && leftType === "float")) 
+        if(rightType != leftType)
         {
             console.log("Type should be int");
             throw new Error("For loops only take int types");

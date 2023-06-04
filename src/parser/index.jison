@@ -185,8 +185,8 @@ CONDITIONALHYPEREXPRESSION
             var resultType = typeStack.pop();
             if(resultType != "bool")
             {
-                console.log("A conditional statement should be a boolean");
-                throw new Error("A conditional statement should be a boolean");
+                console.log("A conditional statement should be a bool");
+                throw new Error("A conditional statement should be a bool");
             }
             jumpStack.push(quadruples.length);
             quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
@@ -207,8 +207,8 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
             console.log(resultOperand,resultType);
             if(resultType != "bool")
             {
-                console.log("A conditional statement should be a boolean");
-                throw new Error("A conditional statement should be a boolean");
+                console.log("A conditional statement should be a bool");
+                throw new Error("A conditional statement should be a bool");
             }
             var end = jumpStack.pop();
             quadruples.push({operator:"GOTOT",value:resultOperand,address:end,global:currentFunction === 0});
@@ -227,7 +227,7 @@ FORASSIGNMENT : ID '=' HYPEREXPRESSION {
         var leftOperand = forVar.address;
         var leftType = "int";
         var operator = "=";
-        if(rightType != leftType && !(rightType === "int" && leftType === "float")) 
+        if(rightType != leftType)
         {
             console.log("Type should be int");
             throw new Error("For loops only take int types");
@@ -559,7 +559,7 @@ FACTOR
             if(currentDimension <= arrayCalled.dimensions.length-1)
             {
                 console.log(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
-                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensionesn`);
+                throw new Error(`Incorrect call array ${arrayCalled.name} has more dimensions`);
 
             }
             arrayCalled = null;
