@@ -1,0 +1,13 @@
+func int sum(int x, int y)
+{
+    int sum = x+y;
+    return sum;
+}
+
+func void main()
+{
+    int x,y;
+    read(x);
+    read(y);
+    print(:sum(x,y));
+}

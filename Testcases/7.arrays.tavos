@@ -1,0 +1,13 @@
+func int sum(int x[1][2])
+{
+    int sum = x[0,0]+ x[0,1];
+    return sum;
+}
+
+func void main()
+{
+    int x[1][2];
+    read(x[0,0]);
+    read(x[0,1]);
+    print(:sum(x));
+}

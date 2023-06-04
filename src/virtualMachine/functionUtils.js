@@ -6,7 +6,6 @@ function getFunctionQuadruples(startingQuadruple,quadruples)
     {
         lastFunctionQuadruple++;
         currentQuadruple = quadruples.find(quadruple => quadruple.id === lastFunctionQuadruple);
-        console.log(currentQuadruple);
     }
     if (currentQuadruple === null || currentQuadruple === undefined)
     {

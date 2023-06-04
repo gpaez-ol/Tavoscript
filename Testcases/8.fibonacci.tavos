@@ -1,0 +1,20 @@
+func void fibonacci(int number)
+    {
+        int t1 = 0;
+        print("Next Term:",t1);
+        int t2=1;
+        print("Next Term:",t2);
+        int nextTerm = t1+t2;
+        for(x=3,x:<number)
+        {
+            print("Next Term:",nextTerm);
+            t1=t2;
+            t2=nextTerm;
+            nextTerm = t1+t2;
+            x = x+1;
+        }
+    } 
+func void main()
+    { 
+        :fibonacci(5); 
+    }
