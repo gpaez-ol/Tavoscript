@@ -344,15 +344,15 @@ function checkInputIsCorrectType(type,value)
 {
     switch(type)
     {
-        case "int":
-        case "float": 
+        case 1:
+        case 2: 
         {
             if(isNaN(value))
             {
                 console.log(`Value should be ${type}`);
                 throw new Error(`Value should be ${type}`);
             }
-            if(type === "int" && Number.isInteger(Number(value)) === false)
+            if(type === 1 && Number.isInteger(Number(value)) === false)
             {
                 console.log(`Value should be ${type}, no decimals`)
                 throw new Error(`Value should be ${type}, no decimals`);
@@ -360,7 +360,7 @@ function checkInputIsCorrectType(type,value)
 
         }
         break;
-        case "bool":
+        case 4:
         {
             if(value !== "true" && value !== "false")
             {

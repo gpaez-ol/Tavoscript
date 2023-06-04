@@ -35,7 +35,7 @@ function createVariable(name, type, currentFunction, varType = "local") {
     varType,varType:
     currentFunction.global === true && varType == "local" ? "global" : varType,
   }
-  if(variable.type !== "void")
+  if(variable.type !== 5)
   {
     variable.address = assignAddress(variable);
   }else {
