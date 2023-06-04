@@ -17,6 +17,7 @@ function createPrintQuad(
   var printValue = operandStack.pop();
   typeStack.pop();
   quadruples.push({
+    id:quadruples.length,
     operator: "PRINT",
     value: printValue,
   });
@@ -31,6 +32,7 @@ function createReadQuad(
   var readValue = operandStack.pop();
   var readType = typeStack.pop();
   quadruples.push({
+    id:quadruples.length,
     operator: "READ",
     value: readValue.address,
     type: readType,
@@ -57,6 +59,7 @@ function createAssignmentQuad(
     throw new Error("Operation is not valid");
   }
   quadruples.push({
+    id:quadruples.length,
     operator: "=",
     operand: leftOperand,
     value: rightOperand,
@@ -89,6 +92,7 @@ function createOperationQuad(
   // Temporal Values = 8  // Pointer Var Type = 10
   let newVariable = createVariable(result, resultType, thisFunction, pointer ? 10 : 8);
   quadruples.push({
+    id:quadruples.length,
     operator: operator,
     leftOperand: leftOperand,
     rightOperand: rightOperand,

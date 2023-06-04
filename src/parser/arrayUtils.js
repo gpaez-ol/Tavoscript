@@ -27,6 +27,7 @@ function createDimensionQuad(
     }
     var arrayCurrentDimension = arrayCalled.dimensions[currentDimension];
     quadruples.push({
+        id:quadruples.length,
         operator: "VER",
         operand,
         upperLimit: arrayCurrentDimension.upperLimit,

@@ -17,7 +17,7 @@
     var availableParams = [];
     var functionCalled = null;
     var functionCallCurrentParam = 0;
-    var quadruples = [{operator:"GOTO",address:null}];
+    var quadruples = [{id:0,operator:"GOTO",address:null}];
     
     var functions = [{variables:[],global:true},{name:"main",returnType:5,parameters:[],variables:[],size:null,quadruplesStart:null}];
     let currentFunction = 0;
@@ -155,7 +155,7 @@ ASSIGNMENT
             throw new Error("Operation is not valid");
         }
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
+        quadruples.push({id:quadruples.length,operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
     }
     ;
 
@@ -176,7 +176,7 @@ CONDITIONALELSE: IF '(' CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}' ELSE
                 var end = jumpStack.pop();
                 var quadruple = quadruples[end];
                 jumpStack.push(quadruples.length);
-                quadruples.push({operator:"GOTO",address:result,global:currentFunction === 0});
+                quadruples.push({id:quadruples.length,operator:"GOTO",address:result,global:currentFunction === 0});
                 quadruple.address = quadruples.length;
       
 };
@@ -191,7 +191,7 @@ CONDITIONALHYPEREXPRESSION
                 throw new Error("A conditional statement should be a bool");
             }
             jumpStack.push(quadruples.length);
-            quadruples.push({operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
+            quadruples.push({id:quadruples.length,operator:"GOTOF",value:resultOperand,address:null,global:currentFunction === 0});
         };
 // Loops
 WHILECOMMAND: WHILE {jumpStack.push(quadruples.length);};
@@ -200,7 +200,7 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
                          var end = jumpStack.pop();
                          var whileStart =  jumpStack.pop();
                          var quadruple = quadruples[end];
-                         quadruples.push({operator:"GOTO",address:whileStart,global:currentFunction === 0});
+                         quadruples.push({id:quadruples.length,operator:"GOTO",address:whileStart,global:currentFunction === 0});
                          quadruple.address = quadruples.length;
 
 } | DOCOMMAND '{' INSTRUCTIONS'}' WHILE '(' HYPEREXPRESSION ')' {
@@ -213,12 +213,12 @@ LOOPS: WHILECOMMAND '('CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS'}'{
                 throw new Error("A conditional statement should be a bool");
             }
             var end = jumpStack.pop();
-            quadruples.push({operator:"GOTOT",value:resultOperand,address:end,global:currentFunction === 0});
+            quadruples.push({id:quadruples.length,operator:"GOTOT",value:resultOperand,address:end,global:currentFunction === 0});
 } | FOR '(' FORASSIGNMENT  , CONDITIONALHYPEREXPRESSION ')' '{' INSTRUCTIONS '}'{
         var pendingFalseQuadruple = jumpStack.pop();
         var forStart = jumpStack.pop();
         var quadruple = quadruples[pendingFalseQuadruple];
-        quadruples.push({operator:"GOTO",address:forStart,global:currentFunction === 0});
+        quadruples.push({id:quadruples.length,operator:"GOTO",address:forStart,global:currentFunction === 0});
         quadruple.address = quadruples.length;
 
 };
@@ -235,7 +235,7 @@ FORASSIGNMENT : ID '=' HYPEREXPRESSION {
             throw new Error("For loops only take int types");
         }
         console.log(`${leftOperand}(${leftType})${operator}${rightOperand}(${rightType})`)
-        quadruples.push({operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
+        quadruples.push({id:quadruples.length,operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
         // this should be the reference to goto at the end of the for
         jumpStack.push(quadruples.length);
     };
@@ -321,7 +321,7 @@ FUNCCALLHEADER: CallType ID '('{
     availableParams = [...functionCalled.parameters];
     console.log("Available Params :",[...availableParams]);
     functionCallCurrentParam = 1
-    quadruples.push({operator:"ERA",functionName:$2,global:currentFunction === 0});
+    quadruples.push({id:quadruples.length,operator:"ERA",functionName:$2,global:currentFunction === 0});
 };
 
 ARGUMENTS: ARGUMENTS , ARGUMENT | ARGUMENT;
@@ -346,7 +346,7 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         throw new Error("Arguments missing for function call");
     }
     // aqui va a generar go sub, procedure_name,initial-address 
-    quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
+    quadruples.push({id:quadruples.length,operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != 5)
@@ -356,7 +356,7 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         var resultType = functionCalled.returnType;
         // Temporal Values = 8
         createVariable(result, resultType, functions[currentFunction], 8);
-        quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
+        quadruples.push({id:quadruples.length,operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
     
 } | FUNCCALLHEADER ')'{
@@ -365,7 +365,7 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         console.log("Arguments missing");
         throw new Error("Arguments missing for function call");
     }
-    quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
+    quadruples.push({id:quadruples.length,operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != 5)
@@ -375,7 +375,7 @@ FUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         var resultType = functionCalled.returnType;
         // Temporal Values = 8
         createVariable(result, resultType, functions[currentFunction], 8);
-        quadruples.push({operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
+        quadruples.push({id:quadruples.length,operator:"=",operand:result,value:functionCalled.name,global:currentFunction === 0})
     }
 };
 
@@ -387,7 +387,7 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         throw new Error("Arguments missing for function call");
     }
     // aqui va a generar go sub, procedure_name,initial-address (quadrupplo hihi)
-    quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
+    quadruples.push({id:quadruples.length,operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != 5)
@@ -397,7 +397,7 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         var resultType = functionCalled.returnType;
         // Temporal Values = 8
         let createdVar = createVariable(result, resultType, functions[currentFunction], 8);
-        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.globalAddress,global:currentFunction === 0})
+        quadruples.push({id:quadruples.length,operator:"=",operand:createdVar.address,value:functionCalled.globalAddress,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
     }
@@ -408,7 +408,7 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         console.log("Arguments missing");
         throw new Error("Arguments missing for function call");
     }
-      quadruples.push({operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
+      quadruples.push({id:quadruples.length,operator:"GOSUB",value:functionCalled.name,global:currentFunction === 0});
     // recordar el address donde estabas antes
     // asignar el valor que tiene la variable global nombre de func en ese momento al sig temporal
     if(functionCalled.returnType != 5)
@@ -418,7 +418,7 @@ FACTFUNCCALLS: FUNCCALLHEADER ARGUMENTS ')'{
         var resultType = functionCalled.returnType;
         // Temporal Values = 8
         let createdVar= createVariable(result, resultType, functions[currentFunction], 8);
-        quadruples.push({operator:"=",operand:createdVar.address,value:functionCalled.name,global:currentFunction === 0})
+        quadruples.push({id:quadruples.length,operator:"=",operand:createdVar.address,value:functionCalled.name,global:currentFunction === 0})
         operandStack.push(createdVar.address);
         typeStack.push(resultType);
     }
