@@ -242,12 +242,14 @@ FORASSIGNMENT : ID '=' HYPEREXPRESSION {
 // Funciones
 PARAMETER: TYPE ID {
          let parameterType = typeMapper.get($1);
-         createVariable($2,parameterType,functions[currentFunction],"parameter");
+         // Parameter Var Type = 11
+         createVariable($2,parameterType,functions[currentFunction],11);
          functions[currentFunction].parameters.push(parameterType);
 } | TYPE ARRAYDEF{
         let arrayParameterType = typeMapper.get($1);
         currentArray.type = arrayParameterType;
-        createArrayVariable(currentArray,functions[currentFunction],"parameter");
+         // Parameter Var Type = 11
+        createArrayVariable(currentArray,functions[currentFunction],11);
         functions[currentFunction].parameters.push({type:arrayParameterType,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
         currentArray = null;
 };
@@ -468,6 +470,7 @@ DIMENSION:  NUMBER ']'{
         console.log("Array limits must be positive values");
         throw new Error("Array limits must be positive values");
     }
+    // Int Var Type = 1
     createConstantVariable($1,1,functions[0])
     currentArray.dimensions.push({upperLimit:$1,m:0});
 } ;
@@ -529,7 +532,7 @@ TERMS
 FACTOR
         : NUMBER 
         {
-            // add check constants
+            // Int Var Type = 1
             let numberAddress = createConstantVariable($1,1,functions[0])
             // Int Var Type = 1
             typeStack.push(1);
@@ -537,15 +540,15 @@ FACTOR
         }
         | '-' NUMBER %prec UMINUS
         {
-            console.log($2*-1);
+            // Int Var Type = 1
             let negativeNAddress =createConstantVariable($2*-1,1,functions[0])
-            // add check constants
             operandStack.push(negativeNAddress);
             // Int Var Type = 1
             typeStack.push(1);
         }
         | FLOAT 
         {
+            // Float Var Type = 2
             let floatAddress = createConstantVariable($1,2,functions[0])
             operandStack.push(floatAddress);
             // Float Var Type = 2
@@ -553,7 +556,7 @@ FACTOR
         }
         | '-' FLOAT %prec UMINUS
         {
-            console.log($2*-1);
+            // Float Var Type = 2
             let negativeFAddress = createConstantVariable($2*-1,2,functions[0])
             operandStack.push(negativeFAddress);
             // Float Var Type = 2
@@ -579,20 +582,21 @@ FACTOR
         }
         |FACTFUNCCALLS 
         | TEXT {
+            // String Var Type = 3
             let stringAddress = createConstantVariable($1,3,functions[0])
             operandStack.push(stringAddress);
             // String Var Type = 3
             typeStack.push(3);
         } |
         TRUE{
+            // Bool Var Type = 4
             let booleanTAddress = createConstantVariable($1,4,functions[0])
-            // constant address
             operandStack.push(booleanTAddress);
             // Bool Var Type = 4
             typeStack.push(4);
         } |
         FALSE {
-            // constant address
+            // Bool Var Type = 4
             let booleanFAddress = createConstantVariable($1,4,functions[0])
             operandStack.push(booleanFAddress);
             // Bool Var Type = 4

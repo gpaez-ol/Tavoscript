@@ -86,8 +86,8 @@ function createOperationQuad(
     throw new Error("Operation is not valid");
   }
   var result = nextAvail(pointer);
-  // Temporal Values = 8
-  let newVariable = createVariable(result, resultType, thisFunction, pointer ? "pointer" : 8);
+  // Temporal Values = 8  // Pointer Var Type = 10
+  let newVariable = createVariable(result, resultType, thisFunction, pointer ? 10 : 8);
   quadruples.push({
     operator: operator,
     leftOperand: leftOperand,

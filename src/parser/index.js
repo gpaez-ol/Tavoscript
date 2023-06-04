@@ -251,7 +251,8 @@ break;
 case 37:
 
          let parameterType = typeMapper.get($$[$0-1]);
-         createVariable($$[$0],parameterType,functions[currentFunction],"parameter");
+         // Parameter Var Type = 11
+         createVariable($$[$0],parameterType,functions[currentFunction],11);
          functions[currentFunction].parameters.push(parameterType);
 
 break;
@@ -259,7 +260,8 @@ case 38:
 
         let arrayParameterType = typeMapper.get($$[$0-1]);
         currentArray.type = arrayParameterType;
-        createArrayVariable(currentArray,functions[currentFunction],"parameter");
+         // Parameter Var Type = 11
+        createArrayVariable(currentArray,functions[currentFunction],11);
         functions[currentFunction].parameters.push({type:arrayParameterType,dimensions:currentArray.dimensions.map(dimension => {return dimension.upperLimit}  )});
         currentArray = null;
 
@@ -500,6 +502,7 @@ case 67:
         console.log("Array limits must be positive values");
         throw new Error("Array limits must be positive values");
     }
+    // Int Var Type = 1
     createConstantVariable($$[$0-1],1,functions[0])
     currentArray.dimensions.push({upperLimit:$$[$0-1],m:0});
 
@@ -561,7 +564,7 @@ case 84:
 break;
 case 86:
 
-            // add check constants
+            // Int Var Type = 1
             let numberAddress = createConstantVariable($$[$0],1,functions[0])
             // Int Var Type = 1
             typeStack.push(1);
@@ -570,9 +573,8 @@ case 86:
 break;
 case 87:
 
-            console.log($$[$0]*-1);
+            // Int Var Type = 1
             let negativeNAddress =createConstantVariable($$[$0]*-1,1,functions[0])
-            // add check constants
             operandStack.push(negativeNAddress);
             // Int Var Type = 1
             typeStack.push(1);
@@ -580,6 +582,7 @@ case 87:
 break;
 case 88:
 
+            // Float Var Type = 2
             let floatAddress = createConstantVariable($$[$0],2,functions[0])
             operandStack.push(floatAddress);
             // Float Var Type = 2
@@ -588,7 +591,7 @@ case 88:
 break;
 case 89:
 
-            console.log($$[$0]*-1);
+            // Float Var Type = 2
             let negativeFAddress = createConstantVariable($$[$0]*-1,2,functions[0])
             operandStack.push(negativeFAddress);
             // Float Var Type = 2
@@ -618,24 +621,28 @@ case 91:
 break;
 case 93:
 
+            // String Var Type = 3
             let stringAddress = createConstantVariable($$[$0],3,functions[0])
             operandStack.push(stringAddress);
+            // String Var Type = 3
             typeStack.push(3);
         
 break;
 case 94:
 
+            // Bool Var Type = 4
             let booleanTAddress = createConstantVariable($$[$0],4,functions[0])
-            // constant address
             operandStack.push(booleanTAddress);
+            // Bool Var Type = 4
             typeStack.push(4);
         
 break;
 case 95:
 
-            // constant address
+            // Bool Var Type = 4
             let booleanFAddress = createConstantVariable($$[$0],4,functions[0])
             operandStack.push(booleanFAddress);
+            // Bool Var Type = 4
             typeStack.push(4);
         
 break;

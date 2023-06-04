@@ -14,9 +14,9 @@ const typeMapper = new Map([
     ["local",6],
     ["global",7],
     ["temporal",8],
-    ["constant","constant"],
-    ["pointer","pointer"],
-    ["parameter","parameter"]
+    ["constant",9],
+    ["pointer",10],
+    ["parameter",11]
   ]);
 
 const startingAddresses = {
@@ -42,21 +42,21 @@ const startingAddresses = {
         4 : 12000,
     },
     // variable constantes 13000-15999
-    constant: {
+    9: {
         1 : 13000,
         2 : 14000,
         3 : 15000,
         4 : 16000,
     },
     // variable pointers de arreglos 17000-20999
-    pointer: {
+    10 : {
         1 : 17000,
         2 :18000,
         3 : 19000,
         4 : 20000,
     },
     // variable parameters 21000-23999
-    parameter: {
+    11: {
         1: 21000,
         2: 22000,
         3: 23000,

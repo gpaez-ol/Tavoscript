@@ -37,12 +37,13 @@ function createDimensionQuad(
     {
         let constantVarAddress = createConstantVariable(arrayCurrentDimension.m,1, mainFunction)
         operandStack.push(constantVarAddress);
+        // Int Var Type = 1
         typeStack.push(1);
         createOperationQuad(quadruples,operandStack,"*",typeStack,nextAvail,thisFunction);
         if(currentArrayCallIndex === undefined || currentArrayCallIndex === null)
         {
             // Constant Var Type = 9
-            if (operandVariable.varType === "constant")
+            if (operandVariable.varType === 9)
             {
                 return {label:operandVariable.name}
             } else {
@@ -59,6 +60,7 @@ function createDimensionQuad(
     }
     if(Object.hasOwn(arrayCurrentDimension, 'k'))
     {
+        // Int Var Type = 1
         let constantVarKAddress = createConstantVariable(arrayCurrentDimension.k,1, mainFunction)
         operandStack.push(constantVarKAddress );
         typeStack.push(1);
@@ -70,7 +72,7 @@ function createDimensionQuad(
         createOperationQuad(quadruples,operandStack,"+",typeStack,nextAvail,thisFunction,true);
     }
     // Constant Var Type = 9
-    if (operandVariable.varType === "constant")
+    if (operandVariable.varType === 9)
     {
         return {label:operandVariable.name}
     } else {

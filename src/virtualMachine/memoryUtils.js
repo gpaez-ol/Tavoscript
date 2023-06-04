@@ -72,11 +72,11 @@ function createParameterSegment(variables,parameterValues,segment)
     // Global Var Type = 7
     let globalVars = functions[0].variables.filter(variable => variable.varType === 7);
     createSegment(globalVars,memory.dataSegment);
-    // Temporal Var Type = 8
-    let extraSegmentVars = functions[0].variables.filter(variable => variable.varType === 8 || variable.varType === "pointer");
+    // Temporal Var Type = 8 // Pointer Var Type = 10
+    let extraSegmentVars = functions[0].variables.filter(variable => variable.varType === 8 || variable.varType === 10);
     createSegment(extraSegmentVars,memory.extraSegment);
     // Constant Var Type = 9
-    let constantVars = functions[0].variables.filter(variable => variable.varType === "constant");
+    let constantVars = functions[0].variables.filter(variable => variable.varType === 9);
     createConstantSegment(constantVars,memory.dataSegment);
     if(devMode)
     {
@@ -92,10 +92,11 @@ function createParameterSegment(variables,parameterValues,segment)
 {
     let localVars = currentFunc.variables.filter(variable => variable.varType === 6);
     createSegment(localVars,memory.stackSegment);
-    let parameterVars = currentFunc.variables.filter(variable => variable.varType === "parameter");
+    // Parameter Var Type = 11
+    let parameterVars = currentFunc.variables.filter(variable => variable.varType === 11);
     createParameterSegment(parameterVars,parameterValues,memory.stackSegment)
-    // Temporal Values = 8
-    let temporalVars = currentFunc.variables.filter(variable => variable.varType === 8 || variable.varType === "pointer");
+    // Temporal Values = 8 // Pointer Var Type = 10
+    let temporalVars = currentFunc.variables.filter(variable => variable.varType === 8 || variable.varType === 10);
     createSegment(temporalVars,memory.extraSegment);
 }
 
