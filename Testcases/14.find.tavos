@@ -2,7 +2,7 @@ func void main()
 {
     bool found = false;
     int array[4];
-    array[0]=5;
+    read(array[1-1]);
     array[1]=1;
     array[2]=7;
     array[3]=4;

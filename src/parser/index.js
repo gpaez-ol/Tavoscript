@@ -139,7 +139,7 @@ case 25:
         var operator = "=";
         if(rightType != leftType && !(rightType === 1 && leftType === 2))
         {
-            console.log("Operation",leftType,operator,rightType,"is not valid");
+            console.log("Operation",getKey(leftType),operator,getKey(rightType),"is not valid");
             throw new Error("Operation is not valid");
         }
         quadruples.push({id:quadruples.length,operator:operator,operand:leftOperand,value:rightOperand,global:currentFunction === 0});
@@ -824,7 +824,7 @@ parse: function parse(input) {
     const {createVariable,createConstantVariable,getVariable,getArrayVariable,createArrayVariable,resetAvailableAddresses} = require("./variableUtils");
     const {getOperands,createAssignmentQuad,createOperationQuad,createPrintQuad,createReadQuad} = require("./quadrupleUtils");
     const {createDimensionQuad} = require("./arrayUtils");
-    const {typeMapper} = require("./mainAddresses");
+    const {typeMapper,getKey} = require("./mainAddresses");
 
     var operandStack = [];
     var typeStack = [];

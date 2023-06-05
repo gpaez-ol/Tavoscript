@@ -1,5 +1,6 @@
 const { semanticTable } = require("./semanticTable");
 const { createVariable, getVariableByAddress } = require("./variableUtils");
+const {getKey} = require("./mainAddresses");
 function getOperands(operandStack,typeStack) {
   const rightOperand = operandStack.pop();
   const rightType = typeStack.pop();
@@ -55,7 +56,7 @@ function createAssignmentQuad(
   );
   // add more validations later but for now strict typing
   if (rightType != leftType && !(rightType === 1 && leftType === 2)) {
-    console.log("Operation", leftType, "=", rightType, "is not valid");
+    console.log("Operation", getKey(leftType), "=", getKey(rightType), "is not valid");
     throw new Error("Operation is not valid");
   }
   quadruples.push({
@@ -82,7 +83,7 @@ function createOperationQuad(
   );
   var resultType = semanticTable[leftType][operator][rightType];
   if (resultType === undefined) {
-    console.log("Operation", leftType, operator, rightType, "is not valid");
+    console.log("Operation", getKey(leftType), operator, getKey(rightType), "is not valid");
     throw new Error("Operation is not valid");
   }
   var result = nextAvail(pointer);
