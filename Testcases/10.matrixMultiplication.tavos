@@ -1,12 +1,12 @@
-func void multiplyMatrixes(int x[2][2],int y[2][2])
+func void multiplyMatrixes(int x[3][3],int y[3][3])
 { 
-     int c[2][2]; 
-     for(i=0,i<2)
+     int c[3][3]; 
+     for(i=0,i<3)
      {
-        for(j=0,j<2)
+        for(j=0,j<3)
         { 
           c[i,j]=0; 
-          for(k=0,k<2)
+          for(k=0,k<3)
           { 
             c[i,j] = c[i,j] + x[i,k] * y[k,j]; 
             k=k+1; 
@@ -15,9 +15,9 @@ func void multiplyMatrixes(int x[2][2],int y[2][2])
         }
         i=i+1; 
     }  
-    for(h=0,h<2)
+    for(h=0,h<3)
     {
-        for(l=0,l<2)
+        for(l=0,l<3)
         { 
             print(c[h,l]);
              l=l+1;
@@ -27,14 +27,25 @@ func void multiplyMatrixes(int x[2][2],int y[2][2])
 } 
 func void main()
 {
-    int x[2][2],y[2][2];
-    x[0,0] = 7;
-    x[0,1] = 5;
-    x[1,0] = 6;
-    x[1,1] = 3;
+    int x[3][3],y[3][3];
+    x[0,0] = 0;
+    x[0,1] = 2;
+    x[0,2] = 2;
+    x[1,0] = 3;
+    x[1,1] = 1;
+    x[1,2] = 1;
+    x[2,0] = 1;
+    x[2,1] = 0;
+    x[2,2] = 2;
+
     y[0,0] = 2;
-    y[0,1] = 1;
-    y[1,0] = 5;
-    y[1,1] =1;
+    y[0,1] = 3;
+    y[0,2] = 0;
+    y[1,0] = 0;
+    y[1,1] = 1;
+    y[1,2] = 1;
+    y[2,0] = 2;
+    y[2,1] = 2;
+    y[2,2] = 1;
     :multiplyMatrixes(x,y);
 }
