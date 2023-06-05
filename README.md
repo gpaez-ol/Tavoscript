@@ -66,3 +66,6 @@ Se anadio un lenguaje basico que funciona como calculadora por el momento para t
 - Se agrego logica para correrlo desde la terminal
 - Se removieron variables sin usar
 - Utiliza code segment para cargar y descargar los quadruplos de memoria
+- Negativos funcionando
+- Operadores tienen una representacion numerica
+- Terminado al 100%

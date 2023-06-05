@@ -4,10 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node main.js",
-    "build": "webpack",
-    "prebuild": "jison src/parser/index.jison -o src/parser/index.js -m amd"
+    "dev": "node main.js"
   },
   "keywords": [],
   "author": "",
