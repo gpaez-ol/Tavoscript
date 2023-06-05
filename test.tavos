@@ -1,0 +1,23 @@
+int globalX[3];
+func int getTen(int x[3])
+{
+    if(x[0] < 10)
+    {
+        while(x[0] < 10)
+        {
+            x[0] = x[0]+1;
+        }
+    }else {
+        while(x[0] > 10)
+        {
+            x[0] = x[0]-1;
+        }
+    }
+    return x[0];
+}
+func void main()
+{
+    read(globalX[0]);
+    print(globalX[0]);
+    print(:getTen(globalX));
+}

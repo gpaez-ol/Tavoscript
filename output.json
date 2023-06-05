@@ -1,0 +1,683 @@
+{
+  "quadruples": [
+    {
+      "id": 0,
+      "operator": "GOTO",
+      "address": 40
+    },
+    {
+      "id": 1,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 2,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9000,
+      "global": false
+    },
+    {
+      "id": 3,
+      "operator": "+",
+      "leftOperand": 9000,
+      "rightOperand": 13003,
+      "result": 17000,
+      "global": false
+    },
+    {
+      "id": 4,
+      "operator": "<",
+      "leftOperand": 17000,
+      "rightOperand": 13004,
+      "result": 12000,
+      "global": false
+    },
+    {
+      "id": 5,
+      "operator": "GOTOF",
+      "value": 12000,
+      "address": 21,
+      "global": false
+    },
+    {
+      "id": 6,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 7,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9001,
+      "global": false
+    },
+    {
+      "id": 8,
+      "operator": "+",
+      "leftOperand": 9001,
+      "rightOperand": 13003,
+      "result": 17001,
+      "global": false
+    },
+    {
+      "id": 9,
+      "operator": "<",
+      "leftOperand": 17001,
+      "rightOperand": 13004,
+      "result": 12001,
+      "global": false
+    },
+    {
+      "id": 10,
+      "operator": "GOTOF",
+      "value": 12001,
+      "address": 20,
+      "global": false
+    },
+    {
+      "id": 11,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 12,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9002,
+      "global": false
+    },
+    {
+      "id": 13,
+      "operator": "+",
+      "leftOperand": 9002,
+      "rightOperand": 13003,
+      "result": 17002,
+      "global": false
+    },
+    {
+      "id": 14,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 15,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9003,
+      "global": false
+    },
+    {
+      "id": 16,
+      "operator": "+",
+      "leftOperand": 9003,
+      "rightOperand": 13003,
+      "result": 17003,
+      "global": false
+    },
+    {
+      "id": 17,
+      "operator": "+",
+      "leftOperand": 17003,
+      "rightOperand": 13005,
+      "result": 9004,
+      "global": false
+    },
+    {
+      "id": 18,
+      "operator": "=",
+      "operand": 17002,
+      "value": 9004,
+      "global": false
+    },
+    {
+      "id": 19,
+      "operator": "GOTO",
+      "address": 6,
+      "global": false
+    },
+    {
+      "id": 20,
+      "operator": "GOTO",
+      "address": 35,
+      "global": false
+    },
+    {
+      "id": 21,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 22,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9005,
+      "global": false
+    },
+    {
+      "id": 23,
+      "operator": "+",
+      "leftOperand": 9005,
+      "rightOperand": 13003,
+      "result": 17004,
+      "global": false
+    },
+    {
+      "id": 24,
+      "operator": ">",
+      "leftOperand": 17004,
+      "rightOperand": 13004,
+      "result": 12002,
+      "global": false
+    },
+    {
+      "id": 25,
+      "operator": "GOTOF",
+      "value": 12002,
+      "address": 35,
+      "global": false
+    },
+    {
+      "id": 26,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 27,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9006,
+      "global": false
+    },
+    {
+      "id": 28,
+      "operator": "+",
+      "leftOperand": 9006,
+      "rightOperand": 13003,
+      "result": 17005,
+      "global": false
+    },
+    {
+      "id": 29,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 30,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9007,
+      "global": false
+    },
+    {
+      "id": 31,
+      "operator": "+",
+      "leftOperand": 9007,
+      "rightOperand": 13003,
+      "result": 17006,
+      "global": false
+    },
+    {
+      "id": 32,
+      "operator": "-",
+      "leftOperand": 17006,
+      "rightOperand": 13005,
+      "result": 9008,
+      "global": false
+    },
+    {
+      "id": 33,
+      "operator": "=",
+      "operand": 17005,
+      "value": 9008,
+      "global": false
+    },
+    {
+      "id": 34,
+      "operator": "GOTO",
+      "address": 21,
+      "global": false
+    },
+    {
+      "id": 35,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 36,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9009,
+      "global": false
+    },
+    {
+      "id": 37,
+      "operator": "+",
+      "leftOperand": 9009,
+      "rightOperand": 13003,
+      "result": 17007,
+      "global": false
+    },
+    {
+      "id": 38,
+      "operator": "RETURN",
+      "value": 17007
+    },
+    {
+      "id": 39,
+      "operator": "ENDFUNC"
+    },
+    {
+      "id": 40,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 41,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9000,
+      "global": false
+    },
+    {
+      "id": 42,
+      "operator": "+",
+      "leftOperand": 9000,
+      "rightOperand": 13006,
+      "result": 17000,
+      "global": false
+    },
+    {
+      "id": 43,
+      "operator": "READ",
+      "value": 17000,
+      "type": 1,
+      "label": {
+        "label": "globalX",
+        "dimensions": [
+          {
+            "label": "0"
+          }
+        ]
+      }
+    },
+    {
+      "id": 44,
+      "operator": "VER",
+      "operand": 13001,
+      "upperLimit": "3",
+      "global": false
+    },
+    {
+      "id": 45,
+      "operator": "+",
+      "leftOperand": 13001,
+      "rightOperand": 13002,
+      "result": 9001,
+      "global": false
+    },
+    {
+      "id": 46,
+      "operator": "+",
+      "leftOperand": 9001,
+      "rightOperand": 13006,
+      "result": 17001,
+      "global": false
+    },
+    {
+      "id": 47,
+      "operator": "PRINT",
+      "value": 17001
+    },
+    {
+      "id": 48,
+      "operator": "ERA",
+      "functionName": "getTen",
+      "global": false
+    },
+    {
+      "id": 49,
+      "operator": "PARAM",
+      "value": 1000,
+      "param": 1,
+      "global": false,
+      "m0": 3
+    },
+    {
+      "id": 50,
+      "operator": "GOSUB",
+      "value": "getTen",
+      "global": false
+    },
+    {
+      "id": 51,
+      "operator": "=",
+      "operand": 9002,
+      "value": 1003,
+      "global": false
+    },
+    {
+      "id": 52,
+      "operator": "PRINT",
+      "value": 9002
+    },
+    {
+      "id": 53,
+      "operator": "ENDFUNC"
+    }
+  ],
+  "functions": [
+    {
+      "variables": [
+        {
+          "type": 1,
+          "name": "3",
+          "address": 13000,
+          "varType": 9
+        },
+        {
+          "type": 1,
+          "name": "globalX",
+          "varType": 7,
+          "dimensions": [
+            {
+              "upperLimit": "3",
+              "k": 0
+            }
+          ],
+          "address": 1000
+        },
+        {
+          "type": 1,
+          "name": "getTen",
+          "address": 1003,
+          "varType": 7
+        },
+        {
+          "type": 1,
+          "name": "0",
+          "address": 13001,
+          "varType": 9
+        },
+        {
+          "type": 1,
+          "name": 0,
+          "address": 13002,
+          "varType": 9
+        },
+        {
+          "type": 1,
+          "name": 21000,
+          "address": 13003,
+          "varType": 9
+        },
+        {
+          "type": 1,
+          "name": "10",
+          "address": 13004,
+          "varType": 9
+        },
+        {
+          "type": 1,
+          "name": "1",
+          "address": 13005,
+          "varType": 9
+        },
+        {
+          "type": 1,
+          "name": 1000,
+          "address": 13006,
+          "varType": 9
+        }
+      ],
+      "global": true
+    },
+    {
+      "name": "main",
+      "returnType": 5,
+      "parameters": [],
+      "variables": [
+        {
+          "type": 1,
+          "name": "t1",
+          "address": 9000,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp1",
+          "address": 17000,
+          "varType": 10
+        },
+        {
+          "type": 1,
+          "name": "t2",
+          "address": 9001,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp2",
+          "address": 17001,
+          "varType": 10
+        },
+        {
+          "type": 1,
+          "name": "t3",
+          "address": 9002,
+          "varType": 8
+        }
+      ],
+      "size": {
+        "local": {
+          "vli": 0,
+          "vlf": 0,
+          "vls": 0,
+          "vlb": 0
+        },
+        "temporal": {
+          "vti": 3,
+          "vtf": 0,
+          "vts": 0,
+          "vtb": 0
+        }
+      },
+      "quadruplesStart": 40
+    },
+    {
+      "name": "getTen",
+      "returnType": 1,
+      "parameters": [
+        {
+          "type": 1,
+          "dimensions": [
+            "3"
+          ]
+        }
+      ],
+      "size": {
+        "local": {
+          "vli": 1,
+          "vlf": 0,
+          "vls": 0,
+          "vlb": 0
+        },
+        "temporal": {
+          "vti": 10,
+          "vtf": 0,
+          "vts": 0,
+          "vtb": 3
+        }
+      },
+      "variables": [
+        {
+          "type": 1,
+          "name": "x",
+          "varType": 11,
+          "dimensions": [
+            {
+              "upperLimit": "3",
+              "k": 0
+            }
+          ],
+          "address": 21000
+        },
+        {
+          "type": 1,
+          "name": "t1",
+          "address": 9000,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp1",
+          "address": 17000,
+          "varType": 10
+        },
+        {
+          "type": 4,
+          "name": "t2",
+          "address": 12000,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "t3",
+          "address": 9001,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp2",
+          "address": 17001,
+          "varType": 10
+        },
+        {
+          "type": 4,
+          "name": "t4",
+          "address": 12001,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "t5",
+          "address": 9002,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp3",
+          "address": 17002,
+          "varType": 10
+        },
+        {
+          "type": 1,
+          "name": "t6",
+          "address": 9003,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp4",
+          "address": 17003,
+          "varType": 10
+        },
+        {
+          "type": 1,
+          "name": "t7",
+          "address": 9004,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "t8",
+          "address": 9005,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp5",
+          "address": 17004,
+          "varType": 10
+        },
+        {
+          "type": 4,
+          "name": "t9",
+          "address": 12002,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "t10",
+          "address": 9006,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp6",
+          "address": 17005,
+          "varType": 10
+        },
+        {
+          "type": 1,
+          "name": "t11",
+          "address": 9007,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp7",
+          "address": 17006,
+          "varType": 10
+        },
+        {
+          "type": 1,
+          "name": "t12",
+          "address": 9008,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "t13",
+          "address": 9009,
+          "varType": 8
+        },
+        {
+          "type": 1,
+          "name": "tp8",
+          "address": 17007,
+          "varType": 10
+        }
+      ],
+      "quadruplesStart": 1,
+      "globalAddress": 1003
+    }
+  ]
+}

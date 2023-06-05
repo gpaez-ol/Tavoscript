@@ -1,4 +1,4 @@
-const { getVariableValue,assignVariableValue,getCodeSegmentIndex,loadFunction,resetMemory,getArrayVariableValues } = require("./memoryUtils");
+const { getVariableValue,assignVariableValue,getCodeSegmentIndex,loadFunction,resetMemory,getArrayVariableValues,getKey } = require("./memoryUtils");
 const {getFunctionQuadruples} = require("./functionUtils");
 var readlineSync = require('readline-sync');
 let memoryStack = [];
@@ -424,13 +424,13 @@ function checkInputIsCorrectType(type,value)
         {
             if(isNaN(value))
             {
-                console.log(`Value should be ${type}`);
-                throw new Error(`Value should be ${type}`);
+                console.log(`Value should be ${getKey(type)}`);
+                throw new Error(`Value should be ${getKey(type)}`);
             }
             if(type === 1 && Number.isInteger(Number(value)) === false)
             {
-                console.log(`Value should be ${type}, no decimals`)
-                throw new Error(`Value should be ${type}, no decimals`);
+                console.log(`Value should be ${getKey(type)}, no decimals`)
+                throw new Error(`Value should be ${getKey(type)}, no decimals`);
             }
 
         }
@@ -439,8 +439,8 @@ function checkInputIsCorrectType(type,value)
         {
             if(value !== "true" && value !== "false")
             {
-                console.log(`Value should be ${type}, true or false`);
-                throw new Error(`Value should be ${type}, true or false`);
+                console.log(`Value should be ${getKey(type)}, true or false`);
+                throw new Error(`Value should be ${getKey(type)}, true or false`);
             }
         }
 

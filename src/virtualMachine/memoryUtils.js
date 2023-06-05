@@ -281,4 +281,22 @@ function getCodeSegmentIndex(id)
     return arrayIndex;
 }
 
-module.exports = {memory,startVariablesMemory,getCodeSegmentIndex,loadFunction,resetMemory,getVariableValue,getArrayVariableValues,assignVariableValue};
+const typeMapper = new Map([
+    ["int", 1],
+    ["float", 2],
+    ["string", 3],
+    ["bool",4],
+    ["void",5],
+    ["local",6],
+    ["global",7],
+    ["temporal",8],
+    ["constant",9],
+    ["pointer",10],
+    ["parameter",11]
+  ]);
+
+  function getKey(value) {
+    return [...typeMapper].find(([key, val]) => val == value)[0]
+  }
+
+module.exports = {memory,getKey,startVariablesMemory,getCodeSegmentIndex,loadFunction,resetMemory,getVariableValue,getArrayVariableValues,assignVariableValue};
