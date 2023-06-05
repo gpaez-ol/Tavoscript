@@ -162,4 +162,4 @@ function validateAddress(address,varType,type) {
 
 }
 
-module.exports = {startingAddresses,typeMapper,validateAddress};
+module.exports = {startingAddresses,typeMapper,validateAddress,getKey};
